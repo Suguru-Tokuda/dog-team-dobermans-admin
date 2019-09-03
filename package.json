@@ -3,9 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@coreui/coreui": "^2.1.12",
+    "axios": "^0.19.0",
+    "bootstrap": "^4.3.1",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.4.1",
+    "jquery-ui": "^1.12.1",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.26",
+    "pace-js": "^1.0.2",
+    "perfect-scrollbar": "^1.4.0",
+    "popper.js": "^1.15.0",
+    "query-string": "^6.8.3",
     "react": "^16.9.0",
+    "react-datepicker": "^2.9.4",
     "react-dom": "^16.9.0",
-    "react-scripts": "3.1.1"
+    "react-router-dom": "^5.0.1",
+    "react-scripts": "3.1.1",
+    "react-toastify": "^5.3.2",
+    "react-ui-icheck": "^0.6.0"
   },
   "scripts": {
     "start": "react-scripts start",
