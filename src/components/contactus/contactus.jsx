@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 
-class Parents extends Component {
+class ContactUs extends Component {
     render() {
         return (
-            <h1>Parents</h1>
+            <h1>ContactUs</h1>
         )
     }
 }
 
-export default Parents;
+export default ContactUs;

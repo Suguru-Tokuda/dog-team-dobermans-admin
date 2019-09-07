@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 class AdminHeader extends Component {
     render() {
@@ -13,7 +13,19 @@ class AdminHeader extends Component {
                 </button>
                 <ul className="nav navbar-nav" style={{textAlign: 'left'}}>
                     <li className="nav-item px-3">
-                        <Link className="nav-link" to="/">Home</Link>
+                        <NavLink className="nav-link" activeClassName="active" to="/" exact>Home</NavLink>
+                    </li>
+                    <li className="nav-item px-3">
+                        <NavLink className="nav-link" activeClassName="active" to="/puppies">Puppies</NavLink>
+                    </li>
+                    <li className="nav-item px-3">
+                        <NavLink className="nav-link" activeClassName="active" to="/parents">Parents</NavLink>
+                    </li>
+                    <li className="nav-item px-3">
+                        <NavLink className="nav-link" activeClassName="active" to="/farm">Farm</NavLink>
+                    </li>
+                    <li className="nav-item px-3">
+                        <NavLink className="nav-link" activeClassName="active" to="/contactus">Contact Us</NavLink>
                     </li>
                 </ul>
                 <ul className="ml-auto navbar-nav mr-5"></ul>
