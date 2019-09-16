@@ -30,20 +30,23 @@ class Puppies extends Component {
     }
 
     getHeader() {
-        return (
-            <React.Fragment>
-                <div className="row">
-                    <div className="col-12">
-                        <h3>Puppies</h3>
+        if (this.state.viewOption === '') {
+            return (
+                <React.Fragment>
+                    <div className="row">
+                        <div className="col-12">
+                            <h3>Puppies</h3>
+                        </div>
                     </div>
-                </div>
-                <div className="row form-group mt-2 ">
-                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-2">
-                        <button className="btn btn-primary" onClick={this.handleCreateNewPuppyBtnClicked}>Create New Puppy</button>
+                    <div className="row form-group mt-2 ">
+                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-2">
+                            <button className="btn btn-primary" onClick={this.handleCreateNewPuppyBtnClicked}>Create New Puppy</button>
+                        </div>
                     </div>
-                </div>
-            </React.Fragment>
-        )
+                </React.Fragment>
+
+            )
+        }
     };
 
     getPuppiesTable() {
