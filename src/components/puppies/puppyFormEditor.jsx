@@ -7,6 +7,7 @@ class PuppyFormEditor extends Component {
         selections: {
             name: '',
             dateOfBirth: null,
+            pictures: ''
         },
         parents: []
     };
@@ -30,6 +31,10 @@ class PuppyFormEditor extends Component {
     handleSelectDDB = (dateOfBirth) => {
         const selections = this.state.selections;
         selections.dateOfBirth = dateOfBirth;
+    }
+
+    handleImageChange = (selectorFiles) => {
+        console.log(selectorFiles);
     }
 
     render() {
@@ -66,6 +71,17 @@ class PuppyFormEditor extends Component {
                     <label className="col-xs-3 col-sm-2 col-md-1 col-lg-1">Price</label>
                     <div className="col-xs-2 col-sm-2 col-md-1 col-lg-1">
                         <input type="text" value={this.state.selections.price} className="form-control" onKeyUp={this.handleSetPrice} />
+                    </div>
+                </div>
+                <div className="row form-group">
+                    <label className="col-xs-3 col-sm-2 col-md-1 col-lg-1">Pictures</label>
+                    <div className="col-xs-2 col-sm-2 col-md-1 col-lg-1">
+                        <input type="file" className="form-control" onChange={(e) => this.handleImageChange(e.target.files)} />
+                    </div>
+                </div>
+                <div className="row form-group">
+                    <div className="col-12">
+                        <img id="img" src={this.state.picture} />
                     </div>
                 </div>
             </React.Fragment>
