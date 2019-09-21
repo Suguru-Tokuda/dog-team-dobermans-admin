@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import PuppiesTable from './puppiesTable';
-import PuppyFormEditor from './puppyFormEditor';
 import moment from 'moment';
 
 class Puppies extends Component {
@@ -30,23 +30,20 @@ class Puppies extends Component {
     }
 
     getHeader() {
-        if (this.state.viewOption === '') {
-            return (
-                <React.Fragment>
-                    <div className="row">
-                        <div className="col-12">
-                            <h3>Puppies</h3>
-                        </div>
+        return (
+            <React.Fragment>
+                <div className="row">
+                    <div className="col-12">
+                        <h3>Puppies</h3>
                     </div>
-                    <div className="row form-group mt-2 ">
-                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-2">
-                            <button className="btn btn-primary" onClick={this.handleCreateNewPuppyBtnClicked}>Create New Puppy</button>
-                        </div>
+                </div>
+                <div className="row form-group mt-2 ">
+                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-2">
+                        <Link className="btn btn-primary" to="/puppy/create/initial-params">Create New Puppy</Link>
                     </div>
-                </React.Fragment>
-
-            )
-        }
+                </div>
+            </React.Fragment>
+        );
     };
 
     getPuppiesTable() {
@@ -60,31 +57,6 @@ class Puppies extends Component {
                  />
             );
         }
-    }
-
-    getCreateNewPuppy() {
-        if (this.state.selectedPuppyId === '' && this.state.viewOption === 'create') {
-            return <PuppyFormEditor />;
-        }
-    }
-
-    getPuppyDetails() {
-        if (this.state.selectedPuppyId !== '' && this.state.viewOption === 'view') {
-            return <h1>Puppy Details</h1>;
-        }
-    }
-
-    getPuppyUpdate() {
-        if (this.state.selectedPuppyId !== '' && this.state.viewOption === 'update') {
-            return <h1>Update</h1>;
-        }
-    }
-
-    handleCreateNewPuppyBtnClicked = () => {
-        this.setState({
-            selectedPuppyId: '',
-            viewOption: 'create'
-        });
     }
 
     handleViewPuppyBtnClicked = (puppyId) => {
@@ -110,9 +82,6 @@ class Puppies extends Component {
                             <div className="card-body">
                                 {this.getHeader()}
                                 {this.getPuppiesTable()}
-                                {this.getCreateNewPuppy()}
-                                {this.getPuppyDetails()}
-                                {this.getPuppyUpdate()}
                             </div>
                         </div>
                     </div>

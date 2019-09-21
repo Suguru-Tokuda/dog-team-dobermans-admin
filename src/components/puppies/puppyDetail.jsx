@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class PuppyDetails extends Component {
+class PuppyDetail extends Component {
     state = {
         puppyId: ''
     };
@@ -13,7 +13,6 @@ class PuppyDetails extends Component {
     componentDidMount() {
         // API call to load puppy data
     }
-
-    
-
 }
+
+export default PuppyDetail;
