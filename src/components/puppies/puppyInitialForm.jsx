@@ -9,8 +9,8 @@ class PuppyInitialForm extends Component {
             type: '',
             sex: '',
             color: '',
-            price: 0,
-            weight: 0,
+            price: '',
+            weight: '',
             dadId: '',
             momId: '',
             description: '',
@@ -36,11 +36,38 @@ class PuppyInitialForm extends Component {
 
     constructor(props) {
         super(props);
+        if (typeof props.puppyId !== 'undefined')
+            this.state.puppyId = props.puppyId;
+        this.state.selections.sex = 'male';
+        this.state.selections.type = 'american';
+        this.state.selections.color = 'Black and Tan';
+        this.state.selections.dadId = 2;
+        this.state.selections.momId = 5;
+        this.state.dads = props.dads;
+        this.state.moms = props.moms;
     }
 
     componentDidMount() {
         // TODO load puppy info if ppuppyId is available.
         // TODO load parents list
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        let hasUpdates = false;
+        const state = prevState;
+        if (nextProps.dads.length !== prevState.dads.length) {
+            hasUpdates = true;
+            state.dads = nextProps.dads;
+        }
+        if (nextProps.moms.length !== prevState.moms.length) {
+            hasUpdates = true;
+            state.moms = nextProps.moms;
+        }
+        if (hasUpdates === true) {
+            return state;
+        } else {
+            return null;
+        }
     }
 
     getHeader = () => {
@@ -57,13 +84,6 @@ class PuppyInitialForm extends Component {
         return (this.state.formSubmitted === true && validations[key] !== '') ? <small className="text-danger">{validations[key]}</small> : null;
     }
 
-    handleSetFirstName = (event) => {
-        const name = event.target.value;
-        const selections = this.state.selections;
-        selections.name = name;
-        this.setState({ selections });
-    }
-
     getColorOptions = () => {
         return this.state.colors.map(color => {
             return <option key={color} value={color}>{color}</option>;
@@ -72,80 +92,162 @@ class PuppyInitialForm extends Component {
 
     getDadOptions = () => {
         return this.state.dads.map(dad => {
-            return <option value={dad.parentId}>{dad.name}</option>;
+            return <option key={dad.parentId} value={dad.parentId}>{dad.name}</option>;
         });
     }
 
     getMomOptions = () => {
         return this.state.moms.map(mom => {
-            return <option value={mom.parentId}>{mom.parentId}</option>
+            return <option key={mom.parentId} value={mom.parentId}>{mom.name}</option>
         });
+    }
+
+    handleSetName = (event) => {
+        const name = event.target.value.trim();
+        const selections = this.state.selections;
+        const validations = this.state.validations;
+        if (name !== '') {
+            validations.name = '';
+        } else {
+            validations.name = 'Enter name';
+        }
+        selections.name = name;
+        this.setState({ selections, validations });
     }
 
     handleSelectDOB = (dateOfBirth) => {
         const selections = this.state.selections;
+        const validations = this.state.validations;
         selections.dateOfBirth = dateOfBirth;
-        this.setState({ selections });
+        if (dateOfBirth !== null) {
+            validations.dateOfBirth = '';
+        } else {
+            validations.dateOfBirth = 'Enter date of birth';
+        }
+
+        this.setState({ selections, validations });
     }
 
     handleSetSex = (event) => {
         const sex = event.target.value;
         const selections = this.state.selections;
+        const validations = this.state.validations;
+        if (sex !== '') {
+            validations.sex = '';
+        } else {
+            validations.sex = 'Enter sex';
+        }
         selections.sex = sex;
-        this.setState({ selections });
+        this.setState({ selections, validations });
     }
 
     handleSetType = (event) => {
         const type = event.target.value;
         const selections = this.state.selections;
+        const validations = this.state.validations;
+        if (type !== '') {
+            validations.type = '';
+        } else {
+            validations.type = 'Enter type';
+        }
         selections.type = type;
-        this.setState({ selections });
+        this.setState({ selections, validations });
     }
 
     handleSetColor = (event) => {
         const color = event.target.value;
         const selections = this.state.selections;
+        const validations = this.state.validations;
+        if (color !== '') {
+            validations.color = '';
+        } else {
+            validations.type = 'Enter color';
+        }
         selections.color = color;
-        this.setState({ selections });
+        this.setState({ selections, validations });
     }
 
-    handleSetDad = (event) => {
+    handleSetDadId = (event) => {
         const dadId = event.target.value;
         const selections = this.state.selections;
+        const validations = this.state.validations;
         selections.dadId = dadId;
-        this.setState({ selections });  
+        if (dadId !== '') {
+            validations.dadId = '';
+        } else {
+            validations.dadId = 'Enter dad';
+        }
+        this.setState({ selections, validations });  
     }
 
-    handleSetMom = (event) => {
+    handleSetMomId = (event) => {
         const momId = event.target.value;
         const selections = this.state.selections;
+        const validations = this.state.validations;
+        if (momId !== '') {
+            validations.momId = '';
+        } else {
+            validations.momId = 'Enter mom';
+        }
         selections.momId = momId;
-        this.setState({ selections });
+        this.setState({ selections, validations });
     }
 
     handleSetWeight = (event) => {
         let input = event.target.value;
         const selections = this.state.selections;
-        input = input.replace(/\D/g, '');
-        selections.weight = input;
-        this.setState({ selections });
+        const validations = this.state.validations;
+        if (input.length > 0) {
+            input = input.replace(/\D/g, '');
+            if (input !== '') {
+                validations.weight = '';
+
+                selections.weight = input;
+            } else {
+                validations.weight = 'Enter weight';
+            }
+        } else {
+            selections.weight = '';
+            validations.weight = 'Enter weight';
+        }
+        this.setState({ selections, validations });
     }
 
     handleSetPrice = (event) => {
         let input = event.target.value;
         const selections = this.state.selections;
-        const price = parseInt(event.target.value);
-        selections.price = price;
-        this.setState({ selections });
+        const validations = this.state.validations;
+        if (input.length > 0) {
+            input = input.replace(/\D/g, '');
+            if (input !== '') {
+                validations.price = '';
+                const price = parseInt(input);
+                selections.price = price;
+            } else {
+                validations.price = 'Enter price';
+            }
+        } else {
+            selections.price = '';
+            validations.price = 'Enter price';
+        }
+        this.setState({ selections, validations });
     }
 
     handleSetDescription = (event) => {
+        const description = event.target.value;
         const selections = this.state.selections;
-        selections.description = event.target.value;
-        this.setState({ selections });
+        const validations = this.state.validations;
+        if (description !== '') {
+            validations.description = '';
+        } else {
+            validations.description = 'Enter description';
+        }
+        selections.description = description;
+        this.setState({ selections, validations });
     }
 
-    handleCreateBtnClicked = () => {
+    handleCreateBtnClicked = (event) => {
+        event.preventDefault();
         this.setState({ formSubmitted: true });
         let invalidCount = 0;
         const validations = this.state.validations;
@@ -153,22 +255,25 @@ class PuppyInitialForm extends Component {
             const selection = this.state.selections[key];
             if (selection === '' || selection === 0 || selection === null) {
                 invalidCount++;
-                validations[key] = 'Enter value';
+                validations[key] = `Enter ${key}`;
             } else {
                 validations[key] = '';
             }
         }
         this.setState({ validations });
         if (invalidCount === 0) {
-            this.props.onNextBtnClicked(this.state.selections);
+            this.props.onToPictureBtnClicked(this.state.selections);
             this.props.history.push('/puppy/create/pictures');
-        } else {
-
         }
     }
 
     handleUpdateBtnClicked = () => {
         console.log('update');
+    }
+
+    handleCancelBtnClicked = () => {
+        this.props.onCancelBtnClicked();
+        this.props.history.push('/puppies');
     }
 
     getNextBtn() {
@@ -184,7 +289,7 @@ class PuppyInitialForm extends Component {
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Name</label>
                             <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">
-                                <input type="text" className={`form-control ${this.getErrorClass('name')}`} onKeyUp={this.handleSetFirstName} />
+                                <input type="text" className={`form-control ${this.getErrorClass('name')}`} onKeyUp={this.handleSetName} />
                                 {this.getErrorMessage('name')}
                             </div>
                         </div>
@@ -227,7 +332,7 @@ class PuppyInitialForm extends Component {
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Dad</label>
                             <div className="col-5">
-                                <select className={`form-control ${this.getErrorClass('dadId')}`} value={this.state.selections.dadId} onChange={this.handleSetDad}>
+                                <select className={`form-control ${this.getErrorClass('dadId')}`} value={this.state.selections.dadId} onChange={this.handleSetDadId}>
                                     {this.getDadOptions()}
                                 </select>
                                 {this.getErrorMessage('dadId')}
@@ -236,7 +341,7 @@ class PuppyInitialForm extends Component {
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Mom</label>
                             <div className="col-5">
-                                <select className={`form-control ${this.getErrorClass('momId')}`} value={this.state.selections.momId} onChange={this.handleSetMom}>
+                                <select className={`form-control ${this.getErrorClass('momId')}`} value={this.state.selections.momId} onChange={this.handleSetMomId}>
                                     {this.getMomOptions()}
                                 </select>
                                 {this.getErrorMessage('momId')}
@@ -266,6 +371,7 @@ class PuppyInitialForm extends Component {
                     </div>
                     <div className="card-footer">
                         {this.getNextBtn()}
+                        <button type="button" className="btn btn-secondary ml-1" onClick={this.handleCancelBtnClicked}>Cancel</button>
                     </div>
                 </form>
             </div>

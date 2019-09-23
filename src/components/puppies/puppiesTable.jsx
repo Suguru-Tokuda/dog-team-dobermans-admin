@@ -145,7 +145,7 @@ class PuppiesTable extends Component {
                         <td>{puppy.sex}</td>
                         <td>{puppy.weight}</td>
                         <td>{`$${puppy.price}`}</td>
-                        <td><img className="rounded" style={{ width: "50px"}} src="http://photos.puppyspot.com/breeds/223/card/500000183_medium.jpg" /></td>
+                        <td><img className="rounded" style={{ width: "50px"}} src="http://photos.puppyspot.com/breeds/223/card/500000183_medium.jpg" alt="http://photos.puppyspot.com/breeds/223/card/500000183_medium.jpg" /></td>
                         <td>
                             <button className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(puppy.puppyId)}><i className="fa fa-search"></i> View</button>
                             <button className="btn btn-sm btn-success ml-2" onClick={() => this.props.onUpdateBtnClicked(puppy.puppyId)}><i className="fa fa-edit"></i> Update</button>

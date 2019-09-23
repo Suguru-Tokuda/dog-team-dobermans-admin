@@ -13,6 +13,13 @@ class PuppyDetail extends Component {
     componentDidMount() {
         // API call to load puppy data
     }
+
+    render() {
+        return (
+            <React.Fragment>
+            </React.Fragment>
+        );
+    }
 }
 
 export default PuppyDetail;

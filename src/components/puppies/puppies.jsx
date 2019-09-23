@@ -10,10 +10,6 @@ class Puppies extends Component {
         viewOption: ''
     }
 
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         const puppies = [];
         for (let i = 1, max = 30; i < max; i++) {

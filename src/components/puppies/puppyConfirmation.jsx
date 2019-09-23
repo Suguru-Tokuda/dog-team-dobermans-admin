@@ -1,14 +1,214 @@
 import React, { Component } from 'react';
+import PuppiesService from '../../services/puppiesService';
+import { storage } from '../../services/firebaseService';
 
 class PuppyConfirmation extends Component {
-
     state = {
+        puppyId: '',
         initialParams: {},
-        pictures: []
+        pictures: [],
+        dads: [],
+        moms: []
     };
 
+    constructor(props) {
+        super(props);
+        this.state.initialParams = props.initialParams;
+        this.state.dads = props.dads;
+        this.state.moms = props.moms;
+        if (Object.keys(this.state.initialParams).length === 0) {
+            this.props.history.push('/puppies');
+        }
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        let hasUpdates;
+        const state = prevState;
+        if (prevState.dads.length !== nextProps.dads.length) {
+            hasUpdates = true;
+            state.dads = nextProps.dads;
+        }
+        if (prevState.moms.length !== nextProps.moms.length) {
+            hasUpdates = true;
+            state.moms = nextProps.moms;
+        }
+        if (prevState.pictures.length !== nextProps.pictures.length) {
+            hasUpdates = true;
+            state.pictures = nextProps.pictures;
+        }
+        if (hasUpdates === true) {
+            return state;
+        } else {
+            return null;
+        }
+    }
+
+    getDadName(parentId) {
+        for (let i = 0, max = this.state.dads.length; i < max; i++) {
+            if (parentId === this.state.dads[i].parentId)
+                return this.state.dads[i].name;
+        }
+        return '';
+    }
+
+    getMomName(parentId) {
+        for (let i = 0, max = this.state.moms.length; i < max; i++) {
+            if (parentId === this.state.moms[i].parentId)
+                return this.state.moms[i].name;
+        }
+        return '';
+    }
+
+    getPictures = () => {
+        const pictures = this.state.pictures;
+        if (pictures.length > 0) {
+            const pictureCards = pictures.map((picture, i) => {
+                const imageURL = URL.createObjectURL(picture);
+                return (
+                    <div key={`puppy-picture-${i}`} className="col-3">
+                        <div className="row">
+                            <div className="col-12">
+                                <img src={imageURL} className="img-fluid" alt={imageURL} />
+                            </div>
+                        </div>
+                    </div>
+                );
+            });
+            return (
+                <React.Fragment>
+                    <div className="row">
+                        <div className="col-12">
+                            <h4>Pictures</h4>
+                        </div>
+                    </div>
+                    <div className="row">
+                        {pictureCards}
+                    </div>
+                </React.Fragment>
+            );
+        } else {
+            return null;
+        }
+    }
+
+    getInitialParams = () => {
+        if (Object.keys(this.state.initialParams).length > 0) {
+            const params = this.state.initialParams;
+            return (
+                <React.Fragment>
+                    <div className="row form-group">
+                        <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Name</strong></label>
+                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{params.name}</div>
+                    </div>
+                    <div className="row form-group">
+                        <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Sex</strong></label>
+                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{params.sex}</div>
+                    </div>
+                    <div className="row form-group">
+                        <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Type</strong></label>
+                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{params.type}</div>
+                    </div>
+                    <div className="row form-group">
+                        <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Color</strong></label>
+                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{params.color}</div>
+                    </div>
+                    <div className="row form-group">
+                        <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Dad</strong></label>
+                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getDadName(params.dadId)}</div>
+                    </div>
+                    <div className="row form-group">
+                        <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Mom</strong></label>
+                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getMomName(params.momId)}</div>
+                    </div>
+                    <div className="row form-group">
+                        <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Weight</strong></label>
+                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{`${params.weight} lbs`}</div>
+                    </div>
+                    <div className="row form-group">
+                        <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Price</strong></label>
+                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{`$${params.price}`}</div>
+                    </div>
+                    <div className="row form-group">
+                        <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Description</strong></label>
+                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{params.description}</div>
+                    </div>
+                </React.Fragment>
+            )
+        }
+    }
+
+    handleFinishBtnClicked = () => {
+        const data = this.state.initialParams;
+        const pictures = this.state.pictures;
+        const downloadURLs = [];
+        if (pictures.length > 0) {
+            const storageRef = storage.ref();
+            const uploadTask = storageRef.child(`puppies/${pictures[0].name}`).put(pictures[0], { contentType: 'image/jpeg'});
+            uploadTask.on('state_changed',
+                function (snapshot) {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload is ' + progress + '% done');
+                    switch (snapshot.state) {
+                        case 'paused':
+                            console.log('Upload is paused');
+                            break;
+                         case 'running':
+                             console.log('Upload is running');
+                             break;
+                    }
+                },
+                function (err) {
+                    switch (err.code) {
+                        case 'storage/unauthorized':
+                            console.log('unauthorized');
+                            break;
+                        case 'storage/canceled':
+                            console.log('canceled');
+                            break;
+                        case 'storage/unknown':
+                            console.log('unknown error');
+                            break;
+                    }
+                },
+                function () {
+                    uploadTask.snapshot.ref.getDownloadURL()
+                        .then(function (downloadURL) {
+                            console.log(downloadURL);
+                        })
+                });
+        }
+        this.props.onShowLoading(true, 1);
+        PuppiesService.createPuppy(data)
+            .then(res => {
+                console.log(res);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+            .finally(() => {
+                this.props.onDoneLoading();
+            });
+    }
+
+    cancelBtnClicked = () => {
+        this.props.onCancelBtnClicked();
+        this.props.history.push('/puppies');
+    }
+
     render() {
-        return null;
+        return (
+            <div className="card">
+                <div className="card-body">
+                    <h3>Confirmation</h3>
+                    {this.getInitialParams()}
+                    {this.getPictures()}
+                </div>
+                <div className="card-footer">
+                    <button className="btn btn-sm btn-primary" onClick={this.handleFinishBtnClicked} type="button">Finish</button>
+                    <button className="btn btn-sm btn-secondary ml-1" onClick={this.cancelBtnClicked} type="button">Cancel</button>
+                </div>
+            </div>
+        );
     }
 
 }

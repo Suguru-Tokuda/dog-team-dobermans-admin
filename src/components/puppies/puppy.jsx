@@ -19,9 +19,9 @@ class Puppy extends Component {
         const url = this.props.url;
         return (
             <React.Fragment>
-                <Route path={`${url}/view/:id`} render={(props) => <PuppyDetail {...props} />} />
-                <Route path={`${url}/create`} render={(props) => <PuppyCreate {...props} url={`${url}/create`} />} />
-                <Route path={`${url}/update/:id`} render={(props) => <PuppyUpdate {...props} />} />
+                <Route path={`${url}/view/:id`} render={(props) => <PuppyDetail {...props} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                <Route path={`${url}/create`} render={(props) => <PuppyCreate {...props} url={`${url}/create`} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                <Route path={`${url}/update/:id`} render={(props) => <PuppyUpdate {...props} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
             </React.Fragment>
         )
     }
