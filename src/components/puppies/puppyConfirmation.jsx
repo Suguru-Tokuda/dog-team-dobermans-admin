@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PuppiesService from '../../services/puppiesService';
-import { storage } from '../../services/firebaseService';
 
 class PuppyConfirmation extends Component {
     state = {
@@ -147,8 +146,8 @@ class PuppyConfirmation extends Component {
                 const url = await PuppiesService.uploadPicture(pictures[i]);
                 pictureLinks.push(url);
             }
-            data.pictures = pictureLinks;
         }
+        data.pictures = pictureLinks;
         PuppiesService.createPuppy(data)
             .then(res => {
                 console.log(res);
@@ -158,6 +157,7 @@ class PuppyConfirmation extends Component {
             })
             .finally(() => {
                 this.props.onDoneLoading();
+                this.props.history.push('/puppies');
             });
     }
 

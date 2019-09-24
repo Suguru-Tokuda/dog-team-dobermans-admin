@@ -30,7 +30,8 @@ export default class PuppiesService {
 
     static uploadPicture(imageFile) {
         return new Promise(function (resolve, reject) {
-            const task = storage.ref(`/puppies/${imageFile.name}`).put(imageFile);
+            const reference = `/puppies/${imageFile.name}`;
+            const task = storage.ref(reference).put(imageFile);
             task.on('state_changed',
                 function (snapshot) {
                     console.log(snapshot);
@@ -42,6 +43,8 @@ export default class PuppiesService {
                             break;
                         case 'running':
                             console.log('Upload is running');
+                            break;
+                        default:
                             break;
                     }
                 },
@@ -57,12 +60,17 @@ export default class PuppiesService {
                         case 'storage/unknown':
                             console.log('unknown error');
                             break;
+                        default:
+                            break;
                     }
                 },
                 function () {
                     task.snapshot.ref.getDownloadURL()
                         .then(function (downloadURL) { 
-                            resolve(downloadURL);
+                            resolve({
+                                reference: reference,
+                                url: downloadURL
+                            });
                         });
                 });
         });

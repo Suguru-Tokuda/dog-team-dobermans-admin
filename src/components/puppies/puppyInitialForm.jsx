@@ -201,8 +201,7 @@ class PuppyInitialForm extends Component {
             input = input.replace(/\D/g, '');
             if (input !== '') {
                 validations.weight = '';
-
-                selections.weight = input;
+                selections.weight = parseFloat(input);
             } else {
                 validations.weight = 'Enter weight';
             }
