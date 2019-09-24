@@ -137,47 +137,18 @@ class PuppyConfirmation extends Component {
         }
     }
 
-    handleFinishBtnClicked = () => {
+    handleFinishBtnClicked = async () => {
         const data = this.state.initialParams;
         const pictures = this.state.pictures;
-        const downloadURLs = [];
-        if (pictures.length > 0) {
-            const storageRef = storage.ref();
-            const uploadTask = storageRef.child(`puppies/${pictures[0].name}`).put(pictures[0], { contentType: 'image/jpeg'});
-            uploadTask.on('state_changed',
-                function (snapshot) {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log('Upload is ' + progress + '% done');
-                    switch (snapshot.state) {
-                        case 'paused':
-                            console.log('Upload is paused');
-                            break;
-                         case 'running':
-                             console.log('Upload is running');
-                             break;
-                    }
-                },
-                function (err) {
-                    switch (err.code) {
-                        case 'storage/unauthorized':
-                            console.log('unauthorized');
-                            break;
-                        case 'storage/canceled':
-                            console.log('canceled');
-                            break;
-                        case 'storage/unknown':
-                            console.log('unknown error');
-                            break;
-                    }
-                },
-                function () {
-                    uploadTask.snapshot.ref.getDownloadURL()
-                        .then(function (downloadURL) {
-                            console.log(downloadURL);
-                        })
-                });
-        }
+        let pictureLinks = [];
         this.props.onShowLoading(true, 1);
+        if (pictures.length > 0) {
+            for (let i = 0, max = pictures.length; i < max; i++) {
+                const url = await PuppiesService.uploadPicture(pictures[i]);
+                pictureLinks.push(url);
+            }
+            data.pictures = pictureLinks;
+        }
         PuppiesService.createPuppy(data)
             .then(res => {
                 console.log(res);
