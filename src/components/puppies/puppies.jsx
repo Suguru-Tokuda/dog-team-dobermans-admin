@@ -36,6 +36,7 @@ class Puppies extends Component {
                 <div className="row form-group mt-2 ">
                     <div className="col-xs-4 col-sm-4 col-md-3 col-lg-2">
                         <Link className="btn btn-primary" to="/puppy/create/initial-params">Create New Puppy</Link>
+                        <button type="button" className="btn btn-success" onClick={this.props.onShowNotification}>Show Notification</button> 
                     </div>
                 </div>
             </React.Fragment>
@@ -43,7 +44,7 @@ class Puppies extends Component {
     };
 
     getPuppiesTable() {
-        if (this.state.selectedPuppyId === '' && this.state.puppies.length > 0 && this.state.viewOption === '') {
+        if (this.state.selectedPuppyId === '' && this.state.puppies.length > 0) {
             return (
                 <PuppiesTable
                  puppies={this.state.puppies}
@@ -56,17 +57,11 @@ class Puppies extends Component {
     }
 
     handleViewPuppyBtnClicked = (puppyId) => {
-        this.setState({
-            selectedPuppyId: puppyId,
-            viewOption: 'view'
-        });
+        this.props.history.push(`/puppy/view/${puppyId}`);
     }
 
     handleUpdatePuppyBtnClicked = (puppyId) => {
-        this.setState({
-            selectedPuppyId: puppyId,
-            viewOption: 'update'
-        });
+        this.props.history.push(`/puppy/update/${puppyId}`);
     }
 
     render() {

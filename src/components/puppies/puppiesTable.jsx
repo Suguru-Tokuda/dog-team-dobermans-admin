@@ -30,7 +30,7 @@ class PuppiesTable extends Component {
         },
         gridSearch: '',
         updateDataFromGridSearch: false,
-        pageSizes: [10, 25, 50],
+        pageSizes: [10, 25, 50]
     };
 
     constructor(props) {
@@ -147,8 +147,8 @@ class PuppiesTable extends Component {
                         <td>{`$${puppy.price}`}</td>
                         <td><img className="rounded" style={{ width: "50px"}} src="http://photos.puppyspot.com/breeds/223/card/500000183_medium.jpg" alt="http://photos.puppyspot.com/breeds/223/card/500000183_medium.jpg" /></td>
                         <td>
-                            <button className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(puppy.puppyId)}><i className="fa fa-search"></i> View</button>
-                            <button className="btn btn-sm btn-success ml-2" onClick={() => this.props.onUpdateBtnClicked(puppy.puppyId)}><i className="fa fa-edit"></i> Update</button>
+                            <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(puppy.puppyId)}><i className="fa fa-search"></i> View</button>
+                            <button type="button" className="btn btn-sm btn-success ml-2" onClick={() => this.props.onUpdateBtnClicked(puppy.puppyId)}><i className="fa fa-edit"></i> Update</button>
                         </td>
                     </tr>
                 );
@@ -184,7 +184,7 @@ class PuppiesTable extends Component {
 
     handlePageSizeChanged = (input) => {
         const paginationInfo = this.state.paginationInfo;
-        paginationInfo.pageSize = input.target.value;
+        paginationInfo.pageSize = parseInt(input.target.value);
         this.setState({ paginationInfo: paginationInfo });
     }
 

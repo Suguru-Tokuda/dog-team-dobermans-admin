@@ -3,12 +3,11 @@ import { Link } from 'react-router-dom';
 import $ from 'jquery';
 
 class PuppyPictureForm extends Component {
-
     state = {
         initialParams: {},
         pictures: [],
         formSubmitted: false
-    }
+    };
 
     constructor(props) {
         super(props);
@@ -18,15 +17,12 @@ class PuppyPictureForm extends Component {
         }
     }
 
-    static getDerivedStateFromProps(prevState, nextProps) {
+    static getDerivedStateFromProps(nextProps, prevState) {
         if (prevState.initialParams !== nextProps.initialParams) {
             return { initialParams: nextProps.initialParams };
         } else {
             return null;
         }
-    }
-
-    componentDidMount() {
     }
 
     getErrorMsg = () => {

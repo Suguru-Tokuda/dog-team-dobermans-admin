@@ -34,7 +34,6 @@ export default class PuppiesService {
             const task = storage.ref(reference).put(imageFile);
             task.on('state_changed',
                 function (snapshot) {
-                    console.log(snapshot);
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                     console.log(`Upload is ${progress}% done`);
                     switch (snapshot.state) {
@@ -49,7 +48,6 @@ export default class PuppiesService {
                     }
                 },
                 function (err) {
-                    console.log(err);
                     switch (err.code) {
                         case 'storage/unauthorized':
                             console.log('unauthorized');

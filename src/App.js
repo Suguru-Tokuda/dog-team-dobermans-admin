@@ -10,6 +10,7 @@ import Puppy from './components/puppies/puppy';
 import Parents from './components/parents/parents';
 import Farm from './components/farm/farm';
 import ContactUs from './components/contactus/contactus';
+import toastr from 'toastr';
 
 class App extends Component {
 
@@ -21,6 +22,13 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state.alertsService = new AlertsService();
+  }
+
+  showNotification(title, message, type) {
+    // container.success('Hello world', 'Title', {
+    //   closeButton: true
+    // });
+    toastr.success('hello world');
   }
 
   showLoading(resetCount, count) {
@@ -58,7 +66,7 @@ class App extends Component {
               <div className="container-fluid">
                 <Switch>
                   <Route path="/" exact render={(props) => <Main {...props} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                  <Route path="/puppies" exact render={(props) => <Puppies {...props} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                  <Route path="/puppies" exact render={(props) => <Puppies {...props} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} onShowNotification={this.showNotification.bind(this)} />} />
                   <Route path="/puppy" render={(props) => <Puppy url="/puppy" {...props} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                   <Route path="/parents" exact render={(props) => <Parents {...props} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                   <Route path="/farm" exact render={(props) => <Farm {...props} />} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />
