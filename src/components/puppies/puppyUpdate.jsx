@@ -16,16 +16,13 @@ class PuppyUpdate extends Component {
         this.state.puppyId = props.match.params.puppyId;
     }
 
-    componentDidMount() {
-        console.log(this.props.match.params.puppyId);
-    }
-
     render() {
+        const url = `${this.state.url}/update`;
         return (
             <React.Fragment>
-                <Route path={`${this.props.url}`} exact render={() => <PuppyUpdateSelection puppyId={this.state.puppyId} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-                <Route path={`${this.props.url}/profile`} render={() => <PuppyCreateForm puppyId={this.state.puppyId} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-                <Route path={`${this.props.url}/picture`} render={() => <PuppyPictureUpdateForm puppyId={this.state.puppyId} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                <Route path={`${url}/:puppyId`} exact render={(props) => <PuppyUpdateSelection {...props} url={url} puppyId={this.state.puppyId} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                <Route path={`${url}/profile/:puppyId`} render={(props) => <PuppyCreateForm {...props} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                <Route path={`${url}/pictures/:puppyId`} render={(props) => <PuppyPictureUpdateForm {...props} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
             </React.Fragment>
         );
     }

@@ -9,19 +9,19 @@ export default class PuppiesService {
     }
 
     static getAllPuppies() {
-        return axios.get(`${this.getServiceBase()}puppies`);
+        return axios.get(`${this.getServiceBase()}puppies?key=${api.API_KEY}`);
     }
 
     static getPuppy(puppyId) {
-        return axios.get(`${this.getServiceBase()}puppy/${puppyId}`);
+        return axios.get(`${this.getServiceBase()}puppy?key=${api.API_KEY}&id=${puppyId}`);
     }
 
     static createPuppy(data) {
         return axios.post(`${this.getServiceBase()}puppy?key=${api.API_KEY}`, data);
     }
 
-    static updatePuppy(data) {
-        return axios.put(`${this.getServiceBase()}puppy/${data.puppyId}`, data);
+    static updatePuppy(puppyId, data) {
+        return axios.put(`${this.getServiceBase()}puppy/?key=${api.API_KEY}&id=${puppyId}`, data);
     }
 
     static deletePuppy(puppyId) {
@@ -29,7 +29,7 @@ export default class PuppiesService {
     }
 
     static uploadPicture(imageFile) {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve) {
             const reference = `/puppies/${imageFile.name}`;
             const task = storage.ref(reference).put(imageFile);
             task.on('state_changed',
@@ -72,6 +72,11 @@ export default class PuppiesService {
                         });
                 });
         });
+    }
+
+    static deletePicture(imageRef) {
+        const desertRef = storage.ref(imageRef)
+        return desertRef.delete();
     }
     
 }

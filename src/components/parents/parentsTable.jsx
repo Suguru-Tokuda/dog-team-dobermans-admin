@@ -26,6 +26,7 @@ class ParentsTable extends Component {
     };
 
     constructor(props) {
+        super(props);
         this.state.tableData = props.parents;
         this.state.filteredData = JSON.parse(JSON.stringify(props.parents));
         this.state.paginationInfo.totalItems = props.totalItems;
@@ -106,32 +107,40 @@ class ParentsTable extends Component {
         }
     }
 
+    getSortIcon(accessor) {
+        let sortIcon = '';
+        if (accessor === this.state.sortData.key) {
+            sortIcon = this.state.sortData.orderAsc === true ? <span className="fa fa-sort-asc" /> : <span className="fa fa-sort-desc" />;
+        }
+        return sortIcon;
+    }
+
     getTable() {
-        let sortIcons;
         const thead = (
             <thead>
                 <tr>
-                    <th className="pointer" onClick={() => this.sortTable('name')}>Name</th>
-                    <th className="pointer" onClick={() => this.sortTable('sex')}>Sex</th>
-                    <th className="pointer" onClick={() => this.sortTable('type')}>Type</th>
-                    <th className="pointer" onClick={() => this.sortTable('weight')}>Weight</th>
-                    <th className="pointer" onClick={() => this.sortTable('color')}>Color</th>
-                    <th className="pointer" onClick={() => this.sortTable('dateOfBirth')}>Date of Birth</th>
+                    <th className="pointer" onClick={() => this.sortTable('name')}>Name {this.getSortIcon('name')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('sex')}>Sex {this.getSortIcon('sex')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('type')}>Type {this.getSortIcon('type')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('weight')}>Weight {this.getSortIcon('weight')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('color')}>Color {this.getSortIcon('color')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('dateOfBirth')}>Date of Birth {this.getSortIcon('dateOfBirth')}</th>
                     <th>Picture</th>
                 </tr>
                 <tr>
                     <th colSpan="100%">
-                        <input type="text" className="form-control" placeholder="Search for parents" defaultValue={this.satet.gridSearch} onKeyUp={this.handleGridSearch} />
+                        <input type="text" className="form-control" placeholder="Search for parents" defaultValue={this.state.gridSearch} onKeyUp={this.handleGridSearch} />
                     </th>
                 </tr>
             </thead>
         );
         let tbody;
         if (this.state.displayedData.length > 0) {
+            console.log(this.state.displayedData);
             const rows = this.state.displayedData.map((parent, i) => {
                 const pictures = parent.pictures;
                 let picture;
-                if (pictures.length > 0) {
+                if (typeof pictures !== 'undefined' && pictures.length > 0) {
                     picture = <img src={pictures[0].url} alt={pictures[0].url} className="rounded" style={{width: "50px"}} />;
                 }
                 return (
@@ -166,7 +175,7 @@ class ParentsTable extends Component {
     handlePageSizeChanged = (input) => {
         const paginationInfo = this.state.paginationInfo;
         paginationInfo.pageSize = parseInt(input.target.value);
-        this.setState({ pagination})
+        this.setState({ paginationInfo })
     }
 
     processGridSearch = (inputStr) => {
@@ -183,7 +192,7 @@ class ParentsTable extends Component {
             tempTableData = this.state.tableData;
         }
         const tempPaginationInfo = this.state.paginationInfo;
-        tempPagination.totalItems = tempTableData.length;
+        tempPaginationInfo.totalItems = tempTableData.length;
         this.setState({
             filteredData: tempTableData,
             paginationInfo: tempPaginationInfo

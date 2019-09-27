@@ -59,7 +59,7 @@ class PuppyPictureForm extends Component {
                     <label htmlFor="picture-upload" className="custom-file-upload">
                         <i className="fa fa-cloud-upload"></i> Upload
                     </label>
-                    <input id="picture-upload" type="file" onChange={this.handleImageChange} />
+                    <input id="picture-upload" type="file" accept="image/*" onChange={this.handleImageChange} />
                 </div>
             );
         }

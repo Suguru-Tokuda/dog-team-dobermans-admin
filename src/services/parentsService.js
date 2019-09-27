@@ -5,7 +5,7 @@ import { storage } from './firebaseService';
 
 export default class ParentsService {
     static getServiceBase() {
-        return `${SessionInfoService.getBaseUrlForAPI}`;
+        return `${SessionInfoService.getBaseUrlForAPI()}`;
     }
 
     static getAllParents() {

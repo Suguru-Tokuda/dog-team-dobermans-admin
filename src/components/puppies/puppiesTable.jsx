@@ -16,14 +16,6 @@ class PuppiesTable extends Component {
             pageSize: 25,
             totalItems: 0
         },
-        columns: [
-            { header: 'Name', accessor: 'name'},
-            { header: 'DOB', accessor: 'dateOfBirth' },
-            { header: 'Sex', accessor: 'sex' },
-            { header: 'Weight', accessor: 'weight' },
-            { header: 'Price', accessor: 'price' },
-            { header: 'Picture', accessor: 'picture' }
-        ],
         sortData: {
             key: 'name',
             orderAsc: false
@@ -115,19 +107,26 @@ class PuppiesTable extends Component {
         }
     }
 
+    getSortIcon(accessor) {
+        let sortIcon = '';
+        if (accessor === this.state.sortData.key) {
+            sortIcon = this.state.sortData.orderAsc === true ? <span className="fa fa-sort-asc" /> : <span className="fa fa-sort-desc" />;
+        }
+        return sortIcon;
+    }
+
     getTable() {
-        let sortIcon;
-        const tHeaders = this.state.columns.map(header => {
-            sortIcon = '';
-            if (header.accessor === this.state.sortData.key) {
-                sortIcon = this.state.sortData.orderAsc === true ? <span className="fa fa-sort-asc" /> : <span className="fa fa-sort-desc" />;
-            }
-            return <th className="pointer" key={header.header} onClick={() => this.sortTable(header.accessor)}>{header.header} {sortIcon}</th>;
-        });
-        tHeaders.push(<th key="action">Actions</th>)
         const thead = (
             <thead>
-                <tr>{tHeaders}</tr>
+                <tr>
+                    <th className="pointer" onClick={() => this.sortTable('name')}>Name {this.getSortIcon('name')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('dateOfBirth')}>Name {this.getSortIcon('dateOfBirth')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('sex')}>Name {this.getSortIcon('sex')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('weight')}>Name {this.getSortIcon('weight')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('price')}>Name {this.getSortIcon('price')}</th>
+                    <th>Picture</th>
+                    <th>Action</th>
+                </tr>
                 <tr>
                     <th colSpan="100%">
                         <input type="text" className="form-control" placeholder="Search for puppies" defaultValue={this.state.gridSearch} onKeyUp={this.handleGirdSearch} />
@@ -138,17 +137,25 @@ class PuppiesTable extends Component {
         let tbody;
         if (this.state.displayedData.length > 0) {
             const rows = this.state.displayedData.map((puppy, i) => {
+                let picture;
+                const pictures = puppy.data.pictures;
+                if (typeof pictures !== 'undefined' && pictures.length > 0) {
+                    picture = <img src={pictures[0].url} alt={pictures[0].reference} className="rounded" style={{ width: "50px"}} />;
+                } else {
+                    picture = <div className="rounded">Not available</div>
+                }
                 return (
-                    <tr key={`puppy-${puppy.puppyId}`}>
-                        <td>{puppy.name}</td>
-                        <td>{moment(puppy.dateOfBirth).format('MM/DD/YYYY')}</td>
-                        <td>{puppy.sex}</td>
-                        <td>{puppy.weight}</td>
-                        <td>{`$${puppy.price}`}</td>
-                        <td><img className="rounded" style={{ width: "50px"}} src="http://photos.puppyspot.com/breeds/223/card/500000183_medium.jpg" alt="http://photos.puppyspot.com/breeds/223/card/500000183_medium.jpg" /></td>
+                    <tr key={`puppy-${puppy.id}`}>
+                        <td>{puppy.data.name}</td>
+                        <td>{moment(puppy.data.dateOfBirth).format('MM/DD/YYYY')}</td>
+                        <td>{puppy.data.sex}</td>
+                        <td>{puppy.data.weight}</td>
+                        <td>{`$${puppy.data.price}`}</td>
+                        <td>{picture}</td>
                         <td>
-                            <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(puppy.puppyId)}><i className="fa fa-search"></i> View</button>
-                            <button type="button" className="btn btn-sm btn-success ml-2" onClick={() => this.props.onUpdateBtnClicked(puppy.puppyId)}><i className="fa fa-edit"></i> Update</button>
+                            <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(puppy.id)}><i className="fa fa-search"></i> View</button>
+                            <button type="button" className="btn btn-sm btn-success ml-2" onClick={() => this.props.onUpdateBtnClicked(puppy.id)}><i className="fa fa-edit"></i> Update</button>
+                            <button type="button" className="btn btn-sm btn-danger ml-2" onClick={() => this.props.onDeleteBtnClicked(puppy.id)}><i className="fa fa-close"></i> Delete</button>
                         </td>
                     </tr>
                 );
@@ -215,13 +222,13 @@ class PuppiesTable extends Component {
             retVal = tableData.filter(puppy => {
                 let foundCount = 0;
                 searchKeywords.forEach(searchKeyword => {
-                    if (puppy.name.toLowerCase().indexOf(searchKeyword) !== -1)
+                    if (puppy.data.name.toLowerCase().indexOf(searchKeyword) !== -1)
                         foundCount++;
-                    if (puppy.sex.toLowerCase() === searchKeyword)
+                    if (puppy.data.sex.toLowerCase() === searchKeyword)
                         foundCount++;
-                    if (puppy.weight === parseFloat(searchKeyword))
+                    if (puppy.data.weight === parseFloat(searchKeyword))
                         foundCount++;
-                    if (puppy.price === parseInt(searchKeyword))
+                    if (puppy.data.price === parseInt(searchKeyword))
                         foundCount++;
                 });
                 return foundCount === searchKeywords.length;
