@@ -9,7 +9,7 @@ class PuppyDetail extends Component {
         puppyId: '',
         puppyData: {},
         dads: [],
-        moms: []
+        moms: [],
     };
 
     constructor(props) {
@@ -141,10 +141,12 @@ class PuppyDetail extends Component {
                         </div>
                         {this.getPictures()}
                     </div>
-                    <div className="card-footer">
-                        <Link to={`/puppy/update/${this.state.puppyId}`} className="btn btn-sm btn-success">Update</Link>
-                        <Link to="/puppies" className="btn btn-sm btn-secondary ml-2">Back</Link>
-                    </div>
+                    {this.props.hideButtons === false && (
+                        <div className="card-footer">
+                            <Link to={`/puppy/update/${this.state.puppyId}`} className="btn btn-sm btn-success">Update</Link>
+                            <Link to="/puppies" className="btn btn-sm btn-secondary ml-2">Back</Link>
+                        </div>
+                    )}
                 </div>
             );
         } else {

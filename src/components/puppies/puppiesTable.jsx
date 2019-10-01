@@ -119,11 +119,11 @@ class PuppiesTable extends Component {
         const thead = (
             <thead>
                 <tr>
-                    <th className="pointer" onClick={() => this.sortTable('name')}>Name {this.getSortIcon('name')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('dateOfBirth')}>Name {this.getSortIcon('dateOfBirth')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('sex')}>Name {this.getSortIcon('sex')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('weight')}>Name {this.getSortIcon('weight')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('price')}>Name {this.getSortIcon('price')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('data.name')}>Name {this.getSortIcon('data.name')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('data.dateOfBirth')}>DOB {this.getSortIcon('data.dateOfBirth')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('data.sex')}>Sex {this.getSortIcon('data.sex')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('data.weight')}>Weight {this.getSortIcon('data.weight')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('data.price')}>Price {this.getSortIcon('data.price')}</th>
                     <th>Picture</th>
                     <th>Action</th>
                 </tr>
@@ -154,8 +154,9 @@ class PuppiesTable extends Component {
                         <td>{picture}</td>
                         <td>
                             <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(puppy.id)}><i className="fa fa-search"></i> View</button>
-                            <button type="button" className="btn btn-sm btn-success ml-2" onClick={() => this.props.onUpdateBtnClicked(puppy.id)}><i className="fa fa-edit"></i> Update</button>
-                            <button type="button" className="btn btn-sm btn-danger ml-2" onClick={() => this.props.onDeleteBtnClicked(puppy.id)}><i className="fa fa-close"></i> Delete</button>
+                            <button type="button" className="btn btn-sm btn-success ml-1" onClick={() => this.props.onUpdateBtnClicked(puppy.id)}><i className="fa fa-edit"></i> Update</button>
+                            <button type="button" className="btn btn-sm btn-info ml-1" onClick={() => this.props.onRecordSalesBtnClicked(puppy.id)}><i className="fa fa-dollar"></i> Sell</button>
+                            <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(puppy.id)}><i className="fa fa-close"></i> Delete</button>
                         </td>
                     </tr>
                 );

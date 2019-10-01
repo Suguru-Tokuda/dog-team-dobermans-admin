@@ -53,8 +53,8 @@ export default class SortService {
                 } else if (typeof utilService.accessValue(array[0], key) === "number") {
                     const isFloat = isNaN(parseFloat(utilService.accessValue(array[0], key))) === false;
                     if (isFloat === true) {
-                        valA = parseFloat(a[key]);
-                        valB = parseFloat(b[key]);
+                        valA = parseFloat(utilService.accessValue(a, key));
+                        valB = parseFloat(utilService.accessValue(b, key));
                     }
                 }
                 return (valA < valB ? 1: (valA > valB ? -1 : 0));

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import ReactCrop from 'react-image-crop';
+import PictureCropModal from '../miscellaneous/pictureCropModal';
 import $ from 'jquery';
 
 class PuppyPictureForm extends Component {
@@ -8,13 +8,7 @@ class PuppyPictureForm extends Component {
         initialParams: {},
         pictures: [],
         tempPictureFile: null,
-        croppedImageUrl: '',
         formSubmitted: false,
-        crop: {
-            unit: "%",
-            width: 30,
-            aspect: 16 / 9
-        }
     };
 
     constructor(props) {
@@ -79,74 +73,17 @@ class PuppyPictureForm extends Component {
         );
     }
 
-    onImageLoaded = (image) => {
-        this.imageRef = image;
-    }
-
-    onCropComplete = (crop) => {
-        console.log(crop);
-        this.makeClientCrop(crop);
-    }
-
-    onCropChange = (crop, percentCrop) => {
-        this.setState({ crop });
-    }
-
-    async makeClientCrop(crop) {
-        if (this.imageRef && crop.width && crop.height) {
-          const croppedImageUrl = await this.getCroppedImg(
-            this.imageRef,
-            crop,
-            "newFile.jpeg"
-          );
-          this.setState({ croppedImageUrl });
-        }
-    }
-
-    getCroppedImg(image, crop, fileName) {
-        const canvas = document.createElement("canvas");
-        const scaleX = image.naturalWidth / image.width;
-        const scaleY = image.naturalHeight / image.height;
-        canvas.width = crop.width;
-        canvas.height = crop.height;
-        const ctx = canvas.getContext("2d");
-    
-        ctx.drawImage(
-          image,
-          crop.x * scaleX,
-          crop.y * scaleY,
-          crop.width * scaleX,
-          crop.height * scaleY,
-          0,
-          0,
-          crop.width,
-          crop.height
-        );
-    
-        return new Promise((resolve, reject) => {
-          canvas.toBlob(blob => {
-            if (!blob) {
-              //reject(new Error('Canvas is empty'));
-              console.error("Canvas is empty");
-              return;
-            }
-            blob.name = fileName;
-            window.URL.revokeObjectURL(this.fileUrl);
-            this.fileUrl = window.URL.createObjectURL(blob);
-            resolve(this.fileUrl);
-          }, "image/jpeg");
-        });
-      }
-
     handleImageChange = (event) => {
         if (event.target.files && event.target.files[0]) {
-            // const pictures = this.state.pictures;
-            // pictures.push(event.target.files[0]);
-            // this.setState({ pictures });
             const reader = new FileReader();
             reader.addEventListener("load", () => {
-                this.setState({ tempPictureFile: reader.result });
+                this.setState({ 
+                    tempPictureFile: reader.result
+                });
             });
+            this.setState({
+                tempPicureFileName: event.target.files[0].name
+            })
             reader.readAsDataURL(event.target.files[0]);
         }
         $('#picture-upload').val(null);
@@ -174,53 +111,39 @@ class PuppyPictureForm extends Component {
         }
     }
 
+    handleFinishImageCropping = (newFile) => {
+        const pictures = this.state.pictures;
+        pictures.push(newFile);
+        this.setState({ 
+            pictures: pictures,
+            tempPictureFile: null
+        });                        
+    }
+
     render() {
+        const { tempPictureFile } = this.state;
         return (
-            <div className="card">
-                <div className="card-body">
-                    <h1>Pictures</h1>
-                    <div className="row form-group">
-                        <div className="col-12">
-                            {this.getPictures()}
-                        </div>
-                        <div className="col-12">
-                            {this.getErrorMsg()}
+            <React.Fragment>
+                <div className="card">
+                    <div className="card-body">
+                        <h1>Pictures</h1>
+                        <div className="row form-group">
+                            <div className="col-12">
+                                {this.getPictures()}
+                            </div>
+                            <div className="col-12">
+                                {this.getErrorMsg()}
+                            </div>
                         </div>
                     </div>
-                    {this.state.tempPictureFile && (
-                        <div className="row form-group">
-                            <div className="col-6">
-                                <ReactCrop
-                                    src={this.state.tempPictureFile}
-                                    crop={this.state.crop}
-                                    onImageLoaded={this.onImageLoaded}
-                                    onComplete={this.onCropComplete}
-                                    onChange={this.onCropChange}
-                                />
-                            </div>
-                        </div>
-                    )}
-                    {this.state.croppedImageUrl && (
-                        <React.Fragment>
-                            <div className="row">
-                                <div className="col-7">
-                                    <img alt="Crop" style={{ maxWidth: "100%" }} src={this.state.croppedImageUrl} />
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-2">
-                                    <button type="button" className="btn btn-success">Crop</button>
-                                </div>
-                            </div>
-                        </React.Fragment>
-                    )}
+                    <div className="card-footer">
+                        <button className="btn btn-primary" onClick={this.handleNextBtnClicked} type="submit">Next</button>
+                        <button className="btn btn-success ml-1" onClick={this.handleSkipBtnClicked} type="button">Skip</button>
+                        <Link className="btn btn-secondary ml-1" to="/puppies">Cancel</Link>
+                    </div>
                 </div>
-                <div className="card-footer">
-                    <button className="btn btn-primary" onClick={this.handleNextBtnClicked} type="submit">Next</button>
-                    <button className="btn btn-success ml-1" onClick={this.handleSkipBtnClicked} type="button">Skip</button>
-                    <Link className="btn btn-secondary ml-1" to="/puppies">Cancel</Link>
-                </div>
-            </div>
+                <PictureCropModal pictureFile={tempPictureFile} onFinishImageCropping={this.handleFinishImageCropping.bind(this)} />
+            </React.Fragment>
         );
     }
 }

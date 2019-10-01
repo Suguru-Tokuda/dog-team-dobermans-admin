@@ -49,6 +49,7 @@ class Puppies extends Component {
                  totalItems={this.state.puppies.length}
                  onViewBtnClicked={this.handleViewPuppyBtnClicked.bind(this)}
                  onUpdateBtnClicked={this.handleUpdatePuppyBtnClicked.bind(this)}
+                 onRecordSalesBtnClicked={this.handleRecordSalesBtnClicked.bind(this)}
                  />
             );
         }
@@ -60,6 +61,10 @@ class Puppies extends Component {
 
     handleUpdatePuppyBtnClicked = (puppyId) => {
         this.props.history.push(`/puppy/update/${puppyId}`);
+    }
+    
+    handleRecordSalesBtnClicked = (puppyId) => {
+        console.log(puppyId);
     }
 
     render() {

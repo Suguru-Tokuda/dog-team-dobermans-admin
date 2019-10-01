@@ -2,10 +2,13 @@ import React, { Component } from 'react';
 import PuppiesService from '../../services/puppiesService';
 import SortablePictureLlist from './sortablePictureList';
 import toastr from 'toastr';
+import PictureCropModal from '../miscellaneous/pictureCropModal';
 
 class PuppyPictureUpdateForm extends Component {
     state = {
         puppyId: '',
+        tempPictureFile: null,
+        tempPictureFileName: '',
         puppyData: {}
     };
 
@@ -70,23 +73,34 @@ class PuppyPictureUpdateForm extends Component {
 
     handleImageChange = async (event) => {
         if (event.target.files && event.target.files[0]) {
-            this.props.onShowLoading(true, 1);
-            // upload a picture and get {reference, url}
-            const newPicture = await PuppiesService.uploadPicture(event.target.files[0]);
-            const puppyData = this.state.puppyData;
-            // push the new picture reference
-            puppyData.pictures.push(newPicture);
-            PuppiesService.updatePuppy(this.state.puppyId, puppyData)
-                .then(res => {
-                    toastr.success("Upload success");
-                })
-                .catch(err => {
-                    toastr.error('There was an error in uploading file');
-                })
-                .finally(() => {
-                    this.props.onDoneLoading();
+            const reader = new FileReader();
+            reader.addEventListener("load", () => {
+                this.setState({
+                    tempPictureFile: reader.result
                 });
+            });
+            this.setState({ tempPictureFileName: event.target.files[0].name });
+            reader.readAsDataURL(event.target.files[0]);
         }
+    }
+
+    handleFinishImageCropping = async (newFile) => {
+        this.props.onShowLoading(true, 1);
+        // upload a picture and get { reference, url }
+        const newPicture = await PuppiesService.uploadPicture(newFile);
+        const puppyData = this.state.puppyData;
+        // push the new picture reference
+        puppyData.pictures.push(newPicture);
+        PuppiesService.updatePuppy(this.state.puppyId, puppyData)
+            .then(res => {
+                toastr.success('Upload success');
+            })
+            .catch(err => {
+                toastr.error('There was an error in uploading file');
+            })
+            .finally(() => {
+                this.props.onDoneLoading();
+            });
     }
 
     handleDeletePicture = async (index) => {
@@ -112,15 +126,19 @@ class PuppyPictureUpdateForm extends Component {
     }
 
     render() {
+        const { tempPictureFile } = this.state;
         return (
-            <div className="card">
-                <div className="card-body">
-                    <h1>Pictures</h1>
-                    <div className="row form-group">
-                        {this.getPictures()}
+            <React.Fragment>
+                <div className="card">
+                    <div className="card-body">
+                        <h1>Pictures</h1>
+                        <div className="row form-group">
+                            {this.getPictures()}
+                        </div>
                     </div>
                 </div>
-            </div>
+                <PictureCropModal pictureFile={tempPictureFile} onFinishImageCropping={this.handleFinishImageCropping.bind(this)} />
+            </React.Fragment>
         );
     }
 }

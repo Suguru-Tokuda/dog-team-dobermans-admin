@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export default class ParentsService {
     static getServiceBase() {
-        return `${SessionInfoService.getBaseUrlForAPI}contactus`;
+        return `${SessionInfoService.getBaseUrlForAPI()}contactus`;
     }
 
     static getContactusInfo() {
