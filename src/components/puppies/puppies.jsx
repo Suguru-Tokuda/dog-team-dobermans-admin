@@ -64,7 +64,7 @@ class Puppies extends Component {
     }
     
     handleRecordSalesBtnClicked = (puppyId) => {
-        console.log(puppyId);
+        this.props.history.push(`/puppy/sales/${puppyId}`);
     }
 
     render() {

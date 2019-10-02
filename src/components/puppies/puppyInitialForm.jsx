@@ -71,7 +71,7 @@ class PuppyInitialForm extends Component {
     }
 
     getHeader = () => {
-        return this.state.puppyId === '' ? <h1>Create New Puppy</h1> : <h1>Update Puppy</h1>;
+        return this.state.puppyId === '' ? <h3 className="mb-3">Create New Puppy</h3> : <h3 className="mb-3">Update Puppy</h3>;
     }
 
     getErrorClass(key) {

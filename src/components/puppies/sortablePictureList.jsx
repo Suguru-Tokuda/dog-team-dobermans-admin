@@ -23,7 +23,6 @@ const SortableList = SortableContainer(({items, onDeletePictureBtnClicked}) => {
     return (
         <div className="row">
             {items.map((value, index) => {
-                console.log(index);
                return <SortableItem key={`item-${index}`} myIndex={index} index={index} value={value} onDeletePictureBtnClicked={onDeletePictureBtnClicked.bind(this)} />;
             })}
         </div>

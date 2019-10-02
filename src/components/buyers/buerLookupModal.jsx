@@ -13,14 +13,14 @@ class BuyerLookupModal extends Component {
             return buyers.map(buyer => {
                 return (
                     <tr>
-                        <td>{buyer.id}</td>
-                        <td>{buyer.data.firstName}</td>
-                        <td>{buyer.data.lastName}</td>
-                        <td>{buyer.data.phone}</td>
-                        <td>{buyer.data.email}</td>
-                        <td>{buyer.data.state}</td>
-                        <td>{buyer.data.city}</td>
-                        <td></td>
+                        <td>{buyer.buyerId}</td>
+                        <td>{buyer.firstName}</td>
+                        <td>{buyer.lastName}</td>
+                        <td>{buyer.phone}</td>
+                        <td>{buyer.email}</td>
+                        <td>{buyer.state}</td>
+                        <td>{buyer.city}</td>
+                        <td><button className="btn btn-sm btn-success" onClick={() => this.handleSelectBuyerBtnClicked(buyer.buyerId)}>Select</button></td>
                     </tr>
                 );
             });
@@ -48,8 +48,6 @@ class BuyerLookupModal extends Component {
             });
     }
 
-
-
     render() {
         const { searchKeyword, buyers } = this.state;
         return (
@@ -75,9 +73,12 @@ class BuyerLookupModal extends Component {
                                                 <th>Email</th>
                                                 <th>State</th>
                                                 <th>City</th>
+                                                <th></th>
                                             </thead>
                                             <tbody>
-
+                                                {buyers.length > 0 && (
+                                                    this.getRows(buyers)
+                                                )}
                                             </tbody>
                                         </table>
                                     </div>

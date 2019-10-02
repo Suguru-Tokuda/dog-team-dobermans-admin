@@ -14,7 +14,10 @@ class PuppyDetail extends Component {
 
     constructor(props) {
         super(props);
-        this.state.puppyId = props.match.params.puppyId;
+        if (typeof props.match !== 'undefined') 
+            this.state.puppyId = props.match.params.puppyId;
+        else
+            this.state.puppyId = props.puppyId;
     }
 
     async componentDidMount() {
@@ -68,7 +71,7 @@ class PuppyDetail extends Component {
             if (pictures.length > 0) {
                 const pictureCards = pictures.map((picture, i) => {
                     return (
-                        <div key={`puppy-picture-${i}`} className="col-3">
+                        <div key={`puppy-picture-${i}`} className="col-xs-12 col-sm-6 col-md-3 col-lg-3 mb-2">
                             <div className="row">
                                 <div className="col-12">
                                     <img src={picture.url} className="img-fluid" alt={picture.reference} />
@@ -102,46 +105,46 @@ class PuppyDetail extends Component {
             return (
                 <div className="card">
                     <div className="card-body">
-                        <h2>Puppy Info</h2>
+                        <h3 className="mb-3">Puppy Info</h3>
                         <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Name</strong></label>
+                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Name</strong></label>
                             <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.state.puppyData.name}</div>
                         </div>
                         <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Sex</strong></label>
+                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Sex</strong></label>
                             <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.state.puppyData.sex}</div>
                         </div>
                         <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Type</strong></label>
+                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Type</strong></label>
                             <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.state.puppyData.type}</div>
                         </div>
                         <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Color</strong></label>
+                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Color</strong></label>
                             <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.state.puppyData.color}</div>
                         </div>
                         <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Dad</strong></label>
+                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Dad</strong></label>
                             <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getDadName(this.state.puppyData.dadId)}</div>
                         </div>
                         <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Mom</strong></label>
+                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Mom</strong></label>
                             <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getMomName(this.state.puppyData.momId)}</div>
                         </div>
                         <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Weight</strong></label>
+                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Weight</strong></label>
                             <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{`${this.state.puppyData.weight} lbs`}</div>
                         </div>
                         <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Price</strong></label>
+                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Price</strong></label>
                             <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{`$${this.state.puppyData.price}`}</div>
                         </div>
                         <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Description</strong></label>
+                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Description</strong></label>
                             <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.state.puppyData.description}</div>
                         </div>
                         {this.getPictures()}
                     </div>
-                    {this.props.hideButtons === false && (
+                    {(this.props.hideButtons === false || this.props.hideButtons === undefined) && (
                         <div className="card-footer">
                             <Link to={`/puppy/update/${this.state.puppyId}`} className="btn btn-sm btn-success">Update</Link>
                             <Link to="/puppies" className="btn btn-sm btn-secondary ml-2">Back</Link>

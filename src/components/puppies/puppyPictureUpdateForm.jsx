@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import PuppiesService from '../../services/puppiesService';
 import SortablePictureLlist from './sortablePictureList';
 import toastr from 'toastr';
@@ -21,7 +22,6 @@ class PuppyPictureUpdateForm extends Component {
         this.props.onShowLoading(true, 1);
         PuppiesService.getPuppy(this.state.puppyId)
             .then(res => {
-                console.log(res);
                 this.setState({
                     puppyData: res.data
                 });
@@ -126,7 +126,7 @@ class PuppyPictureUpdateForm extends Component {
     }
 
     render() {
-        const { tempPictureFile } = this.state;
+        const { tempPictureFile, puppyId } = this.state;
         return (
             <React.Fragment>
                 <div className="card">
@@ -135,6 +135,9 @@ class PuppyPictureUpdateForm extends Component {
                         <div className="row form-group">
                             {this.getPictures()}
                         </div>
+                    </div>
+                    <div className="card-footer">
+                        <Link className="btn btn-sm btn-secondary" to={`/puppy/update/${puppyId}`}>Back</Link>
                     </div>
                 </div>
                 <PictureCropModal pictureFile={tempPictureFile} onFinishImageCropping={this.handleFinishImageCropping.bind(this)} />

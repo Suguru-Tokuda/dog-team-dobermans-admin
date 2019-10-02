@@ -138,25 +138,25 @@ class PuppiesTable extends Component {
         if (this.state.displayedData.length > 0) {
             const rows = this.state.displayedData.map((puppy, i) => {
                 let picture;
-                const pictures = puppy.data.pictures;
+                const pictures = puppy.pictures;
                 if (typeof pictures !== 'undefined' && pictures.length > 0) {
                     picture = <img src={pictures[0].url} alt={pictures[0].reference} className="rounded" style={{ width: "50px"}} />;
                 } else {
                     picture = <div className="rounded">Not available</div>
                 }
                 return (
-                    <tr key={`puppy-${puppy.id}`}>
-                        <td>{puppy.data.name}</td>
-                        <td>{moment(puppy.data.dateOfBirth).format('MM/DD/YYYY')}</td>
-                        <td>{puppy.data.sex}</td>
-                        <td>{puppy.data.weight}</td>
-                        <td>{`$${puppy.data.price}`}</td>
+                    <tr key={`puppy-${puppy.puppyId}`}>
+                        <td>{puppy.name}</td>
+                        <td>{moment(puppy.dateOfBirth).format('MM/DD/YYYY')}</td>
+                        <td>{puppy.sex}</td>
+                        <td>{puppy.weight}</td>
+                        <td>{`$${puppy.price}`}</td>
                         <td>{picture}</td>
                         <td>
-                            <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(puppy.id)}><i className="fa fa-search"></i> View</button>
-                            <button type="button" className="btn btn-sm btn-success ml-1" onClick={() => this.props.onUpdateBtnClicked(puppy.id)}><i className="fa fa-edit"></i> Update</button>
-                            <button type="button" className="btn btn-sm btn-info ml-1" onClick={() => this.props.onRecordSalesBtnClicked(puppy.id)}><i className="fa fa-dollar"></i> Sell</button>
-                            <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(puppy.id)}><i className="fa fa-close"></i> Delete</button>
+                            <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(puppy.puppyId)}><i className="fa fa-search"></i> View</button>
+                            <button type="button" className="btn btn-sm btn-success ml-1" onClick={() => this.props.onUpdateBtnClicked(puppy.puppyId)}><i className="fa fa-edit"></i> Update</button>
+                            <button type="button" className="btn btn-sm btn-info ml-1" onClick={() => this.props.onRecordSalesBtnClicked(puppy.puppyId)}><i className="fa fa-dollar"></i> Sell</button>
+                            <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(puppy.puppyId)}><i className="fa fa-close"></i> Delete</button>
                         </td>
                     </tr>
                 );
