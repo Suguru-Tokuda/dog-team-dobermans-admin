@@ -4,11 +4,14 @@ import PuppyDetail from './puppyDetail';
 import BuyerDetail from '../buyers/buyerDetail';
 import BuyerLookupModal from '../buyers/buerLookupModal';
 import BuyerRegistrationModal from '../buyers/buyerRegistrationModal';
+import BuyersService from '../../services/buyersService';
+import toastr from 'toastr';
 
 class PuppySalesForm extends Component {
     state = {
         puppyId: '',
         buyerId: '',
+        buyer: {},
         emailForSearch: '',
         showLookupModal: false,
         showRegisterBuyerModal: false
@@ -20,7 +23,7 @@ class PuppySalesForm extends Component {
     }
 
     handleOnBuyerCreated = (buyerId) => {
-        this.setState({ buyerId });
+       this.setState({ buyerId });
     }
 
     handleLookupBuyerBtnClicked = () => {
@@ -63,7 +66,7 @@ class PuppySalesForm extends Component {
                         </div>
                     )}
                 </div>
-                <BuyerLookupModal showModal={showLookupModal} onBuyerCreated={this.handleOnBuyerCreated.bind(this)} onShowBuyerRegistration={this.handleShowBuyerRegistrationModal} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                <BuyerLookupModal showModal={showLookupModal} onBuyerSelected={this.handleOnBuyerCreated.bind(this)} onShowBuyerRegistrationModal={this.handleShowBuyerRegistrationModal} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
                 <BuyerRegistrationModal showModal={showRegisterBuyerModal} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
             </React.Fragment>
         );

@@ -1,12 +1,35 @@
 import React, { Component } from 'react';
 import BuyersService from '../../services/buyersService';
 import toastr from 'toastr';
+import $ from 'jquery';
 
 class BuyerLookupModal extends Component {
     state = {
         searchKeyword: '',
-        buyers: []
+        buyers: [],
+        formSubmitted: false,
+        showModal: false
     };
+
+    constructor(props) {
+        super(props);
+        this.state.showModal = props.showModal;
+    }
+
+    componentDidUpdate() {
+        if (this.state.showModal === true) {
+            $('#buyerLookupModal').modal('show');
+        } else {
+            $('#buyerLookupModal').modal('hide');
+        }
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.showModal !== prevState.showModal) {
+            return { showModal: nextProps.showModal };
+        }
+        return null;
+    }
 
     getRows = (buyers) => {
         if (buyers.length > 0) {
@@ -49,17 +72,24 @@ class BuyerLookupModal extends Component {
     }
 
     render() {
-        const { searchKeyword, buyers } = this.state;
+        const { searchKeyword, formSubmitted, buyers } = this.state;
         return (
-            <div className="modal fade" id="buyerLookuupModal" role="dialog" aria-hidden="true">
+            <div className="modal fade" id="buyerLookupModal" role="dialog" aria-hidden="true">
                 <div className="modal-dialog modal-lg" role="document">
                     <div className="modal-content">
+                        <div className="modal-header">
+                            <h3>Buyer Lookup Form</h3>
+                        </div>
                         <div className="modal-body">
                             <div className="row form-group">
-                                <div className="text-center">
-                                    <input type="text" value={searchKeyword} onKeyUp={this.handleSetSearchKeyword} />
-                                    <button className="btn btn-sm btn-success" onClick={this.handleSearchBtnClicked}>Search</button>
-                                </div>
+                                    <div className="col-7">
+                                        <input className="form-control" type="text" value={searchKeyword} onChange={this.handleSetSearchKeyword} placeholder="name, email, phone, state, city..." />
+                                        {formSubmitted === true && searchKeyword === '' && (
+                                            <span className="text-danger">Enter search word</span>
+                                        )}
+                                    </div>
+                                    <button className="btn btn-sm btn-success col-2" onClick={this.handleSearchBtnClicked}>Search</button>
+                                    <button className="btn btn-sm btn-info ml-2 col-2" onClick={this.props.onShowBuyerRegistrationModal}>Create Buyer</button>
                             </div>
                             {buyers.length > 0 && (
                                 <div className="row form-group">

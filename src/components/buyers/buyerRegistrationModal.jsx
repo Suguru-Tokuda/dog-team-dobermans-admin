@@ -30,6 +30,7 @@ class BuyerRegistrationModal extends Component {
         if (nextProps.showModal !== prevState.showModal) {
             return { showModal: nextProps.showModal }
         }
+        return null;
     }
 
     componentDidUpdate() {
@@ -41,7 +42,7 @@ class BuyerRegistrationModal extends Component {
     getStateOptions = () => {
         const states = ConstantsService.getStates();
         return states.map(state => {
-            return <option key={state.abbreviation} value={state.abbreviation}>{state.name}</option>
+            return <option key={state.abbreviation} value={state.abbreviation}>{`${state.abbreviation} - ${state.name}`}</option>
         });
     }
 
@@ -56,31 +57,31 @@ class BuyerRegistrationModal extends Component {
     }
 
     handleSetFirstName = (event) => {
-        const firstName = event.value.trim();
+        const firstName = event.target.value.trim();
         const { selections, validations } = this.state;
         if (firstName !== '') {
-            validations.name = '';
+            validations.firstName = '';
         } else {
-            validations.name = 'Enter first name';
+            validations.firstName = 'Enter first name';
         }
         selections.firstName = firstName;
         this.setState({ selections, validations });
     }
 
     handleSetLastName = (event) => {
-        const lastName = event.value.trim();
+        const lastName = event.target.value.trim();
         const { selections, validations } = this.state;
         if (lastName !== '') {
-            validations.name = '';
+            validations.lastName = '';
         } else {
-            validations.name = 'Enter first name';
+            validations.lastName = 'Enter first name';
         }
         selections.lastName = lastName;
         this.setState({ selections, validations });
     }
 
     handleSetEmail = (event) => {
-        const email = event.value.trim();
+        const email = event.target.value.trim();
         const { selections, validations } = this.state;
         if (email !== '') {
             validations.name = '';
@@ -92,7 +93,7 @@ class BuyerRegistrationModal extends Component {
     }
 
     handleSetPhone = (event) => {
-        const phone = event.value;
+        let phone = event.target.value;
         const { selections, validations } = this.state;
         if (phone.length > 0) {
             phone = phone.replace(/\D/g, '');
@@ -122,7 +123,7 @@ class BuyerRegistrationModal extends Component {
     }
 
     handleSetCity = (event) => {
-        const city = event.value.trim();
+        const city = event.target.value.trim();
         const { selections, validations } = this.state;
         if (city !== '') {
             validations.name = '';
@@ -134,6 +135,7 @@ class BuyerRegistrationModal extends Component {
     }
 
     handleCreateBtnClicked = (event) => {
+        this.setState({ formSubmitted: true });
         event.preventDefault();
         let isValid = true;
         const { selections, validations } = this.state;
@@ -147,7 +149,8 @@ class BuyerRegistrationModal extends Component {
             this.props.onShowLoading(true, 1);
             BuyersService.createBuyer(selections)
                 .then(res => {
-                    this.props.onBuyerCreated(res.data.id);
+                    console.log(res.data);
+                    // this.props.onBuyerCreated(res.data.id);
                 })
                 .catch(err => {
                     toastr.error('There was an error in creating a buyer');
@@ -169,75 +172,67 @@ class BuyerRegistrationModal extends Component {
                 <div className="modal-dialog modal-lg" role="document">
                    <div className="modal-content">
                        <form name="buyerRegistrationForm" noValidate>
+                           <div className="modal-header">
+                               <h3>Buyer Registration Form</h3>
+                           </div>
                             <div className="modal-body">
-                                {selections.firstName !== '' && (
-                                    <div className="row form-group">
-                                        <label className="col-2">
-                                            First Name
-                                        </label>
-                                        <div className="col-10">
-                                            <input type="text" value={selections.firstName} className={`form-control ${this.getErrorClass('firstName')}`} onKeyUp={this.handleSetFirstName} />
-                                            {this.getErrorMsg('firstName')}
-                                        </div>
+                                <div className="row form-group">
+                                    <label className="col-2">
+                                        First Name
+                                    </label>
+                                    <div className="col-10">
+                                        <input type="text" value={selections.firstName} className={`form-control ${this.getErrorClass('firstName')}`} onChange={this.handleSetFirstName} />
+                                        {this.getErrorMsg('firstName')}
                                     </div>
-                                )}
-                                {selections.lastName !== '' && (
-                                    <div className="row form-group">
-                                        <label className="col-2">
-                                            Last Name
-                                        </label>
-                                        <div className="col-10">
-                                            <input type="text" value={selections.lastName} className={`form-control ${this.getErrorClass('lastName')}`} onKeyUp={this.handleSetLastName} />
-                                            {this.getErrorMsg('lastName')}
-                                        </div>
+                                </div>
+                                <div className="row form-group">
+                                    <label className="col-2">
+                                        Last Name
+                                    </label>
+                                    <div className="col-10">
+                                        <input type="text" value={selections.lastName} className={`form-control ${this.getErrorClass('lastName')}`} onChange={this.handleSetLastName} />
+                                        {this.getErrorMsg('lastName')}
                                     </div>
-                                )}
-                                {selections.phone !== '' && (
-                                    <div className="row form-group">
-                                        <label className="col-2">
-                                            Phone
-                                        </label>
-                                        <div className="col-10">
-                                            <input type="text" value={selections.phone} className={`form-control ${this.getErrorClass('phone')}`} onKeyUp={this.handleSetPhone} />
-                                            {this.getErrorMsg('phone')}
-                                        </div>
+                                </div>
+                                <div className="row form-group">
+                                    <label className="col-2">
+                                        Phone
+                                    </label>
+                                    <div className="col-10">
+                                        <input type="text" value={selections.phone} className={`form-control ${this.getErrorClass('phone')}`} onChange={this.handleSetPhone} />
+                                        {this.getErrorMsg('phone')}
                                     </div>
-                                )}
-                                {selections.email !== '' && (
-                                    <div className="row form-group">
-                                        <label className="col-2">
-                                            Email
-                                        </label>
-                                        <div className="col-10">
-                                            <input type="text" value={selections.email} className={`form-control ${this.getErrorClass('email')}`} onKeyUp={this.handleSetEmail} />
-                                            {this.getErrorMsg('email')}
-                                        </div>
+                                </div>
+                                <div className="row form-group">
+                                    <label className="col-2">
+                                        Email
+                                    </label>
+                                    <div className="col-10">
+                                        <input type="text" value={selections.email} className={`form-control ${this.getErrorClass('email')}`} onChange={this.handleSetEmail} />
+                                        {this.getErrorMsg('email')}
                                     </div>
-                                )}
-                                {selections.state !== '' && (
-                                    <div className="row form-group">
-                                        <label className="col-2">
-                                            State
-                                        </label>
-                                        <div className="col-10">
-                                            <select value={selections.state} className={`form-control ${this.getErrorClass('state')}`} onChange={this.handleSetState}>
-                                                {this.getStateOptions()}
-                                            </select>
-                                            {this.getErrorMsg('state')}
-                                        </div>
+                                </div>
+                                <div className="row form-group">
+                                    <label className="col-2">
+                                        State
+                                    </label>
+                                    <div className="col-10">
+                                        <select value={selections.state} className={`form-control ${this.getErrorClass('state')}`} onChange={this.handleSetState}>
+                                            <option value="">--Select State--</option>
+                                            {this.getStateOptions()}
+                                        </select>
+                                        {this.getErrorMsg('state')}
                                     </div>
-                                )}
-                                {selections.city !== '' && (
-                                    <div className="row form-group">
-                                        <label className="col-2">
-                                            City
-                                        </label>
-                                        <div className="col-10">
-                                            <input type="text" className={`form-control ${this.getErrorClass('city')}`} value={selections.city} onKeyUp={this.handleSetCity}/>
-                                            {this.getErrorMsg('city')}
-                                        </div>
+                                </div>
+                                <div className="row form-group">
+                                    <label className="col-2">
+                                        City
+                                    </label>
+                                    <div className="col-10">
+                                        <input type="text" className={`form-control ${this.getErrorClass('city')}`} value={selections.city} onChange={this.handleSetCity}/>
+                                        {this.getErrorMsg('city')}
                                     </div>
-                                )}
+                                </div>
                             </div>
                             <div className="modal-footer">
                                 <button type="submit" className="btn btn-success" onClick={this.handleCreateBtnClicked}>Create</button>
