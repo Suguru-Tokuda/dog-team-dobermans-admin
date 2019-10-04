@@ -149,10 +149,10 @@ class BuyerRegistrationModal extends Component {
             this.props.onShowLoading(true, 1);
             BuyersService.createBuyer(selections)
                 .then(res => {
-                    console.log(res.data);
-                    // this.props.onBuyerCreated(res.data.id);
+                    this.props.onBuyerSelected(res.data.buyerId);
                 })
                 .catch(err => {
+                    console.log(err);
                     toastr.error('There was an error in creating a buyer');
                 })
                 .finally(() => {

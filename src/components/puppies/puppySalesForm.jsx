@@ -4,8 +4,6 @@ import PuppyDetail from './puppyDetail';
 import BuyerDetail from '../buyers/buyerDetail';
 import BuyerLookupModal from '../buyers/buerLookupModal';
 import BuyerRegistrationModal from '../buyers/buyerRegistrationModal';
-import BuyersService from '../../services/buyersService';
-import toastr from 'toastr';
 
 class PuppySalesForm extends Component {
     state = {
@@ -13,6 +11,10 @@ class PuppySalesForm extends Component {
         buyerId: '',
         buyer: {},
         emailForSearch: '',
+        paymentAmount: '',
+        validations: {
+            paymentAmount: ''
+        },
         showLookupModal: false,
         showRegisterBuyerModal: false
     };
@@ -22,8 +24,9 @@ class PuppySalesForm extends Component {
         this.state.puppyId = props.match.params.puppyId;
     }
 
-    handleOnBuyerCreated = (buyerId) => {
-       this.setState({ buyerId });
+    onBuyerSelected = (buyerId) => {
+        console.log(buyerId);
+        this.setState({ buyerId });
     }
 
     handleLookupBuyerBtnClicked = () => {
@@ -34,8 +37,26 @@ class PuppySalesForm extends Component {
         this.setState({ showLookupModal: false, showRegisterBuyerModal: true });
     }
 
+    handleSetPaymentAmount = (event) => {
+        let paymentAmount = event.target.value;
+        const validations = this.state.validations;
+        if (paymentAmount.length > 0) {
+            paymentAmount = paymentAmount.replace(/\D/g, '');
+            if (paymentAmount !== '') {
+                validations.price = '';
+                paymentAmount = parseInt(paymentAmount);
+            } else {
+                validations.price = 'Enter price';
+            }
+        } else {
+            paymentAmount = '';
+            validations.price = 'Enter price';
+        }
+        this.setState({ paymentAmount, validations });
+    }
+
     render() {
-        const { puppyId, buyerId, showLookupModal, showRegisterBuyerModal } = this.state;
+        const { puppyId, buyerId, showLookupModal, showRegisterBuyerModal, paymentAmount } = this.state;
         return (
             <React.Fragment>
                 <div className="row">
@@ -63,11 +84,24 @@ class PuppySalesForm extends Component {
                     {buyerId !== '' && (
                         <div className="col-6">
                             <BuyerDetail buyerId={buyerId} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                            <div className="card">
+                                <div className="card-body">
+                                    <div className="row form-group">
+                                        <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Payment Amount</strong></label>
+                                        <div className="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+                                            <input className="form-control" type="text" value={paymentAmount} onChange={this.handleSetPaymentAmount} />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="card-footer">
+                                    
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
-                <BuyerLookupModal showModal={showLookupModal} onBuyerSelected={this.handleOnBuyerCreated.bind(this)} onShowBuyerRegistrationModal={this.handleShowBuyerRegistrationModal} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
-                <BuyerRegistrationModal showModal={showRegisterBuyerModal} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                <BuyerLookupModal showModal={showLookupModal} onBuyerSelected={this.onBuyerSelected.bind(this)} onShowBuyerRegistrationModal={this.handleShowBuyerRegistrationModal} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                <BuyerRegistrationModal showModal={showRegisterBuyerModal} onBuyerSelected={this.onBuyerSelected.bind(this)} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
             </React.Fragment>
         );
     }
