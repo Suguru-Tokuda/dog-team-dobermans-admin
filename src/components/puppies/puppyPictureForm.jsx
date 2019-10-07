@@ -83,7 +83,7 @@ class PuppyPictureForm extends Component {
             });
             this.setState({
                 tempPicureFileName: event.target.files[0].name
-            })
+            });
             reader.readAsDataURL(event.target.files[0]);
         }
         $('#picture-upload').val(null);

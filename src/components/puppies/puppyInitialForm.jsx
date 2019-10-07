@@ -261,7 +261,13 @@ class PuppyInitialForm extends Component {
         }
         this.setState({ validations });
         if (invalidCount === 0) {
-            this.props.onToPictureBtnClicked(this.state.selections);
+            const newPuppy = this.state.selections;
+            newPuppy.sold = false;
+            newPuppy.buyerId = null;
+            newPuppy.payedAmount = 0;
+            newPuppy.live = false;
+            newPuppy.soldDate = null;
+            this.props.onToPictureBtnClicked(newPuppy);
             this.props.history.push('/puppy/create/pictures');
         }
     }

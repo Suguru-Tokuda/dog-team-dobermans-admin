@@ -8,4 +8,14 @@ export default class UtilService {
         }
         return value;
     }
+
+    static generateID(length) {
+        let retVal = '';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const charLeng = characters.length;
+        for (let i = 0, max = length; i < max; i++) {
+            retVal += characters.charAt(Math.floor(Math.random() * charLeng));
+        }
+        return retVal;
+    }
 }

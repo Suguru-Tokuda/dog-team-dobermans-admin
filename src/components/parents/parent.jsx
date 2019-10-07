@@ -15,12 +15,12 @@ class Parent extends Component {
     }
 
     render() {
-        const url = this.props.url;
+        const { url } = this.props;
         return (
             <Fragment>
-                <Route path={`${url}/view/:id`} render={(props) => <ParentDetail {...props} onShowLoading={this.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-                <Route path={`${url}/create`} render={(props) => <ParentCreate {...props} onShowLoading={this.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-                <Route path={`${url}/update/:id`} render={(props) => <ParentUpdate {...props} onShowLoading={this.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                <Route path={`${url}/view/:id`} render={(props) => <ParentDetail {...props} url={`${url}/view/:id`} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                <Route path={`${url}/create`} render={(props) => <ParentCreate {...props} url={`${url}/create`} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                <Route path={`${url}/update/:id`} render={(props) => <ParentUpdate {...props} url={`${url}/update/:id`} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
             </Fragment>
         );
     }

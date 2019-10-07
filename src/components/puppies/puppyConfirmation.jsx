@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PuppiesService from '../../services/puppiesService';
+import toastr from 'toastr';
 
 class PuppyConfirmation extends Component {
     state = {
@@ -150,7 +151,7 @@ class PuppyConfirmation extends Component {
         data.pictures = pictureLinks;
         PuppiesService.createPuppy(data)
             .then(res => {
-                console.log(res);
+                toastr.success('New puppy created');
             })
             .catch(err => {
                 console.log(err);

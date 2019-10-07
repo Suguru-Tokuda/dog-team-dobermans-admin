@@ -1,4 +1,5 @@
 import SessionInfoService from './sessionInfoService';
+import UtilService from './utilService';
 import * as api from '../api.json';
 import axios from 'axios';
 import { storage } from './firebaseService';
@@ -13,7 +14,7 @@ export default class PuppiesService {
     }
 
     static getPuppy(puppyId) {
-        return axios.get(`${this.getServiceBase()}puppy?key=${api.API_KEY}&id=${puppyId}`);
+        return axios.get(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyId=${puppyId}`);
     }
 
     static createPuppy(data) {
@@ -21,16 +22,17 @@ export default class PuppiesService {
     }
 
     static updatePuppy(puppyId, data) {
-        return axios.put(`${this.getServiceBase()}puppy/?key=${api.API_KEY}&id=${puppyId}`, data);
+        return axios.put(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyId=${puppyId}`, data);
     }
 
     static deletePuppy(puppyId) {
-        return axios.delete(`${this.getServiceBase()}puppy/${puppyId}`);
+        return axios.delete(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyId=${puppyId}`);
     }
 
     static uploadPicture(imageFile) {
         return new Promise(function (resolve) {
-            const reference = `/puppies/${imageFile.name}`;
+            const pictureID = UtilService.generateID(10);
+            const reference = `/puppies/${pictureID}`;
             const task = storage.ref(reference).put(imageFile);
             task.on('state_changed',
                 function (snapshot) {

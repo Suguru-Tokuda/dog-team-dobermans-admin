@@ -18,7 +18,9 @@ class BuyerLookupModal extends Component {
 
     componentDidUpdate() {
         if (this.state.showModal === true) {
-            $('#buyerLookupModal').modal('show');
+            if ($('#buyerLookupModal').is(':visible') === false) {
+                $('#buyerLookupModal').modal('show');
+            }
         } else {
             $('#buyerLookupModal').modal('hide');
         }
@@ -35,7 +37,7 @@ class BuyerLookupModal extends Component {
         if (buyers.length > 0) {
             return buyers.map(buyer => {
                 return (
-                    <tr>
+                    <tr key={buyer.buyerId}>
                         <td>{buyer.buyerId}</td>
                         <td>{buyer.firstName}</td>
                         <td>{buyer.lastName}</td>
@@ -43,7 +45,7 @@ class BuyerLookupModal extends Component {
                         <td>{buyer.email}</td>
                         <td>{buyer.state}</td>
                         <td>{buyer.city}</td>
-                        <td><button className="btn btn-sm btn-success" onClick={() => this.handleSelectBuyerBtnClicked(buyer.buyerId)}>Select</button></td>
+                        <td><button className="btn btn-sm btn-success" onClick={() => this.handleBuyerSelected(buyer.buyerId)}>Select</button></td>
                     </tr>
                 );
             });
@@ -58,17 +60,32 @@ class BuyerLookupModal extends Component {
     handleSearchBtnClicked = () => {
         const { searchKeyword } = this.state;
         const keywordToSend = searchKeyword.trim();
-        this.props.onShowLoading(true, 1);
-        BuyersService.searchForBuyers(keywordToSend)
-            .then(res => {
-                this.setState({ buyers: res.data });
-            })
-            .catch(err => {
-                toastr.error('There was an error in searching for buyers');
-            })
-            .finally(() => {
-                this.props.onDoneLoading();
-            });
+        if (keywordToSend.length > 0) {
+            this.props.onShowLoading(true, 1);
+            BuyersService.searchForBuyers(keywordToSend)
+                .then(res => {
+                    this.setState({ buyers: res.data });
+                })
+                .catch(err => {
+                    toastr.error('There was an error in searching for buyers');
+                })
+                .finally(() => {
+                    this.props.onDoneLoading();
+                });
+        } else {
+            toastr.error('Enter keyword to search');
+        }
+    }
+
+    handleSearchKeywordKeyUp = (e) => {
+        if (e.key === 'Enter') {
+            this.handleSearchBtnClicked();
+        }
+    }
+
+    handleBuyerSelected = (buyerId) => {
+        $('#buyerLookupModal').modal('hide');
+        this.props.onBuyerSelected(buyerId);
     }
 
     render() {
@@ -82,28 +99,30 @@ class BuyerLookupModal extends Component {
                         </div>
                         <div className="modal-body">
                             <div className="row form-group">
-                                    <div className="col-7">
-                                        <input className="form-control" type="text" value={searchKeyword} onChange={this.handleSetSearchKeyword} placeholder="name, email, phone, state, city..." />
-                                        {formSubmitted === true && searchKeyword === '' && (
-                                            <span className="text-danger">Enter search word</span>
-                                        )}
-                                    </div>
-                                    <button className="btn btn-sm btn-success col-2" onClick={this.handleSearchBtnClicked}>Search</button>
-                                    <button className="btn btn-sm btn-info ml-2 col-2" onClick={this.props.onShowBuyerRegistrationModal}>Create Buyer</button>
+                                <div className="col-7">
+                                    <input className="form-control" type="text" value={searchKeyword} onChange={this.handleSetSearchKeyword} onKeyUp={this.handleSearchKeywordKeyUp} placeholder="name, email, phone, state, city..." />
+                                    {formSubmitted === true && searchKeyword === '' && (
+                                        <span className="text-danger">Enter search word</span>
+                                    )}
+                                </div>
+                                <button className="btn btn-sm btn-success col-2" onClick={this.handleSearchBtnClicked}>Search</button>
+                                <button className="btn btn-sm btn-info ml-2 col-2" onClick={this.props.onShowBuyerRegistrationModal}>Create Buyer</button>
                             </div>
                             {buyers.length > 0 && (
                                 <div className="row form-group">
                                     <div className="table-responsive">
                                         <table className="table table-sm table-striped">
                                             <thead>
-                                                <th>ID</th>
-                                                <th>First name</th>
-                                                <th>Last name</th>
-                                                <th>Phone</th>
-                                                <th>Email</th>
-                                                <th>State</th>
-                                                <th>City</th>
-                                                <th></th>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>First name</th>
+                                                    <th>Last name</th>
+                                                    <th>Phone</th>
+                                                    <th>Email</th>
+                                                    <th>State</th>
+                                                    <th>City</th>
+                                                    <th></th>
+                                                </tr>
                                             </thead>
                                             <tbody>
                                                 {buyers.length > 0 && (

@@ -12,10 +12,6 @@ class PuppyCreate extends Component {
         moms: []
     };
 
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         // API call to get parents
         this.setState({

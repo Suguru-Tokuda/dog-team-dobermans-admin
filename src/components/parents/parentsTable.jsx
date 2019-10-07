@@ -136,7 +136,6 @@ class ParentsTable extends Component {
         );
         let tbody;
         if (this.state.displayedData.length > 0) {
-            console.log(this.state.displayedData);
             const rows = this.state.displayedData.map((parent, i) => {
                 const pictures = parent.pictures;
                 let picture;

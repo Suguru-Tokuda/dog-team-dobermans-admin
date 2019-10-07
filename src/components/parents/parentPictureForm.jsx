@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import $ from 'jquery';
+// import { Link } from 'react-router-dom';
+// import $ from 'jquery';
 
 class ParentPictureForm extends Component {
     state = {
@@ -33,4 +33,10 @@ class ParentPictureForm extends Component {
         const pictures = this.state.pictures;
     }
 
+    render() {
+        return <React.Fragment></React.Fragment>;
+    }
+
 }
+
+export default ParentPictureForm;

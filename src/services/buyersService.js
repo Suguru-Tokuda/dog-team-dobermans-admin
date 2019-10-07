@@ -8,7 +8,11 @@ export default class BuyersService {
     }
 
     static searchForBuyers(searchKeyword) {
-        return axios.post(`${this.getServiceBase()}buyers?key=${api.API_KEY}`, { searchKeyword: searchKeyword});
+        return axios.post(`${this.getServiceBase()}buyer/search?key=${api.API_KEY}`, { searchKeyword: searchKeyword});
+    }
+
+    static getBuyer(buyerId) {
+        return axios.get(`${this.getServiceBase()}buyer?key=${api.API_KEY}&buyerId=${buyerId}`);
     }
 
     static createBuyer(firstName, lastName, email, phone, state, city) {

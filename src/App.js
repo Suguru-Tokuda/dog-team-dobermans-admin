@@ -7,6 +7,7 @@ import Sidebar from './components/common/sidebar';
 import Main from './components/main/main';
 import Puppies from './components/puppies/puppies';
 import Puppy from './components/puppies/puppy';
+import Parent from './components/parents/parent';
 import Parents from './components/parents/parents';
 import Farm from './components/farm/farm';
 import ContactUs from './components/contactus/contactus';
@@ -58,8 +59,9 @@ class App extends Component {
               <div className="container-fluid">
                 <Switch>
                   <Route path="/" exact render={(props) => <Main {...props} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                  <Route path="/puppies" exact render={(props) => <Puppies {...props} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                   <Route path="/puppy" render={(props) => <Puppy url="/puppy" {...props} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                  <Route path="/puppies" exact render={(props) => <Puppies {...props} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                  <Route path="/parent" render={(props) => <Parent url="/parent" {...props} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                   <Route path="/parents" exact render={(props) => <Parents {...props} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                   <Route path="/farm" exact render={(props) => <Farm {...props} />} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />
                   <Route path="/contactus" exact render={(props) => <ContactUs {...props} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />

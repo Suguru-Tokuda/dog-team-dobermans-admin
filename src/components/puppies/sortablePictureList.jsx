@@ -17,7 +17,7 @@ const SortableItem = SortableElement(({value, index, myIndex, onDeletePictureBtn
                             </div>
                         </div>
                     </div>
-    )
+    );
 });
 const SortableList = SortableContainer(({items, onDeletePictureBtnClicked}) => {
     return (
@@ -50,7 +50,6 @@ class SortablePictureList extends Component {
             </div>
         );
     }
-
 
 }
 

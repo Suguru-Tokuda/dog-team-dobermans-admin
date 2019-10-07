@@ -7,12 +7,8 @@ import ParentConfirmation from './parentConfirmation';
 class ParentCreate extends Component {
     state = {
         initialParams: {},
-        pictures: [],
+        pictures: []
     };
-
-    constructor(props) {
-        super(props);
-    }
 
     handleNextBtnClicked = (initialParams) => {
         this.setState({ initialParams });
@@ -30,13 +26,15 @@ class ParentCreate extends Component {
     }
 
     render() {
-        const url = this.props.url;
+        const { url } = this.props;
         return (
             <React.Fragment>
-                <Route path={} render={(props) => <ParentInitialForm {...props} initialParams={this.state.initialParams} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-                <Route path={} render={(props) => <ParParentPictureFormnt {...props} initialParams={this.state.initialParams} pictures={this.state.pictures} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-                <Route path={} render={(props) => <ParentConfirmation {...props} initialParams={this.state.initialParams} pictures={this.state.pictures} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                <Route path={`${url}/initial-params`} render={(props) => <ParentInitialForm {...props} initialParams={this.state.initialParams} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                <Route path={`${url}/pictures`} render={(props) => <ParentPictureForm {...props} initialParams={this.state.initialParams} pictures={this.state.pictures} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                <Route path={`${url}/confirmation`} render={(props) => <ParentConfirmation {...props} initialParams={this.state.initialParams} pictures={this.state.pictures} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
             </React.Fragment>
         );
     }
 }
+
+export default ParentCreate;

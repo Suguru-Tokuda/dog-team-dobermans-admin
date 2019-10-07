@@ -4,7 +4,7 @@ import PuppyDetail from './puppyDetail';
 import BuyerDetail from '../buyers/buyerDetail';
 import BuyerLookupModal from '../buyers/buerLookupModal';
 import BuyerRegistrationModal from '../buyers/buyerRegistrationModal';
-import BuyersService from '../../services/buyersService';
+import PuppiesService from '../../services/puppiesService';
 import toastr from 'toastr';
 
 class PuppySalesForm extends Component {
@@ -12,7 +12,8 @@ class PuppySalesForm extends Component {
         puppyId: '',
         buyerId: '',
         buyer: {},
-        emailForSearch: '',
+        puppyDetail: {},
+        paymentAmount: '',
         showLookupModal: false,
         showRegisterBuyerModal: false
     };
@@ -22,8 +23,20 @@ class PuppySalesForm extends Component {
         this.state.puppyId = props.match.params.puppyId;
     }
 
-    handleOnBuyerCreated = (buyerId) => {
-       this.setState({ buyerId });
+    handleBuerSelected = (buyerId) => {
+        const { puppyId } = this.state;
+        this.setState({ buyerId: buyerId, showLookupModal: false, showRegisterBuyerModal: false });
+        this.props.onShowLoading(true, 1);
+        PuppiesService.getPuppy(puppyId)
+            .then(res => {
+                this.setState({ puppyDetail: res.data });
+            })
+            .catch(err => {
+                toastr.error('There was an error in loading puppy data');
+            })
+            .finally(() => {
+                this.props.onDoneLoading();
+            });
     }
 
     handleLookupBuyerBtnClicked = () => {
@@ -34,8 +47,44 @@ class PuppySalesForm extends Component {
         this.setState({ showLookupModal: false, showRegisterBuyerModal: true });
     }
 
+    handlePaymentAmount = (event) => {
+        const { puppyDetail } = this.state;
+        let paymentAmount = event.target.value;
+        if (paymentAmount.length > 0) {
+            paymentAmount = paymentAmount.replace(/\D/g, '');
+            if (paymentAmount !== '') {
+                paymentAmount = parseInt(paymentAmount);
+            }
+        }
+        if (puppyDetail.price >= paymentAmount) {
+            this.setState({ paymentAmount });
+        }
+    }
+
+    handlePaymentSubmision = () => {
+        const { buyerId, puppyDetail, paymentAmount } = this.state;
+        if (paymentAmount !== 0) {
+            puppyDetail.sold = true;
+            puppyDetail.soldDate = new Date();
+            puppyDetail.paidAmount = paymentAmount;
+            puppyDetail.buyerId = buyerId;
+            this.props.onShowLoading(true, 1);
+            PuppiesService.updatePuppy(puppyDetail.puppyId, puppyDetail)
+                .then(res => {
+                    toastr.success('Successfully updated the puppy data');
+                    this.props.history.push('/puppies');
+                })
+                .catch(err => {
+                    toastr.error('There was an error in updating puppy data');
+                })
+                .finally(() => {
+                    this.props.onDoneLoading();
+                });
+        }
+    }
+
     render() {
-        const { puppyId, buyerId, showLookupModal, showRegisterBuyerModal } = this.state;
+        const { puppyId, buyerId, showLookupModal, showRegisterBuyerModal, paymentAmount, puppyDetail } = this.state;
         return (
             <React.Fragment>
                 <div className="row">
@@ -63,11 +112,32 @@ class PuppySalesForm extends Component {
                     {buyerId !== '' && (
                         <div className="col-6">
                             <BuyerDetail buyerId={buyerId} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                            <div className="card">
+                                <div className="card-body">
+                                    <div className="row form-group">
+                                        <label className="col-2"><strong>Price</strong></label>
+                                        {puppyDetail.price && (
+                                            <div className="col-6">{`$${puppyDetail.price}`}</div>
+                                        )}
+                                    </div>
+                                    <div className="row form-group">
+                                        <label className="col-2"><strong>Payment Amount</strong></label>
+                                        <div className="col-6">
+                                            <input className="form-control" type="text" value={paymentAmount} onChange={this.handlePaymentAmount} />
+                                        </div>
+                                    </div>
+                                    <div className="row form-group">
+                                        <div className="col-2">
+                                            <button className="btn btn-primary" onClick={this.handlePaymentSubmision}>Submit Payment</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
-                <BuyerLookupModal showModal={showLookupModal} onBuyerSelected={this.handleOnBuyerCreated.bind(this)} onShowBuyerRegistrationModal={this.handleShowBuyerRegistrationModal} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
-                <BuyerRegistrationModal showModal={showRegisterBuyerModal} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                <BuyerLookupModal showModal={showLookupModal} onBuyerSelected={this.handleBuerSelected.bind(this)} onShowBuyerRegistrationModal={this.handleShowBuyerRegistrationModal} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                <BuyerRegistrationModal showModal={showRegisterBuyerModal} onBuyerSelected={this.handleBuerSelected.bind(this)} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
             </React.Fragment>
         );
     }

@@ -124,6 +124,14 @@ class ParentInitialForm extends Component {
         this.setState({ selections, validations });
     }
 
+    handleSetWeight = (event) => {
+
+    }
+
+    handleSetDescription = (event) => {
+        
+    }
+
     handleUpdateBtnClicked = () => {
 
     }
@@ -146,7 +154,7 @@ class ParentInitialForm extends Component {
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Name</label>
                             <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">
-                                <input type="text" className={`form-control ${this.getErrorClass('name')}`} onKeyUp={this.handleSetName} />
+                                <input type="text" className={`form-control ${this.getErrorClass('name')}`} onChange={this.handleSetName} />
                                 {this.getErrorMessage('name')}
                             </div>
                         </div>
@@ -191,13 +199,6 @@ class ParentInitialForm extends Component {
                             <div className="col-xs-5 col-sm-5 col-md-2 col-lg-3">
                                 <input type="text" value={this.state.selections.weight} className={`form-control ${this.getErrorClass('weight')}`} onChange={this.handleSetWeight} />
                                 {this.getErrorMessage('weight')}
-                            </div>
-                        </div>
-                        <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Price ($)</label>
-                            <div className="col-xs-5 col-sm-5 col-md-2 col-lg-3">
-                                <input type="text" value={this.state.selections.price} className={`form-control ${this.getErrorClass('price')}`} onChange={this.handleSetPrice} />
-                                {this.getErrorMessage('price')}
                             </div>
                         </div>
                         <div className="row form-group">

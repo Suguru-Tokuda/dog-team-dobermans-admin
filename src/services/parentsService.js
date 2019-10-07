@@ -12,8 +12,8 @@ export default class ParentsService {
         return axios.get(`${this.getServiceBase()}parents?key=${api.API_KEY}`);
     }
 
-    static get(parentsId) {
-        return axios.get(`${this.getServiceBase()}parent/${parentsId}?key=${api.API_KEY}`);
+    static get(parentId) {
+        return axios.get(`${this.getServiceBase()}parent?parentId=${parentId}&key=${api.API_KEY}`);
     }
 
     static createParent(data) {
@@ -21,15 +21,15 @@ export default class ParentsService {
     }
 
     static updateParent(data) {
-        return axios.put(`${this.getServiceBase()}parent/${data.parentsId}?key=${api.API_KEY}`, data);
+        return axios.put(`${this.getServiceBase()}parent?parentId=${data.parentId}&key=${api.API_KEY}`, data);
     }
 
-    static deleteParent(parentsId) {
-        return axios.delete(`${this.getServiceBase()}parent/${parentsId}?key=${api.API_KEY}`);
+    static deleteParent(parentId) {
+        return axios.delete(`${this.getServiceBase()}parent?parentId=${parentId}&key=${api.API_KEY}`);
     }
 
     static uploadPicture(imageFile) {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve) {
             const reference = `/parents/${imageFile.name}`;
             const task = storage.ref(reference).put(imageFile);
             task.on('state_changed',
