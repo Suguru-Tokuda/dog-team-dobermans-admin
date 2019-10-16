@@ -59,6 +59,7 @@ class Puppies extends Component {
                  onUpdateBtnClicked={this.handleUpdatePuppyBtnClicked.bind(this)}
                  onRecordSalesBtnClicked={this.handleRecordSalesBtnClicked.bind(this)}
                  onDeleteBtnClicked={this.handleDeleteBtnClicked.bind(this)}
+                 onLiveBtnClicked={this.handleLiveBtnClicked.bind(this)}
                  />
             );
         }
@@ -74,6 +75,30 @@ class Puppies extends Component {
     
     handleRecordSalesBtnClicked = (puppyId) => {
         this.props.history.push(`/puppy/sales/${puppyId}`);
+    }
+
+    handleLiveBtnClicked = (puppyId) => {
+        const puppies = JSON.parse(JSON.stringify(this.state.puppies));
+        let puppyToUpdate, index;
+        puppies.forEach((puppy, i) => {
+            if (puppy.puppyId === puppyId) {
+                puppyToUpdate = puppy;
+                index = i;
+            }
+        });
+        puppyToUpdate.live = !puppyToUpdate.live;
+        this.props.onShowLoading(true, 1);
+        PuppiesService.updatePuppy(puppyId, puppyToUpdate)
+            .then(() => {
+                puppies[index] = puppyToUpdate;
+                this.setState({ puppies });
+            })
+            .catch(() => {
+                toastr.error('There was an error in');
+            })
+            .finally(() => {
+                this.props.onDoneLoading();
+            });
     }
 
     handleDeleteBtnClicked = (puppyId) => {
