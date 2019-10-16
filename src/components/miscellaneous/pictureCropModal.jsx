@@ -103,26 +103,31 @@ class PictureCropModal extends Component {
     }
 
     handleCropBtnClicked = async () => {
-        let newFile;
-        await fetch(this.state.croppedImageUrl)
-            .then(res => {
-                res.blob()
-                    .then(async (blobFile) => {
-                        newFile = new File([blobFile], this.state.pictureFileName, { type: 'image/png' });
-                        try {
-                            const options = {
-                                maxSizeMB: 1,
-                                maxWidthOrHeight: 1280,
-                                useWebWorker: true
-                            };
-                            const compressedFile = await imageCompression(newFile, options);
-                            this.props.onFinishImageCropping(compressedFile);
-                            $('#pictureCropModal').modal('hide');
-                        } catch (err) {
-                            toastr.err(err);
-                        }
-                    });
-            });
+        const { croppedImageUrl } = this.state;
+        if (croppedImageUrl !== '') {
+            let newFile;
+            await fetch(this.state.croppedImageUrl)
+                .then(res => {
+                    res.blob()
+                        .then(async (blobFile) => {
+                            newFile = new File([blobFile], this.state.pictureFileName, { type: 'image/png' });
+                            try {
+                                const options = {
+                                    maxSizeMB: 1,
+                                    maxWidthOrHeight: 1280,
+                                    useWebWorker: true
+                                };
+                                const compressedFile = await imageCompression(newFile, options);
+                                this.props.onFinishImageCropping(compressedFile);
+                                $('#pictureCropModal').modal('hide');
+                            } catch (err) {
+                                toastr.err(err);
+                            }
+                        });
+                });
+        } else {
+            toastr.error('Please crop the image');
+        }
     }
 
     render() {
@@ -151,7 +156,7 @@ class PictureCropModal extends Component {
                             )}
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-success" onClick={this.handleCropBtnClicked}>Finish</button>
+                            <button type="button" className="btn btn-success" disabled={croppedImageUrl === ''} onClick={this.handleCropBtnClicked}>Finish</button>
                         </div>
                     </div>
                 </div>
