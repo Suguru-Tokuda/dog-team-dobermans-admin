@@ -28,6 +28,9 @@ class ParentInitialForm extends Component {
 
     constructor(props) {
         super(props);
+        if (Object.keys(props.initialParams).length > 0) {
+            this.state.selections = props.initialParams;
+        }
         if (typeof props.parentId !== 'undefined')
             this.state.parentId = props.parentId;
         this.state.selections.sex = 'male';
@@ -125,11 +128,55 @@ class ParentInitialForm extends Component {
     }
 
     handleSetWeight = (event) => {
-
+        let input = event.target.value;
+        const { selections, validations } = this.state;
+        if (input.length > 0) {
+            input = input.replace(/\D/g, '');
+            if (input !== '') {
+                validations.weight = '';
+                selections.weight = parseFloat(input);
+            } else {
+                validations.weight = 'Enter weight';
+            }
+        } else {
+            selections.weight = '';
+            validations.weight = 'Enter weight';
+        }
+        this.setState({ selections, validations });
     }
 
     handleSetDescription = (event) => {
-        
+        const description = event.target.value;
+        const { selections, validations } = this.state;
+        if (description !== '') {
+            validations.description = '';
+        } else {
+            validations.description = 'Enter description';
+        }
+        selections.description = description;
+        this.setState({ selections, validations });
+    }
+
+    handleCreateBtnClicked = (event) => {
+        event.preventDefault();
+        this.setState({ formSubmitted: true });
+        let invalidCount = 0;
+        const { selections, validations } = this.state;
+        for (const key in selections) {
+            const selection = selections[key];
+            if (selection === '' || selection === 0 || selection === null) {
+                invalidCount++;
+                validations[key] = `Enter ${key}`;
+            } else {
+                validations[key] = '';
+            }
+        }
+        this.setState({ validations });
+        if (invalidCount === 0) {
+            const newParent = selections;
+            this.props.onToPictureBtnClicked(newParent);
+            this.props.history.push('/parent/create/pictures');
+        }
     }
 
     handleUpdateBtnClicked = () => {
