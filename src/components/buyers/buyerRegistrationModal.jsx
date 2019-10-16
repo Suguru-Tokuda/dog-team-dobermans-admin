@@ -147,7 +147,9 @@ class BuyerRegistrationModal extends Component {
         }
         if (isValid === true) {
             this.props.onShowLoading(true, 1);
-            BuyersService.createBuyer(selections)
+            const newBuyer = selections;
+            newBuyer.puppyIds = [];
+            BuyersService.createBuyer(newBuyer)
                 .then(res => {
                     this.props.onBuyerSelected(res.data.buyerId);
                 })
