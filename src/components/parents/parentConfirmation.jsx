@@ -40,7 +40,11 @@ class ParentConfirmation extends Component {
                             <h4>Pictures</h4>
                         </div>
                         <div className="row">
-                            {pictureCards}
+                            <div className="col-12">
+                                <div className="row">
+                                    {pictureCards}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </React.Fragment>
