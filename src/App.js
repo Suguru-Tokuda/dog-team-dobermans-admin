@@ -23,7 +23,7 @@ class App extends Component {
     super(props);
     this.state.alertsService = new AlertsService();
   }
-
+  
   showLoading(resetCount, count) {
     const isLoading = this.state.alertsService.showLoading(resetCount, count) !== 0;
     this.setState({ isLoading });
