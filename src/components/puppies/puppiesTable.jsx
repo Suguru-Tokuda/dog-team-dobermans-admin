@@ -21,7 +21,6 @@ class PuppiesTable extends Component {
             orderAsc: false
         },
         gridSearch: '',
-        updateDataFromGridSearch: false,
         pageSizes: [10, 25, 50]
     };
 
@@ -32,24 +31,53 @@ class PuppiesTable extends Component {
         this.state.paginationInfo.totalItems = props.totalItems;
     }
 
-    static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.puppies !== prevState.tableData || nextProps.totalItems !== prevState.paginationInfo.totalItems) {
-            const state = prevState;
+    componentDidUpdate(props) {
+        const { tableData, paginationInfo, gridSearch, updateDisplayData } = this.state;
+        if (PuppiesTable.comparePuppyData(props.puppies, tableData) === true || props.totalItems !== paginationInfo.totalItems) {
             let filteredData;
-            if (prevState.gridSearch !== '') {
-                state.updateDataFromGridSearch = true;
-                const searchKeywords = prevState.gridSearch.toLowerCase().trim().split(' ');
-                filteredData = PuppiesTable.filterForKeywords(nextProps.puppies, searchKeywords);
+            if (gridSearch !== '') {
+                const searchKeywords = gridSearch.toLowerCase().trim().split(' ');
+                filteredData = this.filterForKeywords(props.puppies, searchKeywords);
             } else {
-                filteredData = JSON.parse(JSON.stringify(nextProps.puppies));
+                filteredData = JSON.parse(JSON.stringify(props.puppies));
             }
-            state.tableData = nextProps.puppies;
-            state.filteredData = filteredData;
-            if (nextProps.totalItems !== prevState.paginationInfo.totalItems)
-                state.paginationInfo.totalItems = nextProps.totalItems;
-            return state;
+            const newFilteredData = filteredData;
+            if (props.totalItems !== paginationInfo.totalItems)
+                paginationInfo.totalItems = props.totalItems;
+            this.setState({ 
+                tableData: props.puppies,
+                filteredData: newFilteredData,
+                paginationInfo: paginationInfo,
+                updateDisplayData: true
+            });
         }
-        return null;
+        if (updateDisplayData === true) {
+            this.setState({ updateDisplayData: false });
+            this.updateDisplayedData(paginationInfo.currentPage, paginationInfo.startIndex, paginationInfo.endIndex);
+        }
+    }
+
+    static comparePuppyData(newData, oldData) {
+        if (newData.length !== oldData.length) {
+            return false;
+        } else {
+            const keys = Object.keys(newData[0]);
+            for (let i = 0, max = newData.length; i < max; i++) {
+                const puppy = newData[i];
+                const oldPuppy = oldData[i];
+                let hasChange = false;
+                keys.forEach(key => {
+                    if (key !== 'pictures') {
+                        if (puppy[key] !== oldPuppy[key]) {
+                            hasChange = true;
+                        }
+                    }
+                });
+                if (hasChange === true)
+                    return true;
+            }
+            return false;
+        }
     }
 
     updateDisplayedData = (currentPage, startIndex, endIndex) => {
@@ -89,9 +117,14 @@ class PuppiesTable extends Component {
             <option key={pageSize}>{pageSize}</option>
         );
         return (
-            <select value={this.state.paginationInfo.pageSize} className="form-control" onChange={this.handlePageSizeChanged}>
-                {pageSizeOptions}
-            </select>
+            <React.Fragment>
+                <div className="form-inline">
+                    Page size:
+                    <select value={this.state.paginationInfo.pageSize} className="form-control" onChange={this.handlePageSizeChanged}>
+                        {pageSizeOptions}
+                    </select>
+                </div>
+            </React.Fragment>
         )
     }
 
@@ -125,6 +158,8 @@ class PuppiesTable extends Component {
                     <th className="pointer" onClick={() => this.sortTable('data.weight')}>Weight {this.getSortIcon('data.weight')}</th>
                     <th className="pointer" onClick={() => this.sortTable('data.price')}>Price {this.getSortIcon('data.price')}</th>
                     <th>Picture</th>
+                    <th className="pointer" onClick={() => this.sortTable('data.sold')}>Sold {this.getSortIcon('data.sold')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('data.live')}>Live {this.getSortIcon('data.live')}</th>
                     <th>Action</th>
                 </tr>
                 <tr>
@@ -152,10 +187,13 @@ class PuppiesTable extends Component {
                         <td>{puppy.weight}</td>
                         <td>{`$${puppy.price}`}</td>
                         <td>{picture}</td>
+                        <td>{puppy.sold === true ? 'Sold' : 'Unsold'}</td>
+                        <td>{puppy.live === true ? 'Live' : 'No'}</td>
                         <td>
                             <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(puppy.puppyId)}><i className="fa fa-search"></i> View</button>
                             <button type="button" className="btn btn-sm btn-success ml-1" onClick={() => this.props.onUpdateBtnClicked(puppy.puppyId)}><i className="fa fa-edit"></i> Update</button>
                             <button type="button" className="btn btn-sm btn-info ml-1" onClick={() => this.props.onRecordSalesBtnClicked(puppy.puppyId)}><i className="fa fa-dollar"></i> Sell</button>
+                            <button type="button" className="btn btn-sm btn-info ml-1" onClick={() => this.props.onLiveBtnClicked(puppy.puppyId)}><i className={`${puppy.live === true ? 'fa fa-eye-slash' : 'fa fa-eye'}`}></i> {`${puppy.live === true ? 'Hide' : 'Go Live'}`}</button>
                             <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(puppy.puppyId)}><i className="fa fa-close"></i> Delete</button>
                         </td>
                     </tr>
@@ -205,7 +243,7 @@ class PuppiesTable extends Component {
                 if (uniqueKeywords.indexOf(keyword) === -1)
                     uniqueKeywords.push(keyword);
             });
-            tempTableData = PuppiesTable.filterForKeywords(this.state.tableData, searchKeywords)
+            tempTableData = this.filterForKeywords(this.state.tableData, searchKeywords)
         } else {
             tempTableData = this.state.tableData;
         }
@@ -217,7 +255,7 @@ class PuppiesTable extends Component {
         });
     }
 
-    static filterForKeywords(tableData, searchKeywords) {
+    filterForKeywords(tableData, searchKeywords) {
         let retVal;
         if (searchKeywords.length > 0) {
             retVal = tableData.filter(puppy => {
