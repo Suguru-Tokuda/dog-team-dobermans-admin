@@ -2,6 +2,7 @@ import SessionInfoService from './sessionInfoService';
 import axios from 'axios';
 import * as api from '../api.json';
 import { storage } from './firebaseService';
+import UtilService from './utilService';
 
 export default class ParentsService {
     static getServiceBase() {
@@ -30,18 +31,19 @@ export default class ParentsService {
 
     static uploadPicture(imageFile) {
         return new Promise(function (resolve) {
-            const reference = `/parents/${imageFile.name}`;
+            const pictureID = UtilService.generateID(10);
+            const reference = `/parents/${pictureID}`;
             const task = storage.ref(reference).put(imageFile);
             task.on('state_changed',
                 function (snapshot) {
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log(`Upload is ${progress}% done`);
+                    // console.log(`Upload is ${progress}% done`);
                     switch (snapshot.state) {
                         case 'paused':
-                            console.log('Upload is paused');
+                            // console.log('Upload is paused');
                             break;
                         case 'running':
-                            console.log('Upload is running');
+                            // console.log('Upload is running');
                             break;
                         default:
                             break;
@@ -50,13 +52,13 @@ export default class ParentsService {
                 function (err) {
                     switch (err.code) {
                         case 'storage/unauthorized':
-                            console.log('unauthorized');
+                            // console.log('unauthorized');
                             break;
                         case 'storage/canceled':
-                            console.log('canceled');
+                            // console.log('canceled');
                             break;
                         case 'storage/unknown':
-                            console.log('unknown error');
+                            // console.log('unknown error');
                             break;
                         default:
                             break;
