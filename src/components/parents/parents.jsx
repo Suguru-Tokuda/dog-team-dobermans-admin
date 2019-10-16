@@ -51,14 +51,6 @@ class Parents extends Component {
                         onUpdateBtnClicked={this.handleUpdateParentBtnClicked.bind(this)}
                         onDeleteBtnClicked={this.handleDeleteBtnClicked.bind(this)}
                     />;
-        } else {
-            retVal = (
-                <div className="row">
-                    <div className="text-center">
-                        <h4>No Records Available</h4>
-                    </div>
-                </div>
-            );
         }
         return retVal;
     }
