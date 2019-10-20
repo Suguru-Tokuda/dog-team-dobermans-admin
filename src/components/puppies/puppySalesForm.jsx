@@ -111,7 +111,7 @@ class PuppySalesForm extends Component {
                     </div>
                     {buyerId !== '' && (
                         <div className="col-6">
-                            <BuyerDetail buyerId={buyerId} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                            <BuyerDetail buyerId={buyerId} showBackBtn={false} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
                             <div className="card">
                                 <div className="card-body">
                                     <div className="row form-group">

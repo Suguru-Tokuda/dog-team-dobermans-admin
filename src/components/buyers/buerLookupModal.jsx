@@ -59,7 +59,7 @@ class BuyerLookupModal extends Component {
 
     handleSearchBtnClicked = () => {
         const { searchKeyword } = this.state;
-        const keywordToSend = searchKeyword.trim();
+        let keywordToSend = searchKeyword.trim();
         if (keywordToSend.length > 0) {
             this.props.onShowLoading(true, 1);
             BuyersService.searchForBuyers(keywordToSend)
@@ -67,6 +67,7 @@ class BuyerLookupModal extends Component {
                     this.setState({ buyers: res.data });
                 })
                 .catch(err => {
+                    console.log(err);
                     toastr.error('There was an error in searching for buyers');
                 })
                 .finally(() => {
