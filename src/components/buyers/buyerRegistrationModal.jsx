@@ -35,7 +35,10 @@ class BuyerRegistrationModal extends Component {
 
     componentDidUpdate() {
         if (this.state.showModal === true) {
-            $('#buyerRegistrationModal').modal('show');
+            if ($('#buyerRegistrationModal').is(':visible') === false)
+                $('#buyerRegistrationModal').modal('show');
+        } else {
+            $('#buyerRegistrationModal').modal('hide');
         }
     }
 
@@ -147,14 +150,11 @@ class BuyerRegistrationModal extends Component {
         }
         if (isValid === true) {
             this.props.onShowLoading(true, 1);
-            const newBuyer = selections;
-            newBuyer.puppyIds = [];
-            BuyersService.createBuyer(newBuyer)
+            BuyersService.createBuyer(selections.firstName, selections.lastName, selections.email, selections.phone, selections.state, selections.city)
                 .then(res => {
                     this.props.onBuyerSelected(res.data.buyerId);
                 })
                 .catch(err => {
-                    console.log(err);
                     toastr.error('There was an error in creating a buyer');
                 })
                 .finally(() => {

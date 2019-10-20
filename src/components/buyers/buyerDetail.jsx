@@ -13,7 +13,8 @@ class BuyerDetail extends Component {
     constructor(props) {
         super(props);
         this.state.buyerId = props.buyerId;
-        this.state.showBackBtn = props.showBackBtn;
+        if (props.showBackBtn !== undefined)
+            this.state.showBackBtn = props.showBackBtn;
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
