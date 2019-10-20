@@ -36,7 +36,7 @@ export default class ParentsService {
             const task = storage.ref(reference).put(imageFile);
             task.on('state_changed',
                 function (snapshot) {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    // const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                     // console.log(`Upload is ${progress}% done`);
                     switch (snapshot.state) {
                         case 'paused':
@@ -74,6 +74,11 @@ export default class ParentsService {
                         });
                 });
         });
+    }
+    
+    static deletePicture(imageRef) {
+        const desertRef = storage.ref(imageRef);
+        return desertRef.delete();
     }
     
 }

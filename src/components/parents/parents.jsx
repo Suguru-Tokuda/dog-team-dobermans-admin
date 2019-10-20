@@ -3,11 +3,15 @@ import { Link } from 'react-router-dom';
 import ParentsTable from './parentsTable';
 import ParentsService from '../../services/parentsService';
 import toastr from 'toastr';
+import ParentDeleteConfModal from './parentDeleteConfModal';
 
 class Parents extends Component {
     state = {
         parents: [],
-        selectedParentId: ''
+        selectedParentId: '',
+        showDeleteModal: false,
+        parentIdToDelete: '',
+        parentToDelete: {}
     }
 
     componentDidMount() {
@@ -64,10 +68,80 @@ class Parents extends Component {
     }
 
     handleDeleteBtnClicked = (parentId) => {
-        // TODO
+        const { parents } = this.state;
+        let parentToDelete;
+        parents.forEach(parent => {
+            if (parent.parentId === parentId)
+                parentToDelete = parent;
+        });
+        this.setState({
+            parentIdToDelete: parentId,
+            parentToDelete: parentToDelete,
+            showDeleteModal: true
+        });
+    }
+
+    handleDeleteCancelBtnClicked = () => {
+        this.setState({
+            parentIdToDelete: '',
+            parentToDelete: {},
+            showDeleteModal: false
+        });
+    }
+
+    handleDoDeleteBtnClicked = async () => {
+        const { parentToDelete } = this.state;
+        const pictures = parentToDelete.pictures;
+        this.props.onShowLoading(true, 1);
+        if (pictures.length > 0) {
+            pictures.forEach(async picture => {
+                await ParentsService.deletePicture(picture.refeence);
+            });
+        }
+        ParentsService.deleteParent(parentToDelete.parentId)
+            .then(res => {
+                toastr.success('Successfully deleted a parent');
+                this.setState({
+                    puppyIdToDelete: '',
+                    puppyToDelete: {},
+                    showDeleteModal: false
+                });
+                this.getParents();
+            })
+            .catch(err => {
+                toastr.error('There was an error in deleting a parent');
+            })
+            .finally(() => {
+                this.props.onDoneLoading();
+            });
+    }   
+
+    handleLiveBtnClicked = (parentId) => {
+        const parents = JSON.parse(JSON.stringify(this.state.parents));
+        let parentToUpdate, index;
+        parents.forEach((puppy, i) => {
+            if (puppy.parentId === parentId) {
+                parentToUpdate = puppy;
+                index = i;
+            }
+        });
+        parentToUpdate.live = !parentToUpdate.live;
+        this.props.onShowLoading(true, 1);
+        ParentsService.updateParent(parentId, parentToUpdate)
+            .then(() => {
+                parents[index] = parentToUpdate;
+                this.setState({ parents });
+            })
+            .catch(() => {
+                toastr.error('There was an error in');
+            })
+            .finally(() => {
+                this.props.onDoneLoading();
+            });
     }
 
     render() {
+        const { parentIdToDelete, parentToDelete, showDeleteModal } = this.state;
         return (
             <React.Fragment>
                 <div className="row">
@@ -80,6 +154,13 @@ class Parents extends Component {
                         </div>
                     </div>
                 </div>
+                <ParentDeleteConfModal
+                    parentId={parentIdToDelete}
+                    parentDetail={parentToDelete}
+                    showModal={showDeleteModal}
+                    onCancelBtnClicked={this.handleDeleteCancelBtnClicked}
+                    onDoDeleteBtnClicked={this.handleDoDeleteBtnClicked}
+                />
             </React.Fragment>
         )
     }

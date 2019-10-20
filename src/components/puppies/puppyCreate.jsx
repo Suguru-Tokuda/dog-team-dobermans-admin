@@ -60,7 +60,7 @@ class PuppyCreate extends Component {
                 <Route 
                     path={`${url}/initial-params`} 
                     render={(props) => <PuppyInitialForm {...props} 
-                                        initlaParams={this.state.initialParams}
+                                        initialParams={this.state.initialParams}
                                         dads={dads}
                                         moms={moms}
                                         onToPictureBtnClicked={this.handleNextBtnClicked.bind(this)} 
@@ -73,6 +73,7 @@ class PuppyCreate extends Component {
                     render={(props) => <PuppyPictureForm {...props} 
                                         onToConfirmBtnClicked={this.handleConfBtnClicked.bind(this)} 
                                         initialParams={this.state.initialParams} 
+                                        pictures={this.state.pictures}
                                         onShowLoading={this.props.onShowLoading.bind(this)} 
                                         onDoneLoading={this.props.onDoneLoading.bind(this)} />} 
                 />

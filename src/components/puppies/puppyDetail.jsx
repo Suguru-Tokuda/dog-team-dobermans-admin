@@ -10,6 +10,7 @@ class PuppyDetail extends Component {
         puppyData: {},
         dads: [],
         moms: [],
+        loadDetail: true
     };
 
     constructor(props) {
@@ -18,34 +19,43 @@ class PuppyDetail extends Component {
             this.state.puppyId = props.match.params.puppyId;
         else
             this.state.puppyId = props.puppyId;
+        if (typeof props.loadDetail !== 'undefined') {
+            this.state.loadDetail = props.loadDetail;
+        }
+        if (typeof props.puppyDetail !== 'undefined') {
+            this.state.puppyData = props.puppyDetail;
+        }
     }
 
     async componentDidMount() {
         // API call to load puppy data
-        this.props.onShowLoading(true, 1);
-        try {
-            const [puppyData, parents] = await Promise.all([
-                PuppiesService.getPuppy(this.state.puppyId),
-                ParentsService.getAllParents()
-            ]);
-            const dads = [];
-            const moms = [];
-            parents.data.forEach(parent => {
-                if (parent.sex === 'male') {
-                    dads.push(parent);
-                } else if (parent.sex === 'female') {
-                    moms.push(parent);
-                }
-            });
-            this.setState({
-                puppyData: puppyData.data,
-                dads: dads,
-                moms: moms
-            });
-        } catch {
-            toastr.error('There was an error in loading data');
-        } finally {
-            this.props.onDoneLoading();
+        const { loadDetail } = this.state;
+        if (loadDetail === true) {
+            this.props.onShowLoading(true, 1);
+            try {
+                const [puppyData, parents] = await Promise.all([
+                    PuppiesService.getPuppy(this.state.puppyId),
+                    ParentsService.getAllParents()
+                ]);
+                const dads = [];
+                const moms = [];
+                parents.data.forEach(parent => {
+                    if (parent.sex === 'male') {
+                        dads.push(parent);
+                    } else if (parent.sex === 'female') {
+                        moms.push(parent);
+                    }
+                });
+                this.setState({
+                    puppyData: puppyData.data,
+                    dads: dads,
+                    moms: moms
+                });
+            } catch {
+                toastr.error('There was an error in loading data');
+            } finally {
+                this.props.onDoneLoading();
+            }
         }
     }
 

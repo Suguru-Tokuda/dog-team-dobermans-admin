@@ -36,7 +36,7 @@ export default class PuppiesService {
             const task = storage.ref(reference).put(imageFile);
             task.on('state_changed',
                 function (snapshot) {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    // const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                     // console.log(`Upload is ${progress}% done`);
                     switch (snapshot.state) {
                         case 'paused':
@@ -77,7 +77,7 @@ export default class PuppiesService {
     }
 
     static deletePicture(imageRef) {
-        const desertRef = storage.ref(imageRef)
+        const desertRef = storage.ref(imageRef);
         return desertRef.delete();
     }
     

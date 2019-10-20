@@ -82,7 +82,11 @@ class PuppyConfirmation extends Component {
                         </div>
                     </div>
                     <div className="row">
-                        {pictureCards}
+                        <div className="col-12">
+                            <div className="row">
+                                {pictureCards}
+                            </div>
+                        </div>
                     </div>
                 </React.Fragment>
             );
@@ -150,16 +154,20 @@ class PuppyConfirmation extends Component {
         }
         data.pictures = pictureLinks;
         PuppiesService.createPuppy(data)
-            .then(res => {
+            .then(() => {
                 toastr.success('New puppy created');
             })
-            .catch(err => {
-                console.log(err);
+            .catch(() => {
+                toastr.error('There was an error in creating a puppy');
             })
             .finally(() => {
                 this.props.onDoneLoading();
                 this.props.history.push('/puppies');
             });
+    }
+
+    handleModifyBtnClicked = () => {
+        this.props.history.push('/puppy/create/initial-params')
     }
 
     cancelBtnClicked = () => {
@@ -177,6 +185,7 @@ class PuppyConfirmation extends Component {
                 </div>
                 <div className="card-footer">
                     <button className="btn btn-sm btn-primary" onClick={this.handleFinishBtnClicked} type="button">Finish</button>
+                    <button className="btn btn-sm btn-info ml-1" onClick={this.handleModifyBtnClicked} type="button">Modify</button>
                     <button className="btn btn-sm btn-secondary ml-1" onClick={this.cancelBtnClicked} type="button">Cancel</button>
                 </div>
             </div>

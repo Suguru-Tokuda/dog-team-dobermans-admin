@@ -23,20 +23,26 @@ class PuppySalesForm extends Component {
         this.state.puppyId = props.match.params.puppyId;
     }
 
-    handleBuerSelected = (buyerId) => {
+    componentDidMount() {
         const { puppyId } = this.state;
-        this.setState({ buyerId: buyerId, showLookupModal: false, showRegisterBuyerModal: false });
         this.props.onShowLoading(true, 1);
         PuppiesService.getPuppy(puppyId)
             .then(res => {
                 this.setState({ puppyDetail: res.data });
+                if (res.data.buyerId !== null || res.data.buyerId !== '') {
+                    this.setState({ buyerId: res.data.buyerId });
+                }
             })
-            .catch(err => {
+            .catch(() => {
                 toastr.error('There was an error in loading puppy data');
             })
             .finally(() => {
                 this.props.onDoneLoading();
-            });
+            })
+    }
+
+    handleBuerSelected = (buyerId) => {
+        this.setState({ buyerId: buyerId, showLookupModal: false, showRegisterBuyerModal: false });
     }
 
     handleLookupBuyerBtnClicked = () => {
@@ -56,7 +62,9 @@ class PuppySalesForm extends Component {
                 paymentAmount = parseInt(paymentAmount);
             }
         }
-        if (puppyDetail.price >= paymentAmount) {
+        if (puppyDetail.paidAmount === 0 && puppyDetail.price >= paymentAmount) {
+            this.setState({ paymentAmount });
+        } else if (puppyDetail.paidAmount > 0 && puppyDetail.price - puppyDetail.paidAmount >= paymentAmount) {
             this.setState({ paymentAmount });
         }
     }
@@ -92,26 +100,48 @@ class PuppySalesForm extends Component {
                         <div className="card">
                             <div className="card-body">
                                 <h3>Puppy Sales Form</h3>
-                                <p>Please select the buyer for the puppy</p>
-                                <div className="row">
-                                    <div className="col-12">
-                                        <div className="form-inline">
-                                            <button className="btn btn-success" onClick={this.handleLookupBuyerBtnClicked}>Lookup Buyer</button>
-                                            <Link className="btn btn-secondary ml-2" to="/puppies">Back</Link>
+                                {(puppyDetail.buyerId === null || puppyDetail.buyerId === '') && (
+                                    <React.Fragment>
+                                        <p>Please select the buyer for the puppy</p>
+                                        <div className="row">
+                                            <div className="col-12">
+                                                <div className="form-inline">
+                                                    <button className="btn btn-success" onClick={this.handleLookupBuyerBtnClicked}>Lookup Buyer</button>
+                                                    <Link className="btn btn-secondary ml-2" to="/puppies">Back</Link>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
+                                    </React.Fragment>                                    
+                                )}
+                                {(puppyDetail.buyerId !== null && puppyDetail.buyerId !== '') && (
+                                    <React.Fragment>
+                                        <p>Update the sales information.</p>
+                                        <div className="row">
+                                            <div className="col-12">
+                                                <div className="form-inline">
+                                                    <Link className="btn btn-secondary" to="/puppies">Back</Link>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </React.Fragment>
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-6">
-                        <PuppyDetail puppyId={puppyId} hideButtons={true} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                        {Object.keys(puppyDetail).length > 0 &&(
+                            <PuppyDetail puppyId={puppyId} hideButtons={true} puppyDetail={puppyDetail} loadDetail={false} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                        )}
                     </div>
-                    {buyerId !== '' && (
+                    {(buyerId !== '' && buyerId !== null) && (
                         <div className="col-6">
-                            <BuyerDetail buyerId={buyerId} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                            <BuyerDetail 
+                                buyerId={buyerId} 
+                                showBackBtn={false}
+                                onShowLoading={this.props.onShowLoading.bind(this)} 
+                                onDoneLoading={this.props.onDoneLoading.bind(this)} />
                             <div className="card">
                                 <div className="card-body">
                                     <div className="row form-group">
@@ -120,17 +150,33 @@ class PuppySalesForm extends Component {
                                             <div className="col-6">{`$${puppyDetail.price}`}</div>
                                         )}
                                     </div>
-                                    <div className="row form-group">
-                                        <label className="col-2"><strong>Payment Amount</strong></label>
-                                        <div className="col-6">
-                                            <input className="form-control" type="text" value={paymentAmount} onChange={this.handlePaymentAmount} />
-                                        </div>
-                                    </div>
-                                    <div className="row form-group">
-                                        <div className="col-2">
-                                            <button className="btn btn-primary" onClick={this.handlePaymentSubmision}>Submit Payment</button>
-                                        </div>
-                                    </div>
+                                    {puppyDetail.paidAmount > 0 && (
+                                        <React.Fragment>
+                                            <div className="row form-group">
+                                                <label className="col-2"><strong>Paid Amount</strong></label>
+                                                <div className="col-6">{`$${puppyDetail.paidAmount}`}</div>
+                                            </div>
+                                            <div className="row form-group">
+                                                <label className="col-2"><strong>Amount to pay</strong></label>
+                                                <div className="col-6">{`$${puppyDetail.price - puppyDetail.paidAmount}`}</div>
+                                            </div>
+                                        </React.Fragment>
+                                    )}
+                                    {puppyDetail.price > puppyDetail.paidAmount && ( 
+                                        <React.Fragment>
+                                            <div className="row form-group">
+                                                <label className="col-2"><strong>Payment Amount</strong></label>
+                                                <div className="col-6">
+                                                    <input className="form-control" type="text" value={paymentAmount} onChange={this.handlePaymentAmount} />
+                                                </div>
+                                            </div>
+                                            <div className="row form-group">
+                                                <div className="col-2">
+                                                    <button className="btn btn-primary" onClick={this.handlePaymentSubmision}>Submit Payment</button>
+                                                </div>
+                                            </div>
+                                        </React.Fragment>                                        
+                                    )}
                                 </div>
                             </div>
                         </div>

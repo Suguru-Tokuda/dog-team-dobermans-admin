@@ -21,7 +21,8 @@ class PuppiesTable extends Component {
             orderAsc: false
         },
         gridSearch: '',
-        pageSizes: [10, 25, 50]
+        pageSizes: [10, 25, 50],
+        updateDisplayedData: false
     };
 
     constructor(props) {
@@ -32,8 +33,8 @@ class PuppiesTable extends Component {
     }
 
     componentDidUpdate(props) {
-        const { tableData, paginationInfo, gridSearch, updateDisplayData } = this.state;
-        if (PuppiesTable.comparePuppyData(props.puppies, tableData) === true || props.totalItems !== paginationInfo.totalItems) {
+        const { tableData, paginationInfo, gridSearch, updateDisplayedData } = this.state;
+        if (this.comparePuppyData(props.puppies, tableData) === true || props.totalItems !== paginationInfo.totalItems) {
             let filteredData;
             if (gridSearch !== '') {
                 const searchKeywords = gridSearch.toLowerCase().trim().split(' ');
@@ -48,16 +49,16 @@ class PuppiesTable extends Component {
                 tableData: props.puppies,
                 filteredData: newFilteredData,
                 paginationInfo: paginationInfo,
-                updateDisplayData: true
+                updateDisplayedData: true
             });
         }
-        if (updateDisplayData === true) {
-            this.setState({ updateDisplayData: false });
+        if (updateDisplayedData === true) {
+            this.setState({ updateDisplayedData: false });
             this.updateDisplayedData(paginationInfo.currentPage, paginationInfo.startIndex, paginationInfo.endIndex);
         }
     }
 
-    static comparePuppyData(newData, oldData) {
+    comparePuppyData(newData, oldData) {
         if (newData.length !== oldData.length) {
             return false;
         } else {

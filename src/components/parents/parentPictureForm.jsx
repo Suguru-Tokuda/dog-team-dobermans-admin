@@ -14,6 +14,9 @@ class ParentPictureForm extends Component {
     constructor(props) {
         super(props);
         this.state.initialParams = props.initialParams;
+        if (props.pictures.length > 0) {
+            this.state.pictures = props.pictures;
+        }
         if (Object.keys(this.state.initialParams).length === 0) {
             props.history.push('/parents');
         }

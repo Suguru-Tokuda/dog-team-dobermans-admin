@@ -1,34 +1,34 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
 
-class PuppyDeleteConfModal extends Component {
+class ParentDeleteConfModal extends Component {
     state = {
-        puppyId: '',
-        puppyDetail: {},
+        parentId: '',
+        parentDetail: {},
         showModal: false
     };
 
     constructor(props) {
         super(props);
-        this.state.puppyId = props.puppyId;
-        this.state.puppyDetail = props.puppyDetail;
+        this.state.parentId = props.parentId;
+        this.state.parentDetail = props.parentDetail;
     }
 
     componentDidUpdate() {
         if (this.state.showModal === true) {
-            if ($('#puppyDeleteConfModal').is(':visible') === false) {
-                $('#puppyDeleteConfModal').modal('show');
+            if ($('#parentDeleteConfModal').is(':visible') === false) {
+                $('#parentDeleteConfModal').modal('show');
             }
         } else {
-            $('#puppyDeleteConfModal').modal('hide');
+            $('#parentDeleteConfModal').modal('hide');
         }
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.puppyId !== prevState.puppyId || nextProps.showModal !== prevState.showModal) {
+        if (nextProps.parentId !== prevState.parentId || nextProps.showModal !== prevState.showModal) {
             return {
-                puppyId: nextProps.puppyId,
-                puppyDetail: nextProps.puppyDetail,
+                parentId: nextProps.parentId,
+                parentDetail: nextProps.parentDetail,
                 showModal: nextProps.showModal
             };
         }
@@ -36,9 +36,9 @@ class PuppyDeleteConfModal extends Component {
     }
 
     render() {
-        const { puppyDetail } = this.state;
+        const { parentDetail } = this.state;
         return (
-            <div className="modal fade" id="puppyDeleteConfModal" role="dialog" aria-hidden="true">
+            <div className="modal fade" id="parentDeleteConfModal" role="dialog" aria-hidden="true">
                 <div className="modal-dialog modal-lg" role="document">
                     <div className="modal-content">
                         <div className="modal-header">
@@ -48,38 +48,32 @@ class PuppyDeleteConfModal extends Component {
                         <div className="modal-body">
                             <div className="row form-group">
                                 <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Name</strong></label>
-                                {puppyDetail.name && (
-                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyDetail.name}</div>
+                                {parentDetail.name && (
+                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{parentDetail.name}</div>
                                 )}
                             </div>
                             <div className="row form-group">
                                 <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Sex</strong></label>
-                                {puppyDetail.sex && (
-                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyDetail.sex}</div>
+                                {parentDetail.sex && (
+                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{parentDetail.sex}</div>
                                 )}
                             </div>
                             <div className="row form-group">
                                 <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Type</strong></label>
-                                {puppyDetail.type && (
-                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyDetail.type}</div>
+                                {parentDetail.type && (
+                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{parentDetail.type}</div>
                                 )}
                             </div>
                             <div className="row form-group">
                                 <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Color</strong></label>
-                                {puppyDetail.color && (
-                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyDetail.color}</div>
+                                {parentDetail.color && (
+                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{parentDetail.color}</div>
                                 )}
                             </div>
                             <div className="row form-group">
                                 <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Weight</strong></label>
-                                {puppyDetail.weight && (
-                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{`${puppyDetail.weight} lbs`}</div>
-                                )}
-                            </div>
-                            <div className="row form-group">
-                                <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Price</strong></label>
-                                {puppyDetail.price && (
-                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{`$${puppyDetail.price}`}</div>
+                                {parentDetail.weight && (
+                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{parentDetail.weight}</div>
                                 )}
                             </div>
                         </div>
@@ -94,4 +88,4 @@ class PuppyDeleteConfModal extends Component {
     }
 }
 
-export default PuppyDeleteConfModal;
+export default ParentDeleteConfModal;

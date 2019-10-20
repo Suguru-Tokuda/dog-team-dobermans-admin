@@ -21,8 +21,8 @@ class ParentsTable extends Component {
             orderAsc: false
         },
         gridSearch: '',
-        updateDataFromGridSearch: false,
-        pageSizes: [10, 25, 50]
+        pageSizes: [10, 25, 50],
+        updateDisplayedData: false
     };
 
     constructor(props) {
@@ -30,6 +30,55 @@ class ParentsTable extends Component {
         this.state.tableData = props.parents;
         this.state.filteredData = JSON.parse(JSON.stringify(props.parents));
         this.state.paginationInfo.totalItems = props.totalItems;
+    }
+
+    componentDidUpdate(props) {
+        const { tableData, paginationInfo, gridSearch, updateDisplayedData } = this.state;
+        if (this.compareParentData(props.parents, tableData) === true || props.totalItems !== paginationInfo.totalItems) {
+            let filteredData;
+            if (gridSearch !== '') {
+                const searchKeywords = gridSearch.toLowerCase().trim().split(' ');
+                filteredData = this.filterForKeywords(props.parents, searchKeywords);
+            } else {
+                filteredData = JSON.parse(JSON.stringify(props.parents));
+            }
+            const newFilteredData = filteredData;
+            if (props.totalItems !== paginationInfo.totalItems)
+                paginationInfo.totalItems = props.totalItems;
+            this.setState({
+                tableData: props.parents,
+                filteredData: newFilteredData,
+                paginationInfo: paginationInfo,
+                updateDisplayedData: true
+            });
+        }
+        if (updateDisplayedData === true) {
+            this.setState({ updateDisplayedData: false });
+            this.updateDisplayedData(paginationInfo.currentPage, paginationInfo.startIndex, paginationInfo.endIndex);
+        }
+    }
+
+    compareParentData(newData, oldData) {
+        if (newData.length !== oldData.length) {
+            return false;
+        } else {
+            const keys = Object.keys(newData[0]);
+            for (let i = 0, max = newData.length; i < max; i++) {
+                const parent = newData[i];
+                const oldParent = oldData[i];
+                let hasChange = false;
+                keys.forEach(key => {
+                    if (key !== 'pictures') {
+                        if (parent[key] !== oldParent[key]) {
+                            hasChange = true;
+                        }
+                    }
+                });
+                if (hasChange === true)
+                    return true;
+            }
+            return false;
+        }
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -126,6 +175,7 @@ class ParentsTable extends Component {
                     <th className="pointer" onClick={() => this.sortTable('color')}>Color {this.getSortIcon('color')}</th>
                     <th className="pointer" onClick={() => this.sortTable('dateOfBirth')}>Date of Birth {this.getSortIcon('dateOfBirth')}</th>
                     <th>Picture</th>
+                    <th>Actions</th>
                 </tr>
                 <tr>
                     <th colSpan="100%">
@@ -151,6 +201,12 @@ class ParentsTable extends Component {
                       <td>{parent.color}</td>
                       <td>{moment(parent.dateOfBirth).format('MM/DD/YYYY')}</td>
                       <td>{picture}</td>
+                      <td>
+                        <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(parent.parentId)}><i className="fa fa-search"></i> View</button>
+                        <button type="button" className="btn btn-sm btn-success ml-1" onClick={() => this.props.onUpdateBtnClicked(parent.parentId)}><i className="fa fa-edit"></i> Update</button>
+                        <button type="button" className="btn btn-sm btn-info ml-1" onClick={() => this.props.onLiveBtnClicked(parent.parentId)}><i className={`${parent.live === true ? 'fa fa-eye-slash' : 'fa fa-eye'}`}></i> {`${parent.live === true ? 'Hide' : 'Go Live'}`}</button>
+                        <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(parent.parentId)}><i className="fa fa-close"></i> Delete</button>
+                      </td>
                   </tr>  
                 );
             });
