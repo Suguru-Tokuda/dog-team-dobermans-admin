@@ -13,16 +13,16 @@ export default class ParentsService {
         return axios.get(`${this.getServiceBase()}parents?key=${api.API_KEY}`);
     }
 
-    static get(parentId) {
+    static getParent(parentId) {
         return axios.get(`${this.getServiceBase()}parent?parentId=${parentId}&key=${api.API_KEY}`);
     }
 
-    static createParent(data) {
-        return axios.post(`${this.getServiceBase()}parent?key=${api.API_KEY}`, data);
+    static createParent(parentId, data) {
+        return axios.post(`${this.getServiceBase()}parent?parentId=${parentId}&key=${api.API_KEY}`, data);
     }
 
-    static updateParent(data) {
-        return axios.put(`${this.getServiceBase()}parent?parentId=${data.parentId}&key=${api.API_KEY}`, data);
+    static updateParent(parentId, data) {
+        return axios.put(`${this.getServiceBase()}parent?parentId=${parentId}&key=${api.API_KEY}`, data);
     }
 
     static deleteParent(parentId) {
