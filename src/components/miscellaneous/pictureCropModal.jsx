@@ -28,9 +28,13 @@ class PictureCropModal extends Component {
         if (nextProps.pictureFile !== prevState.pictureFile) {
             const state = prevState;
             if (nextProps.pictureFile !== null) {
+                if ($('#pictureCropModal').is(':visible') === false) {
+                    $('#pictureCropModal').modal('show');
+                }  
                 state.pictureFile = nextProps.pictureFile;
                 state.pictureFileName = nextProps.pictureFile[0].name;
             } else {
+                $('#pictureCropModal').modal('hide');
                 state.pictureFile = null;
                 state.pictureFileName = '';
             }
@@ -39,10 +43,18 @@ class PictureCropModal extends Component {
         return null;
     }
 
-    componentDidUpdate() {
-        if (this.state.pictureFile !== null) {
-            $('#pictureCropModal').modal('show');
-        }
+    componentDidMount() {
+        $('#pictureCropModal').on('hidden.bs.modal', () => {
+            this.setState({ 
+                crop: {
+                unit: "%",
+                width: 30,
+                aspect: 1 / 1
+                },
+                croppedImageUrl: ''
+            });
+            this.props.onResetTempPictureFile();
+        });
     }
 
     onImageLoaded = (image) => {
@@ -119,6 +131,14 @@ class PictureCropModal extends Component {
                                 };
                                 const compressedFile = await imageCompression(newFile, options);
                                 this.props.onFinishImageCropping(compressedFile);
+                                this.setState({ 
+                                    crop: {
+                                    unit: "%",
+                                    width: 30,
+                                    aspect: 1 / 1
+                                    },
+                                    croppedImageUrl: ''
+                                });
                                 $('#pictureCropModal').modal('hide');
                             } catch (err) {
                                 toastr.err(err);
