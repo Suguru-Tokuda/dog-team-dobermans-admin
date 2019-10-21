@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PuppiesService from '../../services/puppiesService';
-import SortablePictureLlist from './sortablePictureList';
+import SortablePictureLlist from '../miscellaneous/sortablePictureList';
 import toastr from 'toastr';
 import PictureCropModal from '../miscellaneous/pictureCropModal';
 
@@ -19,8 +19,9 @@ class PuppyPictureUpdateForm extends Component {
     }
 
     componentDidMount() {
+        const { puppyId } = this.state;
         this.props.onShowLoading(true, 1);
-        PuppiesService.getPuppy(this.state.puppyId)
+        PuppiesService.getPuppy(puppyId)
             .then(res => {
                 this.setState({
                     puppyData: res.data
@@ -55,13 +56,13 @@ class PuppyPictureUpdateForm extends Component {
                     </label>
                     <input id="picture-upload" type="file" accept="image/*" onChange={this.handleImageChange} />
                 </div>
-            )
+            );
         }
         return (
-            <div className="row">
+            <React.Fragment>
                 {pictureCards}
                 {pictureAddCard}
-            </div>
+            </React.Fragment>
         );
     }
 
@@ -94,9 +95,10 @@ class PuppyPictureUpdateForm extends Component {
         PuppiesService.updatePuppy(this.state.puppyId, puppyData)
             .then(res => {
                 toastr.success('Upload success');
+                this.setState({ tempPictureFile: null })
             })
             .catch(err => {
-                toastr.error('There was an error in uploading file');
+                toastr.error('There was an error in uploading a file');
             })
             .finally(() => {
                 this.props.onDoneLoading();
@@ -125,6 +127,10 @@ class PuppyPictureUpdateForm extends Component {
             });
     }
 
+    handleResetTempPictureFile = () => {
+        this.setState({ tempPictureFile: null });
+    }
+
     render() {
         const { tempPictureFile, puppyId } = this.state;
         return (
@@ -140,7 +146,10 @@ class PuppyPictureUpdateForm extends Component {
                         <Link className="btn btn-sm btn-secondary" to={`/puppy/update/${puppyId}`}>Back</Link>
                     </div>
                 </div>
-                <PictureCropModal pictureFile={tempPictureFile} onFinishImageCropping={this.handleFinishImageCropping.bind(this)} />
+                <PictureCropModal 
+                    pictureFile={tempPictureFile} 
+                    onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
+                    onResetTempPictureFile={this.handleResetTempPictureFile} />
             </React.Fragment>
         );
     }

@@ -94,7 +94,7 @@ class Puppies extends Component {
                 this.setState({ puppies });
             })
             .catch(() => {
-                toastr.error('There was an error in');
+                toastr.error('There was an error in updating a puppy');
             })
             .finally(() => {
                 this.props.onDoneLoading();

@@ -48,7 +48,7 @@ class PuppyInitialForm extends Component {
         this.state.selections.momId = 5;
         this.state.dads = props.dads;
         this.state.moms = props.moms;
-        if (Object.keys(props.initialParams).length > 0) {
+        if (props.initialParams && Object.keys(props.initialParams).length > 0) {
             this.state.selections.name = props.initialParams.name;
             this.state.selections.type = props.initialParams.type;
             this.state.selections.sex = props.initialParams.sex;
@@ -314,19 +314,19 @@ class PuppyInitialForm extends Component {
     handleUpdateBtnClicked = (event) => {
         event.preventDefault();
         this.setState({ formSubmitted: true });
-        let invalidCount = 0;
+        let valid = true;
         const { puppyId, puppyDetail, selections, validations } = this.state;
         for (const key in selections) {
             const selection = selections[key];
             if (selection === '' || selection === 0 || selection === null) {
-                invalidCount++;
+                valid = false;
                 validations[key] = `Enter ${key}`;
             } else {
                 validations[key] = '';
             }
         }
         this.setState({ validations });
-        if (invalidCount === 0) {
+        if (valid === true) {
               puppyDetail.name = selections.name;
               puppyDetail.type = selections.type;
               puppyDetail.sex = selections.sex;
@@ -337,6 +337,7 @@ class PuppyInitialForm extends Component {
               puppyDetail.momId = selections.momId;
               puppyDetail.description = selections.description;
               puppyDetail.dateOfBirth = selections.dateOfBirth;
+              this.props.onShowLoading(true, 1);
               PuppiesService.updatePuppy(puppyId, puppyDetail)
                 .then(() => {
                     toastr.success('Profile updated');
@@ -344,12 +345,15 @@ class PuppyInitialForm extends Component {
                 })
                 .catch(() => {
                     toastr.error('There was an error in updating puppy data');
+                })
+                .finally(() => {
+                    this.props.onDoneLoading();
                 });
         }
     }
 
     getNextBtn() {
-        return this.state.puppyId === '' ? <button className="btn btn-primary" type="button" onClick={this.handleCreateBtnClicked}>Next</button> : <button className="btn btn-primary" onClick={this.handleUpdateBtnClicked}>Update</button>;
+        return this.state.puppyId === '' ? <button className="btn btn-primary" type="button" onClick={this.handleCreateBtnClicked}>Next</button> : <button type="button" className="btn btn-primary" onClick={this.handleUpdateBtnClicked}>Update</button>;
     }
 
     render() {

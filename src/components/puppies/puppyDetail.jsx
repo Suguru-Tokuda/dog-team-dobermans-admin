@@ -28,7 +28,6 @@ class PuppyDetail extends Component {
     }
 
     async componentDidMount() {
-        // API call to load puppy data
         const { loadDetail } = this.state;
         if (loadDetail === true) {
             this.props.onShowLoading(true, 1);
@@ -101,7 +100,7 @@ class PuppyDetail extends Component {
                             {pictureCards}
                         </div>
                     </React.Fragment>
-                )
+                );
             } else {
                 return null;
             }
@@ -119,39 +118,57 @@ class PuppyDetail extends Component {
                         <h3 className="mb-3">Puppy Info</h3>
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Name</strong></label>
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyData.name}</div>
+                            {puppyData.name && (
+                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyData.name}</div>
+                            )}
                         </div>
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Sex</strong></label>
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyData.sex}</div>
+                            {puppyData.sex && (
+                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyData.sex}</div>
+                            )}
                         </div>
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Type</strong></label>
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyData.type}</div>
+                            {puppyData.type && (
+                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyData.type}</div>
+                            )}
                         </div>
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Color</strong></label>
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyData.color}</div>
+                            {puppyData.color && (
+                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyData.color}</div>
+                            )}
                         </div>
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Dad</strong></label>
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getDadName(puppyData.dadId)}</div>
+                            {puppyData.dadId && (
+                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getDadName(puppyData.dadId)}</div>
+                            )}
                         </div>
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Mom</strong></label>
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getMomName(puppyData.momId)}</div>
+                            {puppyData.momId && (
+                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getMomName(puppyData.momId)}</div>
+                            )}
                         </div>
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Weight</strong></label>
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{`${puppyData.weight} lbs`}</div>
+                            {puppyData.weight && (
+                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{`${puppyData.weight} lbs`}</div>
+                            )}
                         </div>
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Price</strong></label>
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{`$${puppyData.price}`}</div>
+                            {puppyData.price && (
+                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{`$${puppyData.price}`}</div>
+                            )}
                         </div>
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Description</strong></label>
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyData.description}</div>
+                            {puppyData.description && (
+                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyData.description}</div>
+                            )}
                         </div>
                         {this.getPictures()}
                     </div>
