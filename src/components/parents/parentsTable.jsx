@@ -174,6 +174,7 @@ class ParentsTable extends Component {
                     <th className="pointer" onClick={() => this.sortTable('weight')}>Weight {this.getSortIcon('weight')}</th>
                     <th className="pointer" onClick={() => this.sortTable('color')}>Color {this.getSortIcon('color')}</th>
                     <th className="pointer" onClick={() => this.sortTable('dateOfBirth')}>Date of Birth {this.getSortIcon('dateOfBirth')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('live')}>Live {this.getSortIcon('live')}</th>
                     <th>Picture</th>
                     <th>Actions</th>
                 </tr>
@@ -200,6 +201,7 @@ class ParentsTable extends Component {
                       <td>{parent.weight}</td>
                       <td>{parent.color}</td>
                       <td>{moment(parent.dateOfBirth).format('MM/DD/YYYY')}</td>
+                      <td>{parent.live === true ? 'Live' : 'No'}</td>
                       <td>{picture}</td>
                       <td>
                         <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(parent.parentId)}><i className="fa fa-search"></i> View</button>

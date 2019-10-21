@@ -19,7 +19,7 @@ class ParentConfirmation extends Component {
     }
 
     getPictures = () => {
-        const { pictures } = this.state;
+        const pictures = this.state.pictures;
         if (pictures.length > 0) {
             const pictureCards = pictures.map((picture, i) => {
                 const imageURL = URL.createObjectURL(picture);
@@ -39,16 +39,16 @@ class ParentConfirmation extends Component {
                         <div className="col-12">
                             <h4>Pictures</h4>
                         </div>
-                        <div className="row">
-                            <div className="col-12">
-                                <div className="row">
-                                    {pictureCards}
-                                </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-12">
+                            <div className="row">
+                                {pictureCards}
                             </div>
                         </div>
                     </div>
                 </React.Fragment>
-            )
+            );
         } else {
             return null;
         }
@@ -101,6 +101,7 @@ class ParentConfirmation extends Component {
             }
         }
         data.pictures = pictureLinks;
+        data.live = false;
         ParentsService.createParent(data)
             .then(() => {
                 toastr.success('New parent create');

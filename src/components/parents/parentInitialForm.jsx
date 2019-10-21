@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import DatePicker from 'react-datepicker';
+import ParentsService from '../../services/parentsService';
+import toastr from 'toastr';
 
 class ParentInitialForm extends Component {
     state = {
         parentId: '',
+        parentDetail: {},
         selections: {
             name: '',
             type: '',
@@ -28,18 +31,39 @@ class ParentInitialForm extends Component {
 
     constructor(props) {
         super(props);
-        if (Object.keys(props.initialParams).length > 0) {
+        if (typeof props.initialParams !== 'undefined' && Object.keys(props.initialParams).length > 0) {
             this.state.selections = props.initialParams;
         }
-        if (typeof props.parentId !== 'undefined')
-            this.state.parentId = props.parentId;
+        if (typeof props.match.params.parentId !== 'undefined')
+            this.state.parentId = props.match.params.parentId;
         this.state.selections.sex = 'male';
         this.state.selections.type = 'american';
         this.state.selections.color = 'Black and Tan';
     }
 
     componentDidMount() {
-        // TODO load parent info if parentId is available.
+        const { parentId, selections } = this.state;
+        if (typeof this.props.initialParams === 'undefined') {
+            this.props.onShowLoading(true, 1);
+            ParentsService.getParent(parentId)
+                .then(res => {
+                    const parentDetail = res.data;
+                    selections.name = parentDetail.name;
+                    selections.type = parentDetail.type;
+                    selections.sex = parentDetail.sex;
+                    selections.color = parentDetail.color;
+                    selections.weight = parentDetail.weight;
+                    selections.description = parentDetail.description;
+                    selections.dateOfBirth = new Date(parentDetail.dateOfBirth);
+                    this.setState({ parentDetail });
+                })
+                .catch(() => {
+                    toastr.error('There was an error in loading parent detail');
+                })
+                .finally(() => {
+                    this.props.onDoneLoading();
+                });
+        }
     }
 
     getHeader = () => {
@@ -179,20 +203,50 @@ class ParentInitialForm extends Component {
         }
     }
 
-    handleUpdateBtnClicked = () => {
-
-    }
-
-    handleCancelBtnClicked = () => {
-        this.props.onCancelBtnClicked();
-        this.props.history.push('/parents');
+    handleUpdateBtnClicked = (event) => {
+        event.preventDefault();
+        this.setState({ formSubmitted: true });
+        let valid = true;
+        const { parentId, parentDetail, selections, validations } = this.state;
+        for (const key in selections) {
+            const selection = selections[key];
+            if (selection === '' || selection === 0 || selection === null) {
+                valid = false;
+                validations[key] = `Enter ${key}`;
+            } else {
+                validations[key] = '';
+            }
+        }
+        this.setState({ validations });
+        if (valid === true) {
+            parentDetail.name = selections.name;
+            parentDetail.type = selections.type;
+            parentDetail.sex = selections.sex;
+            parentDetail.color = selections.color;
+            parentDetail.weight = selections.weight;
+            parentDetail.description = selections.description;
+            parentDetail.dateOfBirth = selections.dateOfBirth;
+            this.props.onShowLoading(true, 1);
+            ParentsService.updateParent(parentId, parentDetail)
+                .then(() => {
+                    toastr.success('Profile updated');
+                    this.props.onCancelBtnClicked();
+                })
+                .catch(() => {
+                    toastr.error('There was an error in updating parent data');
+                })
+                .finally(() => {
+                    this.props.onDoneLoading();
+                });
+        }
     }
 
     getNextBtn() {
-        return this.state.parentId === '' ? <button type="button" className="btn btn-primary" onClick={this.handleCreateBtnClicked}>Next</button> : <button className="btn btn-primary" onClick={this.handleUpdateBtnClicked}>Update</button>;
+        return this.state.parentId === '' ? <button type="button" className="btn btn-primary" onClick={this.handleCreateBtnClicked}>Next</button> : <button type="button" className="btn btn-primary" onClick={this.handleUpdateBtnClicked}>Update</button>;
     }
 
     render() {
+        const { selections } = this.state;
         return (
             <div className="card">
                 <form noValidate>
@@ -201,21 +255,21 @@ class ParentInitialForm extends Component {
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Name</label>
                             <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">
-                                <input type="text" className={`form-control ${this.getErrorClass('name')}`} onChange={this.handleSetName} />
+                                <input type="text" className={`form-control ${this.getErrorClass('name')}`} value={selections.name} onChange={this.handleSetName} />
                                 {this.getErrorMessage('name')}
                             </div>
                         </div>
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Date of Birth</label>
                             <div className="col-xs-4 col-sm-4 col-md-2 col-lg-3">
-                                <DatePicker className={`form-control ${this.getErrorClass('dateOfBirth')}`} selected={this.state.selections.dateOfBirth} onChange={this.handleSelectDOB} />
+                                <DatePicker className={`form-control ${this.getErrorClass('dateOfBirth')}`} selected={selections.dateOfBirth} onChange={this.handleSelectDOB} />
                                 <br />{this.getErrorMessage('dateOfBirth')}
                             </div>
                         </div>
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Sex</label>
                             <div className="col-5">
-                                <select className={`form-control ${this.getErrorClass('sex')}`} value={this.state.selections.sex} onChange={this.handleSetSex}>
+                                <select className={`form-control ${this.getErrorClass('sex')}`} value={selections.sex} onChange={this.handleSetSex}>
                                     <option value="male">M</option>
                                     <option value="female">F</option>
                                 </select>
@@ -225,7 +279,7 @@ class ParentInitialForm extends Component {
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Type</label>
                             <div className="col-5">
-                                <select className={`form-control ${this.getErrorClass('type')}`} value={this.state.selections.type} onChange={this.handleSetType}>
+                                <select className={`form-control ${this.getErrorClass('type')}`} value={selections.type} onChange={this.handleSetType}>
                                     <option value="american">American</option>
                                     <option value="european">European</option>
                                 </select>
@@ -235,7 +289,7 @@ class ParentInitialForm extends Component {
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Color</label>
                             <div className="col-5">
-                                <select className={`form-control ${this.getErrorClass('color')}`} value={this.state.selections.color} onChange={this.handleSetColor}>
+                                <select className={`form-control ${this.getErrorClass('color')}`} value={selections.color} onChange={this.handleSetColor}>
                                     {this.getColorOptions()}
                                 </select>
                                 {this.getErrorMessage('color')}
@@ -244,21 +298,21 @@ class ParentInitialForm extends Component {
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Weight (lbs)</label>
                             <div className="col-xs-5 col-sm-5 col-md-2 col-lg-3">
-                                <input type="text" value={this.state.selections.weight} className={`form-control ${this.getErrorClass('weight')}`} onChange={this.handleSetWeight} />
+                                <input type="text" value={selections.weight} className={`form-control ${this.getErrorClass('weight')}`} onChange={this.handleSetWeight} />
                                 {this.getErrorMessage('weight')}
                             </div>
                         </div>
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Description</label>
                             <div className="col-xs-9 col-sm-10 col-md-11 col-lg-11">
-                                <textarea value={this.state.selections.description} className={`form-control ${this.getErrorClass('description')}`} rows="10" style={{resize: 'none'}} onChange={this.handleSetDescription} />
+                                <textarea value={selections.description} className={`form-control ${this.getErrorClass('description')}`} rows="10" style={{resize: 'none'}} onChange={this.handleSetDescription} />
                                 {this.getErrorMessage('description')}
                             </div>
                         </div>
                     </div>
                     <div className="card-footer">
                         {this.getNextBtn()}
-                        <button type="button" className="btn btn-secondary ml-1" onClick={this.handleCancelBtnClicked}>Cancel</button>
+                        <button type="button" className="btn btn-secondary ml-1" onClick={this.props.onCancelBtnClicked}>Cancel</button>
                     </div>
                 </form>
             </div>

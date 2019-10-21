@@ -54,6 +54,7 @@ class Parents extends Component {
                         onViewBtnClicked={this.handleViewParentBtnClicked.bind(this)}
                         onUpdateBtnClicked={this.handleUpdateParentBtnClicked.bind(this)}
                         onDeleteBtnClicked={this.handleDeleteBtnClicked.bind(this)}
+                        onLiveBtnClicked={this.handleLiveBtnClicked.bind(this)}
                     />;
         }
         return retVal;
@@ -65,6 +66,27 @@ class Parents extends Component {
 
     handleUpdateParentBtnClicked = (parentId) => {
         this.props.history.push(`/parent/update/${parentId}`);
+    }
+
+    handleLiveBtnClicked = (parentId) => {
+        const parents = JSON.parse(JSON.stringify(this.state.parents));
+        let parentToUpdate, index;
+        parents.forEach((parent, i) => {
+            if (parent.parentId === parentId) {
+                parentToUpdate = parent;
+                index = i;
+            }
+        });
+        parentToUpdate.live = !parentToUpdate.live;
+        this.props.onShowLoading(true, 1);
+        ParentsService.updateParent(parentId, parentToUpdate)
+            .then(() => {
+                parents[index] = parentToUpdate;
+                this.setState({ parents });
+            })
+            .catch(() => {
+                toastr.error('There was an error in update a parent');
+            });
     }
 
     handleDeleteBtnClicked = (parentId) => {
@@ -95,7 +117,7 @@ class Parents extends Component {
         this.props.onShowLoading(true, 1);
         if (pictures.length > 0) {
             pictures.forEach(async picture => {
-                await ParentsService.deletePicture(picture.refeence);
+                await ParentsService.deletePicture(picture.reference);
             });
         }
         ParentsService.deleteParent(parentToDelete.parentId)
