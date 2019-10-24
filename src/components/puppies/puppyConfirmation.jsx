@@ -118,11 +118,11 @@ class PuppyConfirmation extends Component {
                     </div>
                     <div className="row form-group">
                         <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Dad</strong></label>
-                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getDadName(params.dadId)}</div>
+                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getDadName(params.dadID)}</div>
                     </div>
                     <div className="row form-group">
                         <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Mom</strong></label>
-                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getMomName(params.momId)}</div>
+                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getMomName(params.momID)}</div>
                     </div>
                     <div className="row form-group">
                         <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Weight</strong></label>

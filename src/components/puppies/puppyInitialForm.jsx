@@ -14,8 +14,8 @@ class PuppyInitialForm extends Component {
             color: '',
             price: '',
             weight: '',
-            dadId: '',
-            momId: '',
+            dadID: '',
+            momID: '',
             description: '',
             dateOfBirth: null
         },
@@ -26,8 +26,8 @@ class PuppyInitialForm extends Component {
             color: '',
             price: '',
             weight: '',
-            dadId: '',
-            momId: '',
+            dadID: '',
+            momID: '',
             description: '',
             dateOfBirth: ''
         },
@@ -53,8 +53,8 @@ class PuppyInitialForm extends Component {
             this.state.selections.color = props.initialParams.color;
             this.state.selections.price = props.initialParams.price;
             this.state.selections.weight = props.initialParams.weight;
-            this.state.selections.dadId = props.initialParams.dadId;
-            this.state.selections.momId = props.initialParams.momId;
+            this.state.selections.dadID = props.initialParams.dadID;
+            this.state.selections.momID = props.initialParams.momID;
             this.state.selections.description = props.initialParams.description;
             this.state.selections.dateOfBirth = props.initialParams.dateOfBirth;
         }
@@ -74,8 +74,8 @@ class PuppyInitialForm extends Component {
                     selections.color = puppyDetail.color;
                     selections.price = puppyDetail.price;
                     selections.weight = puppyDetail.weight;
-                    selections.dadId = puppyDetail.dadId;
-                    selections.momId = puppyDetail.momId;
+                    selections.dadID = puppyDetail.dadID;
+                    selections.momID = puppyDetail.momID;
                     selections.description = puppyDetail.description;
                     selections.dateOfBirth = new Date(puppyDetail.dateOfBirth);
                     this.setState({ selections: selections, puppyDetail: puppyDetail })
@@ -205,28 +205,28 @@ class PuppyInitialForm extends Component {
     }
 
     handleSetDadId = (event) => {
-        const dadId = event.target.value;
+        const dadID = event.target.value;
         const selections = this.state.selections;
         const validations = this.state.validations;
-        selections.dadId = dadId;
-        if (dadId !== '') {
-            validations.dadId = '';
+        selections.dadID = dadID;
+        if (dadID !== '') {
+            validations.dadID = '';
         } else {
-            validations.dadId = 'Enter dad';
+            validations.dadID = 'Enter dad';
         }
         this.setState({ selections, validations });  
     }
 
     handleSetMomId = (event) => {
-        const momId = event.target.value;
+        const momID = event.target.value;
         const selections = this.state.selections;
         const validations = this.state.validations;
-        if (momId !== '') {
-            validations.momId = '';
+        if (momID !== '') {
+            validations.momID = '';
         } else {
-            validations.momId = 'Enter mom';
+            validations.momID = 'Enter mom';
         }
-        selections.momId = momId;
+        selections.momID = momID;
         this.setState({ selections, validations });
     }
 
@@ -331,8 +331,8 @@ class PuppyInitialForm extends Component {
               puppyDetail.color = selections.color;
               puppyDetail.price = selections.price;
               puppyDetail.weight = selections.weight;
-              puppyDetail.dadId = selections.dadId;
-              puppyDetail.momId = selections.momId;
+              puppyDetail.dadID = selections.dadID;
+              puppyDetail.momID = selections.momID;
               puppyDetail.description = selections.description;
               puppyDetail.dateOfBirth = selections.dateOfBirth;
               this.props.onShowLoading(true, 1);
@@ -407,19 +407,19 @@ class PuppyInitialForm extends Component {
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Dad</label>
                             <div className="col-5">
-                                <select className={`form-control ${this.getErrorClass('dadId')}`} value={selections.dadId} onChange={this.handleSetDadId}>
+                                <select className={`form-control ${this.getErrorClass('dadID')}`} value={selections.dadID} onChange={this.handleSetDadId}>
                                     {this.getDadOptions()}
                                 </select>
-                                {this.getErrorMessage('dadId')}
+                                {this.getErrorMessage('dadID')}
                             </div>
                         </div>
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Mom</label>
                             <div className="col-5">
-                                <select className={`form-control ${this.getErrorClass('momId')}`} value={selections.momId} onChange={this.handleSetMomId}>
+                                <select className={`form-control ${this.getErrorClass('momID')}`} value={selections.momID} onChange={this.handleSetMomId}>
                                     {this.getMomOptions()}
                                 </select>
-                                {this.getErrorMessage('momId')}
+                                {this.getErrorMessage('momID')}
                             </div>
                         </div>
                         <div className="row form-group">

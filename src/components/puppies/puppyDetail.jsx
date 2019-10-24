@@ -142,14 +142,14 @@ class PuppyDetail extends Component {
                         </div>
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Dad</strong></label>
-                            {puppyData.dadId && (
-                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getDadName(puppyData.dadId)}</div>
+                            {puppyData.dadID && (
+                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getDadName(puppyData.dadID)}</div>
                             )}
                         </div>
                         <div className="row form-group">
                             <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Mom</strong></label>
-                            {puppyData.momId && (
-                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getMomName(puppyData.momId)}</div>
+                            {puppyData.momID && (
+                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getMomName(puppyData.momID)}</div>
                             )}
                         </div>
                         <div className="row form-group">
