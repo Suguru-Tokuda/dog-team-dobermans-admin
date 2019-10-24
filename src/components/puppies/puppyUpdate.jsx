@@ -9,7 +9,7 @@ import toastr from 'toastr';
 class PuppyUpdate extends Component {
     state = {
         url: '',
-        puppyId: '',
+        puppyID: '',
         dads: [],
         moms: []
     };
@@ -17,7 +17,7 @@ class PuppyUpdate extends Component {
     constructor(props) {
         super(props);
         this.state.url = props.url;
-        this.state.puppyId = props.match.params.puppyId;
+        this.state.puppyID = props.match.params.puppyID;
     }
 
     componentDidMount() {
@@ -59,18 +59,18 @@ class PuppyUpdate extends Component {
     }
 
     handleCancleClicked = () => {
-        const { puppyId } = this.state;
-        this.props.history.push(`/puppy/update/${puppyId}`);
+        const { puppyID } = this.state;
+        this.props.history.push(`/puppy/update/${puppyID}`);
     }
 
     render() {
         const url = `${this.state.url}/update`;
-        const { puppyId, dads, moms } = this.state;
+        const { puppyID, dads, moms } = this.state;
         return (
             <React.Fragment>
-                <Route path={`${url}/:puppyId`} exact render={(props) => <PuppyUpdateSelection {...props} url={url} puppyId={puppyId} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-                <Route path={`${url}/profile/:puppyId`} render={(props) => <PuppyCreateForm {...props} url={url} puppyId={puppyId} dads={dads} moms={moms} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} onCancelBtnClicked={this.handleCancleClicked} />} />
-                <Route path={`${url}/pictures/:puppyId`} render={(props) => <PuppyPictureUpdateForm {...props} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                <Route path={`${url}/:puppyID`} exact render={(props) => <PuppyUpdateSelection {...props} url={url} puppyID={puppyID} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                <Route path={`${url}/profile/:puppyID`} render={(props) => <PuppyCreateForm {...props} url={url} puppyID={puppyID} dads={dads} moms={moms} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} onCancelBtnClicked={this.handleCancleClicked} />} />
+                <Route path={`${url}/pictures/:puppyID`} render={(props) => <PuppyPictureUpdateForm {...props} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
             </React.Fragment>
         );
     }

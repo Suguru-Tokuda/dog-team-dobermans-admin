@@ -8,9 +8,9 @@ import ParentDeleteConfModal from './parentDeleteConfModal';
 class Parents extends Component {
     state = {
         parents: [],
-        selectedParentId: '',
+        selectedparentID: '',
         showDeleteModal: false,
-        parentIdToDelete: '',
+        parentIDToDelete: '',
         parentToDelete: {}
     }
 
@@ -60,26 +60,26 @@ class Parents extends Component {
         return retVal;
     }
 
-    handleViewParentBtnClicked = (parentId) => {
-        this.props.history.push(`/parent/view/${parentId}`);
+    handleViewParentBtnClicked = (parentID) => {
+        this.props.history.push(`/parent/view/${parentID}`);
     }
 
-    handleUpdateParentBtnClicked = (parentId) => {
-        this.props.history.push(`/parent/update/${parentId}`);
+    handleUpdateParentBtnClicked = (parentID) => {
+        this.props.history.push(`/parent/update/${parentID}`);
     }
 
-    handleLiveBtnClicked = (parentId) => {
+    handleLiveBtnClicked = (parentID) => {
         const parents = JSON.parse(JSON.stringify(this.state.parents));
         let parentToUpdate, index;
         parents.forEach((parent, i) => {
-            if (parent.parentId === parentId) {
+            if (parent.parentID === parentID) {
                 parentToUpdate = parent;
                 index = i;
             }
         });
         parentToUpdate.live = !parentToUpdate.live;
         this.props.onShowLoading(true, 1);
-        ParentsService.updateParent(parentId, parentToUpdate)
+        ParentsService.updateParent(parentID, parentToUpdate)
             .then(() => {
                 parents[index] = parentToUpdate;
                 this.setState({ parents });
@@ -89,15 +89,15 @@ class Parents extends Component {
             });
     }
 
-    handleDeleteBtnClicked = (parentId) => {
+    handleDeleteBtnClicked = (parentID) => {
         const { parents } = this.state;
         let parentToDelete;
         parents.forEach(parent => {
-            if (parent.parentId === parentId)
+            if (parent.parentID === parentID)
                 parentToDelete = parent;
         });
         this.setState({
-            parentIdToDelete: parentId,
+            parentIDToDelete: parentID,
             parentToDelete: parentToDelete,
             showDeleteModal: true
         });
@@ -105,7 +105,7 @@ class Parents extends Component {
 
     handleDeleteCancelBtnClicked = () => {
         this.setState({
-            parentIdToDelete: '',
+            parentIDToDelete: '',
             parentToDelete: {},
             showDeleteModal: false
         });
@@ -120,11 +120,11 @@ class Parents extends Component {
                 await ParentsService.deletePicture(picture.reference);
             });
         }
-        ParentsService.deleteParent(parentToDelete.parentId)
+        ParentsService.deleteParent(parentToDelete.parentID)
             .then(res => {
                 toastr.success('Successfully deleted a parent');
                 this.setState({
-                    puppyIdToDelete: '',
+                    puppyIDToDelete: '',
                     puppyToDelete: {},
                     showDeleteModal: false
                 });
@@ -138,18 +138,18 @@ class Parents extends Component {
             });
     }   
 
-    handleLiveBtnClicked = (parentId) => {
+    handleLiveBtnClicked = (parentID) => {
         const parents = JSON.parse(JSON.stringify(this.state.parents));
         let parentToUpdate, index;
         parents.forEach((puppy, i) => {
-            if (puppy.parentId === parentId) {
+            if (puppy.parentID === parentID) {
                 parentToUpdate = puppy;
                 index = i;
             }
         });
         parentToUpdate.live = !parentToUpdate.live;
         this.props.onShowLoading(true, 1);
-        ParentsService.updateParent(parentId, parentToUpdate)
+        ParentsService.updateParent(parentID, parentToUpdate)
             .then(() => {
                 parents[index] = parentToUpdate;
                 this.setState({ parents });
@@ -163,7 +163,7 @@ class Parents extends Component {
     }
 
     render() {
-        const { parentIdToDelete, parentToDelete, showDeleteModal } = this.state;
+        const { parentIDToDelete, parentToDelete, showDeleteModal } = this.state;
         return (
             <React.Fragment>
                 <div className="row">
@@ -177,7 +177,7 @@ class Parents extends Component {
                     </div>
                 </div>
                 <ParentDeleteConfModal
-                    parentId={parentIdToDelete}
+                    parentID={parentIDToDelete}
                     parentDetail={parentToDelete}
                     showModal={showDeleteModal}
                     onCancelBtnClicked={this.handleDeleteCancelBtnClicked}

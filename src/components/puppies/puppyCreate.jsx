@@ -8,7 +8,7 @@ import toastr from 'toastr';
 
 class PuppyCreate extends Component {
     state = {
-        puppyId: '',
+        puppyID: '',
         initialParams: {},
         pictures: [],
         dads: [],
@@ -17,8 +17,8 @@ class PuppyCreate extends Component {
 
     constructor(props) {
         super(props);
-        if (props.puppyId !== undefined) {
-            this.state.puppyId = props.puppyId;
+        if (props.puppyID !== undefined) {
+            this.state.puppyID = props.puppyID;
         }
     }
 
@@ -109,7 +109,7 @@ class PuppyCreate extends Component {
                                             initialParams={this.state.initialParams} 
                                             pictures={this.state.pictures} 
                                             onCancelBtnClicked={this.handleCancelClicked} 
-                                            puppyId={this.state.puppyid} 
+                                            puppyID={this.state.puppyID} 
                                             onShowLoading={this.props.onShowLoading.bind(this)} 
                                             onDoneLoading={this.props.onDoneLoading.bind(this)} 
                 />} />

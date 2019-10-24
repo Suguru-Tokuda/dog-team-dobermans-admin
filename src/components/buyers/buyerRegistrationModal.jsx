@@ -152,7 +152,7 @@ class BuyerRegistrationModal extends Component {
             this.props.onShowLoading(true, 1);
             BuyersService.createBuyer(selections.firstName, selections.lastName, selections.email, selections.phone, selections.state, selections.city)
                 .then(res => {
-                    this.props.onBuyerSelected(res.data.buyerId);
+                    this.props.onBuyerSelected(res.data.buyerID);
                 })
                 .catch(err => {
                     toastr.error('There was an error in creating a buyer');

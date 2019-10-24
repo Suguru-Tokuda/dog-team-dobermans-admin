@@ -194,7 +194,7 @@ class ParentsTable extends Component {
                     picture = <img src={pictures[0].url} alt={pictures[0].url} className="rounded" style={{width: "50px"}} />;
                 }
                 return (
-                  <tr key={`parent-${parent.parentId}`}>
+                  <tr key={`parent-${parent.parentID}`}>
                       <td>{parent.name}</td>
                       <td>{parent.sex}</td>
                       <td>{parent.type}</td>
@@ -204,10 +204,10 @@ class ParentsTable extends Component {
                       <td>{parent.live === true ? 'Live' : 'No'}</td>
                       <td>{picture}</td>
                       <td>
-                        <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(parent.parentId)}><i className="fa fa-search"></i> View</button>
-                        <button type="button" className="btn btn-sm btn-success ml-1" onClick={() => this.props.onUpdateBtnClicked(parent.parentId)}><i className="fa fa-edit"></i> Update</button>
-                        <button type="button" className="btn btn-sm btn-info ml-1" onClick={() => this.props.onLiveBtnClicked(parent.parentId)}><i className={`${parent.live === true ? 'fa fa-eye-slash' : 'fa fa-eye'}`}></i> {`${parent.live === true ? 'Hide' : 'Go Live'}`}</button>
-                        <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(parent.parentId)}><i className="fa fa-close"></i> Delete</button>
+                        <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(parent.parentID)}><i className="fa fa-search"></i> View</button>
+                        <button type="button" className="btn btn-sm btn-success ml-1" onClick={() => this.props.onUpdateBtnClicked(parent.parentID)}><i className="fa fa-edit"></i> Update</button>
+                        <button type="button" className="btn btn-sm btn-info ml-1" onClick={() => this.props.onLiveBtnClicked(parent.parentID)}><i className={`${parent.live === true ? 'fa fa-eye-slash' : 'fa fa-eye'}`}></i> {`${parent.live === true ? 'Hide' : 'Go Live'}`}</button>
+                        <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(parent.parentID)}><i className="fa fa-close"></i> Delete</button>
                       </td>
                   </tr>  
                 );

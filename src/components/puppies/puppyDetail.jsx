@@ -6,7 +6,7 @@ import toastr from 'toastr';
 
 class PuppyDetail extends Component {
     state = {
-        puppyId: '',
+        puppyID: '',
         puppyData: {},
         dads: [],
         moms: [],
@@ -16,9 +16,9 @@ class PuppyDetail extends Component {
     constructor(props) {
         super(props);
         if (typeof props.match !== 'undefined') 
-            this.state.puppyId = props.match.params.puppyId;
+            this.state.puppyID = props.match.params.puppyID;
         else
-            this.state.puppyId = props.puppyId;
+            this.state.puppyID = props.puppyID;
         if (typeof props.loadDetail !== 'undefined') {
             this.state.loadDetail = props.loadDetail;
         }
@@ -33,7 +33,7 @@ class PuppyDetail extends Component {
             this.props.onShowLoading(true, 1);
             try {
                 const [puppyData, parents] = await Promise.all([
-                    PuppiesService.getPuppy(this.state.puppyId),
+                    PuppiesService.getPuppy(this.state.puppyID),
                     ParentsService.getAllParents()
                 ]);
                 const dads = [];
@@ -58,17 +58,17 @@ class PuppyDetail extends Component {
         }
     }
 
-    getDadName(parentId) {
+    getDadName(parentID) {
         for (let i = 0, max = this.state.dads.length; i < max; i++) {
-            if (parentId === this.state.dads[i].parentId)
+            if (parentID === this.state.dads[i].parentID)
                 return this.state.dads[i].name;
         }
         return '';
     }
 
-    getMomName(parentId) {
+    getMomName(parentID) {
         for (let i = 0, max = this.state.moms.length; i < max; i++) {
-            if (parentId === this.state.moms[i].parentId)
+            if (parentID === this.state.moms[i].parentID)
                 return this.state.moms[i].name;
         }
         return '';
@@ -111,7 +111,7 @@ class PuppyDetail extends Component {
 
     getPuppyData() {
         if (Object.keys(this.state.puppyData).length > 0) {
-            const { puppyData, puppyId } = this.state;
+            const { puppyData, puppyID } = this.state;
             return (
                 <div className="card">
                     <div className="card-body">
@@ -174,7 +174,7 @@ class PuppyDetail extends Component {
                     </div>
                     {(this.props.hideButtons === false || this.props.hideButtons === undefined) && (
                         <div className="card-footer">
-                            <Link to={`/puppy/update/${puppyId}`} className="btn btn-sm btn-success">Update</Link>
+                            <Link to={`/puppy/update/${puppyID}`} className="btn btn-sm btn-success">Update</Link>
                             <Link to="/puppies" className="btn btn-sm btn-secondary ml-2">Back</Link>
                         </div>
                     )}

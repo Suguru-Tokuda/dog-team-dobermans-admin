@@ -5,7 +5,7 @@ import toastr from 'toastr';
 
 class ParentInitialForm extends Component {
     state = {
-        parentId: '',
+        parentID: '',
         parentDetail: {},
         selections: {
             name: '',
@@ -34,18 +34,18 @@ class ParentInitialForm extends Component {
         if (typeof props.initialParams !== 'undefined' && Object.keys(props.initialParams).length > 0) {
             this.state.selections = props.initialParams;
         }
-        if (typeof props.match.params.parentId !== 'undefined')
-            this.state.parentId = props.match.params.parentId;
+        if (typeof props.match.params.parentID !== 'undefined')
+            this.state.parentID = props.match.params.parentID;
         this.state.selections.sex = 'male';
         this.state.selections.type = 'american';
         this.state.selections.color = 'Black and Tan';
     }
 
     componentDidMount() {
-        const { parentId, selections } = this.state;
+        const { parentID, selections } = this.state;
         if (typeof this.props.initialParams === 'undefined') {
             this.props.onShowLoading(true, 1);
-            ParentsService.getParent(parentId)
+            ParentsService.getParent(parentID)
                 .then(res => {
                     const parentDetail = res.data;
                     selections.name = parentDetail.name;
@@ -67,7 +67,7 @@ class ParentInitialForm extends Component {
     }
 
     getHeader = () => {
-        return this.state.parentId === '' ? <h1>Create New Parent</h1> : <h1>Update Parent</h1>;
+        return this.state.parentID === '' ? <h1>Create New Parent</h1> : <h1>Update Parent</h1>;
     }
 
     getErrorClass(key) {
@@ -207,7 +207,7 @@ class ParentInitialForm extends Component {
         event.preventDefault();
         this.setState({ formSubmitted: true });
         let valid = true;
-        const { parentId, parentDetail, selections, validations } = this.state;
+        const { parentID, parentDetail, selections, validations } = this.state;
         for (const key in selections) {
             const selection = selections[key];
             if (selection === '' || selection === 0 || selection === null) {
@@ -227,7 +227,7 @@ class ParentInitialForm extends Component {
             parentDetail.description = selections.description;
             parentDetail.dateOfBirth = selections.dateOfBirth;
             this.props.onShowLoading(true, 1);
-            ParentsService.updateParent(parentId, parentDetail)
+            ParentsService.updateParent(parentID, parentDetail)
                 .then(() => {
                     toastr.success('Profile updated');
                     this.props.onCancelBtnClicked();
@@ -242,7 +242,7 @@ class ParentInitialForm extends Component {
     }
 
     getNextBtn() {
-        return this.state.parentId === '' ? <button type="button" className="btn btn-primary" onClick={this.handleCreateBtnClicked}>Next</button> : <button type="button" className="btn btn-primary" onClick={this.handleUpdateBtnClicked}>Update</button>;
+        return this.state.parentID === '' ? <button type="button" className="btn btn-primary" onClick={this.handleCreateBtnClicked}>Next</button> : <button type="button" className="btn btn-primary" onClick={this.handleUpdateBtnClicked}>Update</button>;
     }
 
     render() {

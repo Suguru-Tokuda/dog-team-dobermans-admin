@@ -3,14 +3,14 @@ import $ from 'jquery';
 
 class PuppyDeleteConfModal extends Component {
     state = {
-        puppyId: '',
+        puppyID: '',
         puppyDetail: {},
         showModal: false
     };
 
     constructor(props) {
         super(props);
-        this.state.puppyId = props.puppyId;
+        this.state.puppyID = props.puppyID;
         this.state.puppyDetail = props.puppyDetail;
     }
 
@@ -25,9 +25,9 @@ class PuppyDeleteConfModal extends Component {
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.puppyId !== prevState.puppyId || nextProps.showModal !== prevState.showModal) {
+        if (nextProps.puppyID !== prevState.puppyID || nextProps.showModal !== prevState.showModal) {
             return {
-                puppyId: nextProps.puppyId,
+                puppyID: nextProps.puppyID,
                 puppyDetail: nextProps.puppyDetail,
                 showModal: nextProps.showModal
             };

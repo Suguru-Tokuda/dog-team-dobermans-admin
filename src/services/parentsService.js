@@ -13,20 +13,20 @@ export default class ParentsService {
         return axios.get(`${this.getServiceBase()}parents?key=${api.API_KEY}`);
     }
 
-    static getParent(parentId) {
-        return axios.get(`${this.getServiceBase()}parent?parentId=${parentId}&key=${api.API_KEY}`);
+    static getParent(parentID) {
+        return axios.get(`${this.getServiceBase()}parent?parentID=${parentID}&key=${api.API_KEY}`);
     }
 
-    static createParent(parentId, data) {
-        return axios.post(`${this.getServiceBase()}parent?parentId=${parentId}&key=${api.API_KEY}`, data);
+    static createParent(parentID, data) {
+        return axios.post(`${this.getServiceBase()}parent?parentID=${parentID}&key=${api.API_KEY}`, data);
     }
 
-    static updateParent(parentId, data) {
-        return axios.put(`${this.getServiceBase()}parent?parentId=${parentId}&key=${api.API_KEY}`, data);
+    static updateParent(parentID, data) {
+        return axios.put(`${this.getServiceBase()}parent?parentID=${parentID}&key=${api.API_KEY}`, data);
     }
 
-    static deleteParent(parentId) {
-        return axios.delete(`${this.getServiceBase()}parent?parentId=${parentId}&key=${api.API_KEY}`);
+    static deleteParent(parentID) {
+        return axios.delete(`${this.getServiceBase()}parent?parentID=${parentID}&key=${api.API_KEY}`);
     }
 
     static uploadPicture(imageFile) {

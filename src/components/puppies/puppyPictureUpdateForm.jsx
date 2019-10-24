@@ -7,7 +7,7 @@ import PictureCropModal from '../miscellaneous/pictureCropModal';
 
 class PuppyPictureUpdateForm extends Component {
     state = {
-        puppyId: '',
+        puppyID: '',
         tempPictureFile: null,
         tempPictureFileName: '',
         puppyData: {}
@@ -15,13 +15,13 @@ class PuppyPictureUpdateForm extends Component {
 
     constructor(props) {
         super(props);
-        this.state.puppyId = props.match.params.puppyId;
+        this.state.puppyID = props.match.params.puppyID;
     }
 
     componentDidMount() {
-        const { puppyId } = this.state;
+        const { puppyID } = this.state;
         this.props.onShowLoading(true, 1);
-        PuppiesService.getPuppy(puppyId)
+        PuppiesService.getPuppy(puppyID)
             .then(res => {
                 this.setState({
                     puppyData: res.data
@@ -69,7 +69,7 @@ class PuppyPictureUpdateForm extends Component {
     handleUpdatePictureOrder = (pictures) => {
         const puppyData = this.state.puppyData;
         puppyData.pictures = pictures;
-        PuppiesService.updatePuppy(this.state.puppyId, puppyData);
+        PuppiesService.updatePuppy(this.state.puppyID, puppyData);
     }
 
     handleImageChange = async (event) => {
@@ -92,7 +92,7 @@ class PuppyPictureUpdateForm extends Component {
         const puppyData = this.state.puppyData;
         // push the new picture reference
         puppyData.pictures.push(newPicture);
-        PuppiesService.updatePuppy(this.state.puppyId, puppyData)
+        PuppiesService.updatePuppy(this.state.puppyID, puppyData)
             .then(res => {
                 toastr.success('Upload success');
                 this.setState({ tempPictureFile: null })
@@ -113,7 +113,7 @@ class PuppyPictureUpdateForm extends Component {
         puppyData.pictures = pictures;
         PuppiesService.deletePicture(pictureToDelete.reference)
             .then(res => {
-                PuppiesService.updatePuppy(this.state.puppyId, puppyData)
+                PuppiesService.updatePuppy(this.state.puppyID, puppyData)
                     .then(res => {
                         toastr.success('Successfully deleted the picture');
                         this.setState({ puppyData });
@@ -132,7 +132,7 @@ class PuppyPictureUpdateForm extends Component {
     }
 
     render() {
-        const { tempPictureFile, puppyId } = this.state;
+        const { tempPictureFile, puppyID } = this.state;
         return (
             <React.Fragment>
                 <div className="card">
@@ -143,7 +143,7 @@ class PuppyPictureUpdateForm extends Component {
                         </div>
                     </div>
                     <div className="card-footer">
-                        <Link className="btn btn-sm btn-secondary" to={`/puppy/update/${puppyId}`}>Back</Link>
+                        <Link className="btn btn-sm btn-secondary" to={`/puppy/update/${puppyID}`}>Back</Link>
                     </div>
                 </div>
                 <PictureCropModal 

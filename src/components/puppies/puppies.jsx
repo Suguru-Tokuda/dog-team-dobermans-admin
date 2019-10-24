@@ -7,7 +7,7 @@ import toastr from 'toastr';
 
 class Puppies extends Component {
     state = {
-        puppyIdToDelete: '',
+        puppyIDToDelete: '',
         puppyToDelete: {},
         showDeleteModal: false,
         puppies: [],
@@ -65,30 +65,30 @@ class Puppies extends Component {
         }
     }
 
-    handleViewPuppyBtnClicked = (puppyId) => {
-        this.props.history.push(`/puppy/view/${puppyId}`);
+    handleViewPuppyBtnClicked = (puppyID) => {
+        this.props.history.push(`/puppy/view/${puppyID}`);
     }
 
-    handleUpdatePuppyBtnClicked = (puppyId) => {
-        this.props.history.push(`/puppy/update/${puppyId}`);
+    handleUpdatePuppyBtnClicked = (puppyID) => {
+        this.props.history.push(`/puppy/update/${puppyID}`);
     }
     
-    handleRecordSalesBtnClicked = (puppyId) => {
-        this.props.history.push(`/puppy/sales/${puppyId}`);
+    handleRecordSalesBtnClicked = (puppyID) => {
+        this.props.history.push(`/puppy/sales/${puppyID}`);
     }
 
-    handleLiveBtnClicked = (puppyId) => {
+    handleLiveBtnClicked = (puppyID) => {
         const puppies = JSON.parse(JSON.stringify(this.state.puppies));
         let puppyToUpdate, index;
         puppies.forEach((puppy, i) => {
-            if (puppy.puppyId === puppyId) {
+            if (puppy.puppyID === puppyID) {
                 puppyToUpdate = puppy;
                 index = i;
             }
         });
         puppyToUpdate.live = !puppyToUpdate.live;
         this.props.onShowLoading(true, 1);
-        PuppiesService.updatePuppy(puppyId, puppyToUpdate)
+        PuppiesService.updatePuppy(puppyID, puppyToUpdate)
             .then(() => {
                 puppies[index] = puppyToUpdate;
                 this.setState({ puppies });
@@ -101,15 +101,15 @@ class Puppies extends Component {
             });
     }
 
-    handleDeleteBtnClicked = (puppyId) => {
+    handleDeleteBtnClicked = (puppyID) => {
         const { puppies } = this.state;
         let puppyToDelete;
         puppies.forEach(puppy => {
-            if (puppy.puppyId === puppyId)
+            if (puppy.puppyID === puppyID)
                 puppyToDelete = puppy;
         });
         this.setState({
-            puppyIdToDelete: puppyId,
+            puppyIDToDelete: puppyID,
             puppyToDelete: puppyToDelete,
             showDeleteModal: true
         });
@@ -117,7 +117,7 @@ class Puppies extends Component {
 
     handleDeleteCancelBtnClicked = () => {
         this.setState({
-            puppyIdToDelete: '',
+            puppyIDToDelete: '',
             puppyToDelete: {},
             showDeleteModal: false
         });
@@ -132,11 +132,11 @@ class Puppies extends Component {
                 await PuppiesService.deletePicture(picture.reference);
             });
         }
-        PuppiesService.deletePuppy(puppyToDelete.puppyId)
+        PuppiesService.deletePuppy(puppyToDelete.puppyID)
             .then(res => {
                 toastr.success('Successfully deleted a puppy');
                 this.setState({
-                    puppyIdToDelete: '',
+                    puppyIDToDelete: '',
                     puppyToDelete: {},
                     showDeleteModal: false
                 });
@@ -151,7 +151,7 @@ class Puppies extends Component {
     }
 
     render() {
-        const { puppyIdToDelete, puppyToDelete, showDeleteModal } = this.state;
+        const { puppyIDToDelete, puppyToDelete, showDeleteModal } = this.state;
         return (
             <React.Fragment>
                 <div className="row">
@@ -165,7 +165,7 @@ class Puppies extends Component {
                     </div>
                 </div>
                 <PuppyDeleteConfModal 
-                    puppyId={puppyIdToDelete} 
+                    puppyID={puppyIDToDelete} 
                     puppyDetail={puppyToDelete} 
                     showModal={showDeleteModal}
                     onCancelBtnClicked={this.handleDeleteCancelBtnClicked.bind(this)}

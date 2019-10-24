@@ -4,7 +4,7 @@ import toastr from 'toastr';
 
 class PuppyConfirmation extends Component {
     state = {
-        puppyId: '',
+        puppyID: '',
         initialParams: {},
         pictures: [],
         dads: [],
@@ -43,17 +43,17 @@ class PuppyConfirmation extends Component {
         }
     }
 
-    getDadName(parentId) {
+    getDadName(parentID) {
         for (let i = 0, max = this.state.dads.length; i < max; i++) {
-            if (parentId === this.state.dads[i].parentId)
+            if (parentID === this.state.dads[i].parentID)
                 return this.state.dads[i].name;
         }
         return '';
     }
 
-    getMomName(parentId) {
+    getMomName(parentID) {
         for (let i = 0, max = this.state.moms.length; i < max; i++) {
-            if (parentId === this.state.moms[i].parentId)
+            if (parentID === this.state.moms[i].parentID)
                 return this.state.moms[i].name;
         }
         return '';

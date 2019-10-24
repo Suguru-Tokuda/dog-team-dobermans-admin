@@ -9,8 +9,8 @@ import toastr from 'toastr';
 
 class PuppySalesForm extends Component {
     state = {
-        puppyId: '',
-        buyerId: '',
+        puppyID: '',
+        buyerID: '',
         buyer: {},
         puppyDetail: {},
         paymentAmount: '',
@@ -20,17 +20,17 @@ class PuppySalesForm extends Component {
 
     constructor(props) {
         super(props);
-        this.state.puppyId = props.match.params.puppyId;
+        this.state.puppyID = props.match.params.puppyID;
     }
 
     componentDidMount() {
-        const { puppyId } = this.state;
+        const { puppyID } = this.state;
         this.props.onShowLoading(true, 1);
-        PuppiesService.getPuppy(puppyId)
+        PuppiesService.getPuppy(puppyID)
             .then(res => {
                 this.setState({ puppyDetail: res.data });
-                if (res.data.buyerId !== null || res.data.buyerId !== '') {
-                    this.setState({ buyerId: res.data.buyerId });
+                if (res.data.buyerID !== null || res.data.buyerID !== '') {
+                    this.setState({ buyerID: res.data.buyerID });
                 }
             })
             .catch(() => {
@@ -41,8 +41,8 @@ class PuppySalesForm extends Component {
             })
     }
 
-    handleBuerSelected = (buyerId) => {
-        this.setState({ buyerId: buyerId, showLookupModal: false, showRegisterBuyerModal: false });
+    handleBuerSelected = (buyerID) => {
+        this.setState({ buyerID: buyerID, showLookupModal: false, showRegisterBuyerModal: false });
     }
 
     handleLookupBuyerBtnClicked = () => {
@@ -70,14 +70,14 @@ class PuppySalesForm extends Component {
     }
 
     handlePaymentSubmision = () => {
-        const { buyerId, puppyDetail, paymentAmount } = this.state;
+        const { buyerID, puppyDetail, paymentAmount } = this.state;
         if (paymentAmount !== 0) {
             puppyDetail.sold = true;
             puppyDetail.soldDate = new Date();
             puppyDetail.paidAmount = paymentAmount;
-            puppyDetail.buyerId = buyerId;
+            puppyDetail.buyerID = buyerID;
             this.props.onShowLoading(true, 1);
-            PuppiesService.updatePuppy(puppyDetail.puppyId, puppyDetail)
+            PuppiesService.updatePuppy(puppyDetail.puppyID, puppyDetail)
                 .then(res => {
                     toastr.success('Successfully updated the puppy data');
                     this.props.history.push('/puppies');
@@ -92,7 +92,7 @@ class PuppySalesForm extends Component {
     }
 
     render() {
-        const { puppyId, buyerId, showLookupModal, showRegisterBuyerModal, paymentAmount, puppyDetail } = this.state;
+        const { puppyID, buyerID, showLookupModal, showRegisterBuyerModal, paymentAmount, puppyDetail } = this.state;
         return (
             <React.Fragment>
                 <div className="row">
@@ -100,7 +100,7 @@ class PuppySalesForm extends Component {
                         <div className="card">
                             <div className="card-body">
                                 <h3>Puppy Sales Form</h3>
-                                {(puppyDetail.buyerId === null || puppyDetail.buyerId === '') && (
+                                {(puppyDetail.buyerID === null || puppyDetail.buyerID === '') && (
                                     <React.Fragment>
                                         <p>Please select the buyer for the puppy</p>
                                         <div className="row">
@@ -113,7 +113,7 @@ class PuppySalesForm extends Component {
                                         </div>
                                     </React.Fragment>                                    
                                 )}
-                                {(puppyDetail.buyerId !== null && puppyDetail.buyerId !== '') && (
+                                {(puppyDetail.buyerID !== null && puppyDetail.buyerID !== '') && (
                                     <React.Fragment>
                                         <p>Update the sales information.</p>
                                         <div className="row">
@@ -132,13 +132,19 @@ class PuppySalesForm extends Component {
                 <div className="row">
                     <div className="col-6">
                         {Object.keys(puppyDetail).length > 0 &&(
-                            <PuppyDetail puppyId={puppyId} hideButtons={true} puppyDetail={puppyDetail} loadDetail={false} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                            <PuppyDetail 
+                            puppyID={puppyID} 
+                            hideButtons={true} 
+                            puppyDetail={puppyDetail} 
+                            loadDetail={true}
+                            onShowLoading={this.props.onShowLoading.bind(this)} 
+                            onDoneLoading={this.props.onDoneLoading.bind(this)} />
                         )}
                     </div>
-                    {(buyerId !== '' && buyerId !== null) && (
+                    {(buyerID !== '' && buyerID !== null) && (
                         <div className="col-6">
                             <BuyerDetail 
-                                buyerId={buyerId} 
+                                buyerID={buyerID} 
                                 showBackBtn={false}
                                 onShowLoading={this.props.onShowLoading.bind(this)} 
                                 onDoneLoading={this.props.onDoneLoading.bind(this)} />

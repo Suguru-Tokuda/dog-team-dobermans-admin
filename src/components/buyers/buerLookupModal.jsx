@@ -37,15 +37,15 @@ class BuyerLookupModal extends Component {
         if (buyers.length > 0) {
             return buyers.map(buyer => {
                 return (
-                    <tr key={buyer.buyerId}>
-                        <td>{buyer.buyerId}</td>
+                    <tr key={buyer.buyerID}>
+                        <td>{buyer.buyerID}</td>
                         <td>{buyer.firstName}</td>
                         <td>{buyer.lastName}</td>
                         <td>{buyer.phone}</td>
                         <td>{buyer.email}</td>
                         <td>{buyer.state}</td>
                         <td>{buyer.city}</td>
-                        <td><button className="btn btn-sm btn-success" onClick={() => this.handleBuyerSelected(buyer.buyerId)}>Select</button></td>
+                        <td><button className="btn btn-sm btn-success" onClick={() => this.handleBuyerSelected(buyer.buyerID)}>Select</button></td>
                     </tr>
                 );
             });
@@ -60,6 +60,7 @@ class BuyerLookupModal extends Component {
     handleSearchBtnClicked = () => {
         const { searchKeyword } = this.state;
         let keywordToSend = searchKeyword.trim();
+        keywordToSend = keywordToSend.replace(' ', '+');
         if (keywordToSend.length > 0) {
             this.props.onShowLoading(true, 1);
             BuyersService.searchForBuyers(keywordToSend)
@@ -84,9 +85,9 @@ class BuyerLookupModal extends Component {
         }
     }
 
-    handleBuyerSelected = (buyerId) => {
+    handleBuyerSelected = (buyerID) => {
         $('#buyerLookupModal').modal('hide');
-        this.props.onBuyerSelected(buyerId);
+        this.props.onBuyerSelected(buyerID);
     }
 
     render() {

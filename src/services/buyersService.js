@@ -7,12 +7,12 @@ export default class BuyersService {
         return `${SessionInfoService.getBaseUrlForAPI()}`;
     }
 
-    static searchForBuyers(searchKeyword) {
-        return axios.get(`${this.getServiceBase()}buyer/search?key=${api.API_KEY}&searchKeyword=${searchKeyword}`);
+    static searchForBuyers(searchKeywords) {
+        return axios.get(`${this.getServiceBase()}buyer/search?key=${api.API_KEY}&searchKeywords=${searchKeywords}`);
     }
 
-    static getBuyer(buyerId) {
-        return axios.get(`${this.getServiceBase()}buyer?key=${api.API_KEY}&buyerId=${buyerId}`);
+    static getBuyer(buyerID) {
+        return axios.get(`${this.getServiceBase()}buyer?key=${api.API_KEY}&buyerID=${buyerID}`);
     }
 
     static createBuyer(firstName, lastName, email, phone, state, city) {

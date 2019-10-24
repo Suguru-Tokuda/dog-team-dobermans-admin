@@ -4,7 +4,7 @@ import toastr from 'toastr';
 
 class ParentDetail extends Component {
     state = {
-        parentId: '',
+        parentID: '',
         parentDetail: {},
         loadDetail: true
     };
@@ -12,9 +12,9 @@ class ParentDetail extends Component {
     constructor(props) {
         super(props);
         if (typeof props.match !== 'undefined') {
-            this.state.parentId = props.match.params.parentId;
+            this.state.parentID = props.match.params.parentID;
         } else {
-            this.state.parentId = props.parentId;
+            this.state.parentID = props.parentID;
         }
         if (typeof props.loadDetail !== 'undefined') {
             this.state.loadDetail = props.loadDetail;
@@ -25,10 +25,10 @@ class ParentDetail extends Component {
     }
 
     componentDidMount() {
-        const { parentId, loadDetail } = this.state;
+        const { parentID, loadDetail } = this.state;
         if (loadDetail === true) {
             this.props.onShowLoading(true, 1);
-            ParentsService.getParent(parentId)
+            ParentsService.getParent(parentID)
                 .then(res => {
                     this.setState({ parentDetail: res.data });
                 })

@@ -5,7 +5,7 @@ import toastr from 'toastr';
 
 class PuppyInitialForm extends Component {
     state = {
-        puppyId: '',
+        puppyID: '',
         puppyDetail: {},
         selections: {
             name: '',
@@ -39,13 +39,11 @@ class PuppyInitialForm extends Component {
 
     constructor(props) {
         super(props);
-        if (typeof props.match.params.puppyId !== 'undefined')
-            this.state.puppyId = props.match.params.puppyId;
+        if (typeof props.match.params.puppyID !== 'undefined')
+            this.state.puppyID = props.match.params.puppyID;
         this.state.selections.sex = 'male';
         this.state.selections.type = 'american';
         this.state.selections.color = 'Black & Tan';
-        this.state.selections.dadId = 2;
-        this.state.selections.momId = 5;
         this.state.dads = props.dads;
         this.state.moms = props.moms;
         if (props.initialParams && Object.keys(props.initialParams).length > 0) {
@@ -63,10 +61,10 @@ class PuppyInitialForm extends Component {
     }
 
     componentDidMount() {
-        const { puppyId } = this.state;
-        if (puppyId !== '') {
+        const { puppyID } = this.state;
+        if (puppyID !== '') {
             this.props.onShowLoading(true, 1);
-            PuppiesService.getPuppy(puppyId)
+            PuppiesService.getPuppy(puppyID)
                 .then(res => {
                     const puppyDetail = res.data;
                     const { selections } = this.state;
@@ -110,7 +108,7 @@ class PuppyInitialForm extends Component {
     }
 
     getHeader = () => {
-        return this.state.puppyId === '' ? <h3 className="mb-3">Create New Puppy</h3> : <h3 className="mb-3">Update Puppy</h3>;
+        return this.state.puppyID === '' ? <h3 className="mb-3">Create New Puppy</h3> : <h3 className="mb-3">Update Puppy</h3>;
     }
 
     getErrorClass(key) {
@@ -131,13 +129,13 @@ class PuppyInitialForm extends Component {
 
     getDadOptions = () => {
         return this.state.dads.map(dad => {
-            return <option key={dad.parentId} value={dad.parentId}>{dad.name}</option>;
+            return <option key={dad.parentID} value={dad.parentID}>{dad.name}</option>;
         });
     }
 
     getMomOptions = () => {
         return this.state.moms.map(mom => {
-            return <option key={mom.parentId} value={mom.parentId}>{mom.name}</option>
+            return <option key={mom.parentID} value={mom.parentID}>{mom.name}</option>
         });
     }
 
@@ -301,7 +299,7 @@ class PuppyInitialForm extends Component {
         if (invalidCount === 0) {
             const newPuppy = this.state.selections;
             newPuppy.sold = false;
-            newPuppy.buyerId = null;
+            newPuppy.buyerID = null;
             newPuppy.payedAmount = 0;
             newPuppy.live = false;
             newPuppy.soldDate = null;
@@ -315,7 +313,7 @@ class PuppyInitialForm extends Component {
         event.preventDefault();
         this.setState({ formSubmitted: true });
         let valid = true;
-        const { puppyId, puppyDetail, selections, validations } = this.state;
+        const { puppyID, puppyDetail, selections, validations } = this.state;
         for (const key in selections) {
             const selection = selections[key];
             if (selection === '' || selection === 0 || selection === null) {
@@ -338,7 +336,7 @@ class PuppyInitialForm extends Component {
               puppyDetail.description = selections.description;
               puppyDetail.dateOfBirth = selections.dateOfBirth;
               this.props.onShowLoading(true, 1);
-              PuppiesService.updatePuppy(puppyId, puppyDetail)
+              PuppiesService.updatePuppy(puppyID, puppyDetail)
                 .then(() => {
                     toastr.success('Profile updated');
                     this.props.onCancelBtnClicked();
@@ -353,7 +351,7 @@ class PuppyInitialForm extends Component {
     }
 
     getNextBtn() {
-        return this.state.puppyId === '' ? <button className="btn btn-primary" type="button" onClick={this.handleCreateBtnClicked}>Next</button> : <button type="button" className="btn btn-primary" onClick={this.handleUpdateBtnClicked}>Update</button>;
+        return this.state.puppyID === '' ? <button className="btn btn-primary" type="button" onClick={this.handleCreateBtnClicked}>Next</button> : <button type="button" className="btn btn-primary" onClick={this.handleUpdateBtnClicked}>Update</button>;
     }
 
     render() {

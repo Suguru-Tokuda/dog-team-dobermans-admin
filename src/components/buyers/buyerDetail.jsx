@@ -4,7 +4,7 @@ import toastr from 'toastr';
 
 class BuyerDetail extends Component {
     state = {
-        buyerId: '',
+        buyerID: '',
         buyerDetail: {},
         loadBuyer: false,
         showBackBtn: true
@@ -12,15 +12,15 @@ class BuyerDetail extends Component {
 
     constructor(props) {
         super(props);
-        this.state.buyerId = props.buyerId;
+        this.state.buyerID = props.buyerID;
         if (props.showBackBtn !== undefined)
             this.state.showBackBtn = props.showBackBtn;
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.buyerId !== prevState.buyerId) {
+        if (nextProps.buyerID !== prevState.buyerID) {
             return {
-                buyerId: nextProps.buyerId,
+                buyerID: nextProps.buyerID,
                 loadBuyer: true
             };
         }
@@ -28,9 +28,9 @@ class BuyerDetail extends Component {
     }
 
     componentDidMount() {
-        const { buyerId } = this.state;
+        const { buyerID } = this.state;
         this.props.onShowLoading(true, 1);
-        BuyersService.getBuyer(buyerId)
+        BuyersService.getBuyer(buyerID)
             .then(res => {
                 this.setState({ buyerDetail: res.data });
             })
@@ -43,11 +43,11 @@ class BuyerDetail extends Component {
     }
 
     componentDidUpdate() {
-        const { buyerId, loadBuyer } = this.state;
+        const { buyerID, loadBuyer } = this.state;
         if (loadBuyer === true) {
             this.setState({ loadBuyer: false });
             this.props.onShowLoading(true, 1);
-            BuyersService.getBuyer(buyerId)
+            BuyersService.getBuyer(buyerID)
                 .then(res => {
                     this.setState({ buyerDetail: res.data });
                 })

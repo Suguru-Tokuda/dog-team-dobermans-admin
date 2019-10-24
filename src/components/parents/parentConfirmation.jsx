@@ -4,7 +4,7 @@ import toastr from 'toastr';
 
 class ParentConfirmation extends Component {
     state = {
-        parentId: '',
+        parentID: '',
         initialParams: {},
         pictures: []
     };

@@ -181,7 +181,7 @@ class PuppiesTable extends Component {
                     picture = <div className="rounded">Not available</div>
                 }
                 return (
-                    <tr key={`puppy-${puppy.puppyId}`}>
+                    <tr key={`puppy-${puppy.puppyID}`}>
                         <td>{puppy.name}</td>
                         <td>{moment(puppy.dateOfBirth).format('MM/DD/YYYY')}</td>
                         <td>{puppy.sex}</td>
@@ -191,11 +191,11 @@ class PuppiesTable extends Component {
                         <td>{puppy.sold === true ? 'Sold' : 'Unsold'}</td>
                         <td>{puppy.live === true ? 'Live' : 'No'}</td>
                         <td>
-                            <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(puppy.puppyId)}><i className="fa fa-search"></i> View</button>
-                            <button type="button" className="btn btn-sm btn-success ml-1" onClick={() => this.props.onUpdateBtnClicked(puppy.puppyId)}><i className="fa fa-edit"></i> Update</button>
-                            <button type="button" className="btn btn-sm btn-info ml-1" onClick={() => this.props.onRecordSalesBtnClicked(puppy.puppyId)}><i className="fa fa-dollar"></i> Sell</button>
-                            <button type="button" className="btn btn-sm btn-info ml-1" onClick={() => this.props.onLiveBtnClicked(puppy.puppyId)}><i className={`${puppy.live === true ? 'fa fa-eye-slash' : 'fa fa-eye'}`}></i> {`${puppy.live === true ? 'Hide' : 'Go Live'}`}</button>
-                            <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(puppy.puppyId)}><i className="fa fa-close"></i> Delete</button>
+                            <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(puppy.puppyID)}><i className="fa fa-search"></i> View</button>
+                            <button type="button" className="btn btn-sm btn-success ml-1" onClick={() => this.props.onUpdateBtnClicked(puppy.puppyID)}><i className="fa fa-edit"></i> Update</button>
+                            <button type="button" className="btn btn-sm btn-info ml-1" onClick={() => this.props.onRecordSalesBtnClicked(puppy.puppyID)}><i className="fa fa-dollar"></i> Sell</button>
+                            <button type="button" className="btn btn-sm btn-info ml-1" onClick={() => this.props.onLiveBtnClicked(puppy.puppyID)}><i className={`${puppy.live === true ? 'fa fa-eye-slash' : 'fa fa-eye'}`}></i> {`${puppy.live === true ? 'Hide' : 'Go Live'}`}</button>
+                            <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(puppy.puppyID)}><i className="fa fa-close"></i> Delete</button>
                         </td>
                     </tr>
                 );

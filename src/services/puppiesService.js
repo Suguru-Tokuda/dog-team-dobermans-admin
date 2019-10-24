@@ -13,20 +13,20 @@ export default class PuppiesService {
         return axios.get(`${this.getServiceBase()}puppies?key=${api.API_KEY}`);
     }
 
-    static getPuppy(puppyId) {
-        return axios.get(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyId=${puppyId}`);
+    static getPuppy(puppyID) {
+        return axios.get(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyID=${puppyID}`);
     }
 
     static createPuppy(data) {
         return axios.post(`${this.getServiceBase()}puppy?key=${api.API_KEY}`, data);
     }
 
-    static updatePuppy(puppyId, data) {
-        return axios.put(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyId=${puppyId}`, data);
+    static updatePuppy(puppyID, data) {
+        return axios.put(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyID=${puppyID}`, data);
     }
 
-    static deletePuppy(puppyId) {
-        return axios.delete(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyId=${puppyId}`);
+    static deletePuppy(puppyID) {
+        return axios.delete(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyID=${puppyID}`);
     }
 
     static uploadPicture(imageFile) {

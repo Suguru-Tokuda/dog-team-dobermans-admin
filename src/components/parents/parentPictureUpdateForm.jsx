@@ -7,7 +7,7 @@ import PictureCropModal from '../miscellaneous/pictureCropModal';
 
 class ParentPictureUpdateForm extends Component {
     state = {
-        parentId: '',
+        parentID: '',
         tempPictureFile: null,
         tempPictureFileName: '',
         parentDetail: {}
@@ -15,13 +15,13 @@ class ParentPictureUpdateForm extends Component {
 
     constructor(props) {
         super(props);
-        this.state.parentId = props.match.params.parentId;
+        this.state.parentID = props.match.params.parentID;
     }
 
     componentDidMount() {
-        const { parentId } = this.state;
+        const { parentID } = this.state;
         this.props.onShowLoading(true, 1);
-        ParentsService.getParent(parentId)
+        ParentsService.getParent(parentID)
             .then(res => {
                 this.setState({ parentDetail: res.data });
             })
@@ -66,9 +66,9 @@ class ParentPictureUpdateForm extends Component {
     }
 
     handleUpdatePictureOrder = (pictures) => {
-        const { parentId, parentDetail } = this.state;
+        const { parentID, parentDetail } = this.state;
         parentDetail.pictures = pictures;
-        ParentsService.updateParent(parentId, parentDetail);
+        ParentsService.updateParent(parentID, parentDetail);
     }
 
     handleImageChange = async (event) => {
@@ -85,13 +85,13 @@ class ParentPictureUpdateForm extends Component {
     }
 
     handleFinishImageCropping = async (newFile) => {
-        const { parentId, parentDetail } = this.state;
+        const { parentID, parentDetail } = this.state;
         this.props.onShowLoading(true, 1);
         // upload a picture and get { reference, url }
         const newPicture = await ParentsService.uploadPicture(newFile);
         // push the new picture reference
         parentDetail.pictures.push(newPicture);
-        ParentsService.updateParent(parentId, parentDetail)
+        ParentsService.updateParent(parentID, parentDetail)
             .then(() => {
                 toastr.success('Upload success');
             })
@@ -104,12 +104,12 @@ class ParentPictureUpdateForm extends Component {
     }
 
     handleDeletePicture = async (index) => {
-        const { parentId, parentDetail } = this.state;
+        const { parentID, parentDetail } = this.state;
         const pictureToDelete = parentDetail.pictures[index];
         parentDetail.pictures.splice(index, 1);
         ParentsService.deletePicture(pictureToDelete.reference)
             .then(() => {
-                ParentsService.updateParents(parentId, parentDetail)
+                ParentsService.updateParents(parentID, parentDetail)
                     .then(() => {
                         toastr.success('Successfully deleted the picture');
                         this.setState({ parentDetail });
@@ -128,7 +128,7 @@ class ParentPictureUpdateForm extends Component {
     }
 
     render() {
-        const { tempPictureFile, parentId } = this.state;
+        const { tempPictureFile, parentID } = this.state;
         return (
             <React.Fragment>
                 <div className="card">
@@ -139,7 +139,7 @@ class ParentPictureUpdateForm extends Component {
                         </div>
                     </div>
                     <div className="card-footer">
-                        <Link className="btn btn-sm btn-secondary" to={`/parent/update/${parentId}`}>Back</Link>
+                        <Link className="btn btn-sm btn-secondary" to={`/parent/update/${parentID}`}>Back</Link>
                     </div>
                 </div>
                 <PictureCropModal 

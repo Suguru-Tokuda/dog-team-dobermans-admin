@@ -3,14 +3,14 @@ import $ from 'jquery';
 
 class ParentDeleteConfModal extends Component {
     state = {
-        parentId: '',
+        parentID: '',
         parentDetail: {},
         showModal: false
     };
 
     constructor(props) {
         super(props);
-        this.state.parentId = props.parentId;
+        this.state.parentID = props.parentID;
         this.state.parentDetail = props.parentDetail;
     }
 
@@ -25,9 +25,9 @@ class ParentDeleteConfModal extends Component {
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.parentId !== prevState.parentId || nextProps.showModal !== prevState.showModal) {
+        if (nextProps.parentID !== prevState.parentID || nextProps.showModal !== prevState.showModal) {
             return {
-                parentId: nextProps.parentId,
+                parentID: nextProps.parentID,
                 parentDetail: nextProps.parentDetail,
                 showModal: nextProps.showModal
             };
