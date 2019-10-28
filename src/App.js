@@ -9,7 +9,8 @@ import Puppies from './components/puppies/puppies';
 import Puppy from './components/puppies/puppy';
 import Parent from './components/parents/parent';
 import Parents from './components/parents/parents';
-import Farm from './components/farm/farm';
+import Buyers from './components/buyers/buyers';
+import AboutUs from './components/aboutUs/aboutUs';
 import ContactUs from './components/contactus/contactus';
 
 class App extends Component {
@@ -63,7 +64,8 @@ class App extends Component {
                   <Route path="/puppies" exact render={(props) => <Puppies {...props} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                   <Route path="/parent" render={(props) => <Parent url="/parent" {...props} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                   <Route path="/parents" exact render={(props) => <Parents {...props} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                  <Route path="/farm" exact render={(props) => <Farm {...props} />} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />
+                  <Route path="/buyers" exact render={(props) => <Buyers {...props} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                  <Route path="/about-us" exact render={(props) => <AboutUs {...props} />} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />
                   <Route path="/contactus" exact render={(props) => <ContactUs {...props} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                 </Switch>
                 {this.getSpinner()}
