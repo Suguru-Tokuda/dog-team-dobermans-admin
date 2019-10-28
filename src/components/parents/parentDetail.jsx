@@ -83,42 +83,60 @@ class ParentDetail extends Component {
             <div className="card">
                 <div className="card-body">
                     <h3 className="mb-3">Parent Info</h3>
-                    <div className="row form-group">
-                        <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Name</strong></label>
-                        {parentDetail.name && (
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{parentDetail.name}</div>
-                        )}
-                    </div>
-                    <div className="row form-group">
-                        <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Sex</strong></label>
-                        {parentDetail.sex && (
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{parentDetail.sex}</div>
-                        )}
-                    </div>
-                    <div className="row form-group">
-                        <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Type</strong></label>
-                        {parentDetail.type && (
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{parentDetail.type}</div>
-                        )}
-                    </div>
-                    <div className="row form-group">
-                        <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Color</strong></label>
-                        {parentDetail.color && (
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{parentDetail.color}</div>
-                        )}
-                    </div>
-                    <div className="row form-group">
-                        <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Weight</strong></label>
-                        {parentDetail.weight && (
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{`${parentDetail.weight} lbs`}</div>
-                        )}
-                    </div>
-                    <div className="row form-group">
-                        <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Description</strong></label>
-                        {parentDetail.description && (
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{parentDetail.description}</div>
-                        )}
-                    </div>
+                    <div className="table-responsive">
+                            <table className="table table-borderless">
+                                <tbody>
+                                    <tr>
+                                        <th width="10%">Name</th>
+                                        <td width="90%">
+                                            {parentDetail.name && (
+                                                parentDetail.name
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th width="10%">Sex</th>
+                                        <td width="90%">
+                                            {parentDetail.sex && (
+                                                parentDetail.sex
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th width="10%">Type</th>
+                                        <td width="90%">
+                                            {parentDetail.type && (
+                                                parentDetail.type
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th width="10%">Color</th>
+                                        <td width="90%">
+                                            {parentDetail.color && (
+                                                parentDetail.color
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th width="10%">Weight</th>
+                                        <td width="90%">
+                                            {parentDetail.weight && (
+                                                `${parentDetail.weight} lbs`
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th width="10%">Description</th>
+                                        <td width="90%">
+                                            {parentDetail.description && (
+                                                parentDetail.description
+                                            )}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     {(parentDetail.pictures && parentDetail.pictures.length > 0) &&
                         this.getPictures()
                     }
