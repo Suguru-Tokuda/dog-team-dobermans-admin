@@ -22,6 +22,9 @@ class AdminHeader extends Component {
                         <NavLink className="nav-link" activeClassName="active" to="/parents">Parents</NavLink>
                     </li>
                     <li className="nav-item px-3">
+                        <NavLink className="nav-link" activeClassName="active" to="/buyers">Buyers</NavLink>
+                    </li>
+                    <li className="nav-item px-3">
                         <NavLink className="nav-link" activeClassName="active" to="/farm">Farm</NavLink>
                     </li>
                     <li className="nav-item px-3">

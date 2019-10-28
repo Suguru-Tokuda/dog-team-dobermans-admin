@@ -18,7 +18,10 @@ class AdminSidebar extends Component {
                         <NavLink className="nav-link" activeClassName="active" to="/parents">Parents</NavLink>
                     </li>
                     <li className="nav-item">
-                        <NavLink className="nav-link" activeClassName="active" to="/farm">Farm</NavLink>
+                        <NavLink className="nav-link" activeClassName="active" to="/buyers">Buyers</NavLink>
+                    </li>
+                    <li className="nav-item">
+                        <NavLink className="nav-link" activeClassName="active" to="/about-us">About Us</NavLink>
                     </li>
                     <li className="nav-item">
                         <NavLink className="nav-link" activeClassName="active" to="/contactus">Contact Us</NavLink>
@@ -26,7 +29,7 @@ class AdminSidebar extends Component {
                 </ul>
             </nav>
         </div>
-        )
+        );
     }
 }
 
