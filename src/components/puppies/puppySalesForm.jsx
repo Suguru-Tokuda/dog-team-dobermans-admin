@@ -42,7 +42,7 @@ class PuppySalesForm extends Component {
     }
 
     handleBuerSelected = (buyerID) => {
-        this.setState({ buyerID: buyerID, showLookupModal: false, showRegisterBuyerModal: false });
+        this.setState({ buyerID: buyerID });
     }
 
     handleLookupBuyerBtnClicked = () => {
@@ -106,7 +106,7 @@ class PuppySalesForm extends Component {
                                         <div className="row">
                                             <div className="col-12">
                                                 <div className="form-inline">
-                                                    <button className="btn btn-success" onClick={this.handleLookupBuyerBtnClicked}>Lookup Buyer</button>
+                                                    <button data-toggle="modal" type="button" data-target="#buyerLookupModal" className="btn btn-success" onClick={this.handleLookupBuyerBtnClicked}>Lookup Buyer</button>
                                                     <Link className="btn btn-secondary ml-2" to="/puppies">Back</Link>
                                                 </div>
                                             </div>

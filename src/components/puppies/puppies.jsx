@@ -12,7 +12,7 @@ class Puppies extends Component {
         showDeleteModal: false,
         puppies: [],
         viewOption: ''
-    }
+    };
 
     componentDidMount() {
         this.getPuppies();

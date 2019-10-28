@@ -46,41 +46,59 @@ class PuppyDeleteConfModal extends Component {
                             <p>Delete cannot be undone. Please confirm.</p>
                         </div>
                         <div className="modal-body">
-                            <div className="row form-group">
-                                <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Name</strong></label>
-                                {puppyDetail.name && (
-                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyDetail.name}</div>
-                                )}
-                            </div>
-                            <div className="row form-group">
-                                <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Sex</strong></label>
-                                {puppyDetail.sex && (
-                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyDetail.sex}</div>
-                                )}
-                            </div>
-                            <div className="row form-group">
-                                <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Type</strong></label>
-                                {puppyDetail.type && (
-                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyDetail.type}</div>
-                                )}
-                            </div>
-                            <div className="row form-group">
-                                <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Color</strong></label>
-                                {puppyDetail.color && (
-                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyDetail.color}</div>
-                                )}
-                            </div>
-                            <div className="row form-group">
-                                <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Weight</strong></label>
-                                {puppyDetail.weight && (
-                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{`${puppyDetail.weight} lbs`}</div>
-                                )}
-                            </div>
-                            <div className="row form-group">
-                                <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Price</strong></label>
-                                {puppyDetail.price && (
-                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{`$${puppyDetail.price}`}</div>
-                                )}
+                            <div className="table-responsive">
+                                <table className="table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <th width="10%">Name</th>
+                                            <td width="90%">
+                                                {puppyDetail.name && (
+                                                    puppyDetail.name
+                                                )}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th width="10%">Sex</th>
+                                            <td width="90%">
+                                                {puppyDetail.sex && (
+                                                    puppyDetail.sex
+                                                )}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th width="10%">Type</th>
+                                            <td width="90%">
+                                                {puppyDetail.type && (
+                                                    puppyDetail.type
+                                                )}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th width="10%">Color</th>
+                                            <td width="90%">
+                                                {puppyDetail.color && (
+                                                    puppyDetail.color
+                                                )}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th width="10%">Weight</th>
+                                            <td width="90%">
+                                                {puppyDetail.weight && (
+                                                    `${puppyDetail.weight} lbs`
+                                                )}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th width="10%">Price</th>
+                                            <td width="90%">
+                                                {puppyDetail.price && (
+                                                    `$${puppyDetail.price}`
+                                                )}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                         <div className="modal-footer">

@@ -408,6 +408,7 @@ class PuppyInitialForm extends Component {
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Dad</label>
                             <div className="col-5">
                                 <select className={`form-control ${this.getErrorClass('dadID')}`} value={selections.dadID} onChange={this.handleSetDadId}>
+                                    <option value="">--Select Dad--</option>
                                     {this.getDadOptions()}
                                 </select>
                                 {this.getErrorMessage('dadID')}
@@ -417,6 +418,7 @@ class PuppyInitialForm extends Component {
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Mom</label>
                             <div className="col-5">
                                 <select className={`form-control ${this.getErrorClass('momID')}`} value={selections.momID} onChange={this.handleSetMomId}>
+                                    <option value="">--Select Mom--</option>
                                     {this.getMomOptions()}
                                 </select>
                                 {this.getErrorMessage('momID')}

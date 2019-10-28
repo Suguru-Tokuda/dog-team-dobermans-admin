@@ -116,59 +116,83 @@ class PuppyDetail extends Component {
                 <div className="card">
                     <div className="card-body">
                         <h3 className="mb-3">Puppy Info</h3>
-                        <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Name</strong></label>
-                            {puppyData.name && (
-                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyData.name}</div>
-                            )}
-                        </div>
-                        <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Sex</strong></label>
-                            {puppyData.sex && (
-                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyData.sex}</div>
-                            )}
-                        </div>
-                        <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Type</strong></label>
-                            {puppyData.type && (
-                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyData.type}</div>
-                            )}
-                        </div>
-                        <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Color</strong></label>
-                            {puppyData.color && (
-                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyData.color}</div>
-                            )}
-                        </div>
-                        <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Dad</strong></label>
-                            {puppyData.dadID && (
-                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getDadName(puppyData.dadID)}</div>
-                            )}
-                        </div>
-                        <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Mom</strong></label>
-                            {puppyData.momID && (
-                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{this.getMomName(puppyData.momID)}</div>
-                            )}
-                        </div>
-                        <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Weight</strong></label>
-                            {puppyData.weight && (
-                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{`${puppyData.weight} lbs`}</div>
-                            )}
-                        </div>
-                        <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Price</strong></label>
-                            {puppyData.price && (
-                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{`$${puppyData.price}`}</div>
-                            )}
-                        </div>
-                        <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Description</strong></label>
-                            {puppyData.description && (
-                                <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{puppyData.description}</div>
-                            )}
+                        <div className="table-responsive">
+                            <table className="table table-borderless">
+                                <tbody>
+                                    <tr>
+                                        <th width="10%">Name</th>
+                                        <td width="90%">
+                                            {puppyData.name && (
+                                                puppyData.name
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th width="10%">Sex</th>
+                                        <td width="90%">
+                                            {puppyData.sex && (
+                                                puppyData.sex
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th width="10%">Type</th>
+                                        <td width="90%">
+                                            {puppyData.type && (
+                                                puppyData.type
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th width="10%">Color</th>
+                                        <td width="90%">
+                                            {puppyData.color && (
+                                                puppyData.color
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th width="10%">Dad</th>
+                                        <td width="90%">
+                                            {puppyData.dadID && (
+                                                this.getDadName(puppyData.dadID)
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th width="10%">Mom</th>
+                                        <td width="90%">
+                                            {puppyData.momID && (
+                                                this.getMomName(puppyData.momID)
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th width="10%">Weight</th>
+                                        <td width="90%">
+                                            {puppyData.weight && (
+                                                `${puppyData.weight} lbs`
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th width="10%">Price</th>
+                                        <td width="90%">
+                                            {puppyData.price && (
+                                                `$${puppyData.price}`
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th width="10%">Description</th>
+                                        <td width="90%">
+                                            {puppyData.description && (
+                                                puppyData.description
+                                            )}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                         {this.getPictures()}
                     </div>

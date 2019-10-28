@@ -42,12 +42,11 @@ class PuppiesTable extends Component {
             } else {
                 filteredData = JSON.parse(JSON.stringify(props.puppies));
             }
-            const newFilteredData = filteredData;
             if (props.totalItems !== paginationInfo.totalItems)
                 paginationInfo.totalItems = props.totalItems;
             this.setState({ 
                 tableData: props.puppies,
-                filteredData: newFilteredData,
+                filteredData: filteredData,
                 paginationInfo: paginationInfo,
                 updateDisplayedData: true
             });
@@ -118,15 +117,13 @@ class PuppiesTable extends Component {
             <option key={pageSize}>{pageSize}</option>
         );
         return (
-            <React.Fragment>
                 <div className="form-inline">
                     Page size:
                     <select value={this.state.paginationInfo.pageSize} className="form-control" onChange={this.handlePageSizeChanged}>
                         {pageSizeOptions}
                     </select>
                 </div>
-            </React.Fragment>
-        )
+        );
     }
 
     getPagination() {
@@ -153,14 +150,14 @@ class PuppiesTable extends Component {
         const thead = (
             <thead>
                 <tr>
-                    <th className="pointer" onClick={() => this.sortTable('data.name')}>Name {this.getSortIcon('data.name')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('data.dateOfBirth')}>DOB {this.getSortIcon('data.dateOfBirth')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('data.sex')}>Sex {this.getSortIcon('data.sex')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('data.weight')}>Weight {this.getSortIcon('data.weight')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('data.price')}>Price {this.getSortIcon('data.price')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('name')}>Name {this.getSortIcon('name')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('dateOfBirth')}>DOB {this.getSortIcon('dateOfBirth')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('sex')}>Sex {this.getSortIcon('sex')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('weight')}>Weight {this.getSortIcon('weight')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('price')}>Price {this.getSortIcon('price')}</th>
                     <th>Picture</th>
-                    <th className="pointer" onClick={() => this.sortTable('data.sold')}>Sold {this.getSortIcon('data.sold')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('data.live')}>Live {this.getSortIcon('data.live')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('sold')}>Sold {this.getSortIcon('sold')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('live')}>Live {this.getSortIcon('live')}</th>
                     <th>Action</th>
                 </tr>
                 <tr>
@@ -212,18 +209,6 @@ class PuppiesTable extends Component {
         );
     }
 
-    getPagination = () => {
-        return (
-            <Pagination
-                onPageChange={this.updateDisplayedData.bind(this)}
-                currentPage={this.state.paginationInfo.currentPage}
-                totalItems={this.state.filteredData.length}
-                maxPages={this.state.paginationInfo.maxPages}
-                pageSize={this.state.paginationInfo.pageSize}
-                />
-        );
-    }
-
     handleGirdSearch = (input) => {
         this.processGridSearch(input.target.value);
         this.setState({ gridSearch: input.target.value });
@@ -262,13 +247,13 @@ class PuppiesTable extends Component {
             retVal = tableData.filter(puppy => {
                 let foundCount = 0;
                 searchKeywords.forEach(searchKeyword => {
-                    if (puppy.data.name.toLowerCase().indexOf(searchKeyword) !== -1)
+                    if (puppy.name.toLowerCase().indexOf(searchKeyword) !== -1)
                         foundCount++;
-                    if (puppy.data.sex.toLowerCase() === searchKeyword)
+                    if (puppy.sex.toLowerCase() === searchKeyword)
                         foundCount++;
-                    if (puppy.data.weight === parseFloat(searchKeyword))
+                    if (puppy.weight === parseFloat(searchKeyword))
                         foundCount++;
-                    if (puppy.data.price === parseInt(searchKeyword))
+                    if (puppy.price === parseInt(searchKeyword))
                         foundCount++;
                 });
                 return foundCount === searchKeywords.length;
