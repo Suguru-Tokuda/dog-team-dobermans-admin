@@ -22,24 +22,31 @@ class BuyerRegistrationModal extends Component {
             city: '',
             state: ''
         },
-        showModal: false,
         formSubmitted: false
     };
 
-    static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.showModal !== prevState.showModal) {
-            return { showModal: nextProps.showModal }
-        }
-        return null;
-    }
-
     componentDidUpdate() {
-        if (this.state.showModal === true) {
-            if ($('#buyerRegistrationModal').is(':visible') === false)
-                $('#buyerRegistrationModal').modal('show');
-        } else {
-            $('#buyerRegistrationModal').modal('hide');
-        }
+        $('#buyerRegistrationModal').on('hidden.bs.modal', () => {
+            this.setState({
+                selections: {
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    phone: '',
+                    city: '',
+                    state: ''
+                },
+                validations: {
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    phone: '',
+                    city: '',
+                    state: ''
+                },
+                formSubmitted: false
+            });
+        });
     }
 
     getStateOptions = () => {
@@ -153,6 +160,27 @@ class BuyerRegistrationModal extends Component {
             BuyersService.createBuyer(selections.firstName, selections.lastName, selections.email, selections.phone, selections.state, selections.city)
                 .then(res => {
                     this.props.onBuyerSelected(res.data.buyerID);
+                    this.setState({
+                        selections: {
+                            firstName: '',
+                            lastName: '',
+                            email: '',
+                            phone: '',
+                            city: '',
+                            state: ''
+                        },
+                        validations: {
+                            firstName: '',
+                            lastName: '',
+                            email: '',
+                            phone: '',
+                            city: '',
+                            state: ''
+                        },
+                        formSubmitted: false
+                    });
+                    toastr.success('A new buyer created');
+                    $('#buyerRegistrationModal').modal('hide');
                 })
                 .catch(err => {
                     toastr.error('There was an error in creating a buyer');

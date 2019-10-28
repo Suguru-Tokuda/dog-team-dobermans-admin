@@ -65,41 +65,59 @@ class BuyerDetail extends Component {
         return (
             <div className="card">
                 <div className="card-body">
-                    <div className="row form-group">
-                        <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>First Name</strong></label>
-                        {buyerDetail.firstName && (
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{buyerDetail.firstName}</div>
-                        )}
-                    </div>
-                    <div className="row form-group">
-                        <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Last Name</strong></label>
-                        {buyerDetail.lastName && (
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{buyerDetail.lastName}</div>
-                        )}
-                    </div>
-                    <div className="row form-group">
-                        <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Phone</strong></label>
-                        {buyerDetail.phone && (
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{buyerDetail.phone}</div>
-                        )}
-                    </div>
-                    <div className="row form-group">
-                        <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Email</strong></label>
-                        {buyerDetail.email && (
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{buyerDetail.email}</div>
-                        )}
-                    </div>
-                    <div className="row form-group">
-                        <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>City</strong></label>
-                        {buyerDetail.city && (
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{buyerDetail.city}</div>
-                        )}
-                    </div>
-                    <div className="row form-group">
-                        <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>State</strong></label>
-                        {buyerDetail.state && (
-                            <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{buyerDetail.state}</div>
-                        )}
+                    <div className="table-responsive">
+                        <table className="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <th width="10%">First Name</th>
+                                    <td width="90%">
+                                        {buyerDetail.firstName && (
+                                            buyerDetail.firstName
+                                        )}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th width="10%">Last Name</th>
+                                    <td width="90%">
+                                        {buyerDetail.lastName && (
+                                            buyerDetail.lastName
+                                        )}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th width="10%">Phone</th>
+                                    <td width="90%">
+                                        {buyerDetail.phone && (
+                                            buyerDetail.phone
+                                        )}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th width="10%">Email</th>
+                                    <td width="90%">
+                                        {buyerDetail.email && (
+                                            buyerDetail.email
+                                        )}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th width="10%">City</th>
+                                    <td width="90%">
+                                        {buyerDetail.city && (
+                                            buyerDetail.city
+                                        )}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th width="10%">State</th>
+                                    <td width="90%">
+                                        {buyerDetail.state && (
+                                            buyerDetail.state
+                                        )}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 {showBackBtn === true && (

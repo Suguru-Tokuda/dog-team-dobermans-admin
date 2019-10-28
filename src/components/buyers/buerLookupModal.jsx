@@ -8,30 +8,7 @@ class BuyerLookupModal extends Component {
         searchKeyword: '',
         buyers: [],
         formSubmitted: false,
-        showModal: false
     };
-
-    constructor(props) {
-        super(props);
-        this.state.showModal = props.showModal;
-    }
-
-    componentDidUpdate() {
-        if (this.state.showModal === true) {
-            if ($('#buyerLookupModal').is(':visible') === false) {
-                $('#buyerLookupModal').modal('show');
-            }
-        } else {
-            $('#buyerLookupModal').modal('hide');
-        }
-    }
-
-    static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.showModal !== prevState.showModal) {
-            return { showModal: nextProps.showModal };
-        }
-        return null;
-    }
 
     getRows = (buyers) => {
         if (buyers.length > 0) {
@@ -90,6 +67,11 @@ class BuyerLookupModal extends Component {
         this.props.onBuyerSelected(buyerID);
     }
 
+    handleCreateBuyerBtnClicked() {
+        $('#buyerLookupModal').modal('hide');
+        $('#buyerRegistrationModal').modal('show');
+    }
+
     render() {
         const { searchKeyword, formSubmitted, buyers } = this.state;
         return (
@@ -107,8 +89,8 @@ class BuyerLookupModal extends Component {
                                         <span className="text-danger">Enter search word</span>
                                     )}
                                 </div>
-                                <button className="btn btn-sm btn-success col-2" onClick={this.handleSearchBtnClicked}>Search</button>
-                                <button className="btn btn-sm btn-info ml-2 col-2" onClick={this.props.onShowBuyerRegistrationModal}>Create Buyer</button>
+                                <button type="button" className="btn btn-sm btn-success col-2" onClick={this.handleSearchBtnClicked}>Search</button>
+                                <button type="button" className="btn btn-sm btn-info ml-2 col-2" onClick={this.handleCreateBuyerBtnClicked}>Create Buyer</button>
                             </div>
                             {buyers.length > 0 && (
                                 <div className="row form-group">
@@ -135,6 +117,9 @@ class BuyerLookupModal extends Component {
                                     </div>
                                 </div>
                             )}
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-sm btn-secondary ml-2 col-2" data-toggle="modal" data-target="#buyerLookupModal">Cancel</button>
                         </div>
                     </div>
                 </div>
