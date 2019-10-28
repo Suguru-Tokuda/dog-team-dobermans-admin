@@ -11,6 +11,10 @@ export default class BuyersService {
         return axios.get(`${this.getServiceBase()}buyer/search?key=${api.API_KEY}&searchKeywords=${searchKeywords}`);
     }
 
+    static getBuyers() {
+        return axios.get(`${this.getServiceBase()}buyers?key=${api.API_KEY}`);
+    }
+
     static getBuyer(buyerID) {
         return axios.get(`${this.getServiceBase()}buyer?key=${api.API_KEY}&buyerID=${buyerID}`);
     }
@@ -22,8 +26,26 @@ export default class BuyersService {
             email: email,
             phone: phone,
             state: state,
-            city: city
+            city: city,
+            puppyIDs: []
         };
         return axios.post(`${this.getServiceBase()}/buyer?key=${api.API_KEY}`, data);
+    }
+
+    static updateBuyer(firstName, lastName, email, phone, state, city, puppyIDs) {
+        const data = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: phone,
+            state: state,
+            city: city,
+            puppyIDs: puppyIDs
+        };
+        return axios.put(`${this.getServiceBase()}/buyer?key=${api.API_KEY}`, data);
+    }
+
+    static deleteBuyer(buyerID) {
+        return axios.delete(`${this.getServiceBase()}buyer?key=${api.API_KEY}&buyerID=${buyerID}`);
     }
 }
