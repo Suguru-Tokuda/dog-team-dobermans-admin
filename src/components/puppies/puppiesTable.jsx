@@ -34,7 +34,7 @@ class PuppiesTable extends Component {
 
     componentDidUpdate(props) {
         const { tableData, paginationInfo, gridSearch, updateDisplayedData } = this.state;
-        if (this.comparePuppyData(props.puppies, tableData) === true || props.totalItems !== paginationInfo.totalItems) {
+        if (JSON.stringify(props.puppies) !== JSON.stringify(tableData) || props.totalItems !== paginationInfo.totalItems) {
             let filteredData;
             if (gridSearch !== '') {
                 const searchKeywords = gridSearch.toLowerCase().trim().split(' ');
@@ -54,29 +54,6 @@ class PuppiesTable extends Component {
         if (updateDisplayedData === true) {
             this.setState({ updateDisplayedData: false });
             this.updateDisplayedData(paginationInfo.currentPage, paginationInfo.startIndex, paginationInfo.endIndex);
-        }
-    }
-
-    comparePuppyData(newData, oldData) {
-        if (newData.length !== oldData.length) {
-            return false;
-        } else {
-            const keys = Object.keys(newData[0]);
-            for (let i = 0, max = newData.length; i < max; i++) {
-                const puppy = newData[i];
-                const oldPuppy = oldData[i];
-                let hasChange = false;
-                keys.forEach(key => {
-                    if (key !== 'pictures') {
-                        if (puppy[key] !== oldPuppy[key]) {
-                            hasChange = true;
-                        }
-                    }
-                });
-                if (hasChange === true)
-                    return true;
-            }
-            return false;
         }
     }
 

@@ -33,7 +33,7 @@ class BuyersTable extends Component {
 
     componentDidUpdate(props) {
         const { tableData, paginationInfo, gridSearch, updateDisplayedData } = this.state;
-        if (this.compareBuyerData(props.buyers, tableData) === true || props.totalItems !== paginationInfo.totalItems) {
+        if (JSON.stringify(tableData) !== JSON.stringify(props.buyers) || props.totalItems !== paginationInfo.totalItems) {
             let filteredData;
             if (gridSearch !== '') {
                 const searchKeywords = gridSearch.toLowerCase().trim().split(' ');
@@ -54,26 +54,6 @@ class BuyersTable extends Component {
             this.setState({ updateDisplayedData: false });
             this.updateDisplayedData(paginationInfo.currentPage, paginationInfo.startIndex, paginationInfo.endIndex);
         }
-    }
-
-    compareBuyerData(newData, oldData) {
-        if (newData.length !== oldData.length) {
-            return false;
-        } else {
-            const keys = Object.keys(newData[0]);
-            for (let i = 0, max = newData.length; i < max; i++) {
-                const buyer = newData[i];
-                const oldBuyer = oldData[i];
-                let hasChange = false;
-                keys.forEach(key => {
-                    if (buyer[key] !== oldBuyer[key])
-                        hasChange = true;
-                });
-                if (hasChange === true)
-                    return true;
-            }
-        }
-        return false;
     }
 
     updateDisplayedData = (currentPage, startIndex, endIndex) => {
