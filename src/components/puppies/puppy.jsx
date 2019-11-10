@@ -24,7 +24,7 @@ class Puppy extends Component {
                 <Route path={`${url}/update/:puppyID`} render={(props) => <PuppyUpdate {...props} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
                 <Route path={`${url}/sales/:puppyID`} render={(props) => <PuppySalesForm {...props} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
             </React.Fragment>
-        )
+        );
     }
 }
 

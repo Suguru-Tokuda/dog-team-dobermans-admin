@@ -51,9 +51,7 @@ class BuyerRegistrationModal extends Component {
 
     getStateOptions = () => {
         const states = ConstantsService.getStates();
-        return states.map(state => {
-            return <option key={state.abbreviation} value={state.abbreviation}>{`${state.abbreviation} - ${state.name}`}</option>
-        });
+        return states.map(state => <option key={state.abbreviation} value={state.abbreviation}>{`${state.abbreviation} - ${state.name}`}</option>);
     }
 
     getErrorMsg(key) {
@@ -67,7 +65,7 @@ class BuyerRegistrationModal extends Component {
     }
 
     handleSetFirstName = (event) => {
-        const firstName = event.target.value.trim();
+        const firstName = event.target.value;
         const { selections, validations } = this.state;
         if (firstName !== '') {
             validations.firstName = '';
@@ -79,7 +77,7 @@ class BuyerRegistrationModal extends Component {
     }
 
     handleSetLastName = (event) => {
-        const lastName = event.target.value.trim();
+        const lastName = event.target.value;
         const { selections, validations } = this.state;
         if (lastName !== '') {
             validations.lastName = '';
@@ -133,7 +131,7 @@ class BuyerRegistrationModal extends Component {
     }
 
     handleSetCity = (event) => {
-        const city = event.target.value.trim();
+        const city = event.target.value;
         const { selections, validations } = this.state;
         if (city !== '') {
             validations.name = '';

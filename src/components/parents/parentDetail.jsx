@@ -6,7 +6,8 @@ class ParentDetail extends Component {
     state = {
         parentID: '',
         parentDetail: {},
-        loadDetail: true
+        loadDetail: true,
+        showBackBtn: false
     };
 
     constructor(props) {
@@ -21,6 +22,9 @@ class ParentDetail extends Component {
         }
         if (typeof props.parentDetail !== 'undefined') {
             this.state.parentDetail = props.parentDetail;
+        }
+        if (typeof props.showBackBtn !== 'undefined') {
+            this.state.showBackBtn = props.showBackBtn;
         }
     }
 
@@ -78,7 +82,7 @@ class ParentDetail extends Component {
     }
 
     render() {
-        const { parentDetail } = this.state;
+        const { parentDetail, showBackBtn } = this.state;
         return (
             <div className="card">
                 <div className="card-body">
@@ -141,6 +145,11 @@ class ParentDetail extends Component {
                         this.getPictures()
                     }
                 </div>
+                {typeof showBackBtn !== 'undefined' && showBackBtn === true && (
+                    <div className="card-footer">
+                        <button className="btn btn-secondary" onClick={this.props.onBackBtnClicked} >Back</button>
+                    </div>
+                )}
             </div>
         );
     }

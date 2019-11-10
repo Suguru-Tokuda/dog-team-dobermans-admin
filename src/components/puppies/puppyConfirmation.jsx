@@ -153,6 +153,7 @@ class PuppyConfirmation extends Component {
             }
         }
         data.pictures = pictureLinks;
+        data.name = data.name.trim();
         PuppiesService.createPuppy(data)
             .then(() => {
                 toastr.success('New puppy created');

@@ -14,11 +14,15 @@ class Parent extends Component {
         this.state.url = props.url;
     }
 
+    handleBackBtn = () => {
+        this.props.history.push('/parents');
+    }
+
     render() {
         const { url } = this.props;
         return (
             <Fragment>
-                <Route path={`${url}/view/:parentID`} render={(props) => <ParentDetail {...props} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                <Route path={`${url}/view/:parentID`} render={(props) => <ParentDetail {...props} url={url} showBackBtn={true} onBackBtnClicked={this.handleBackBtn} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
                 <Route path={`${url}/create`} render={(props) => <ParentCreate {...props} url={`${url}/create`} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
                 <Route path={`${url}/update/:parentID`} render={(props) => <ParentUpdate {...props} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
             </Fragment>

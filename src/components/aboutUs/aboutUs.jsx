@@ -7,9 +7,13 @@ class AboutUs extends Component {
         aboutUsDetail: {}
     };
 
+    constructor(props) {
+        super(props);
+    }
+
     componentDidMount() {
         this.props.onShowLoading(true, 1);
-        AboutUsDetail.getAboutUs()
+        AboutUsService.getAboutUs()
             .then((res) => {
                 this.setState({ aboutUsDetail: res.data });
             })
@@ -17,7 +21,7 @@ class AboutUs extends Component {
                 toastr.error('There was an error in loading about us data');
             })
             .finally(() => {
-                this.props.onDoneLoading
+                this.props.onDoneLoading();
             });
     }
 

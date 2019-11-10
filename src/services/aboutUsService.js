@@ -6,7 +6,7 @@ import UtilService from './utilService';
 
 export default class AboutUsService {
     static getServiceBase() {
-        return `${SessionInfoService.getBaseUrlForAPI()}aboutUs`;
+        return `${SessionInfoService.getBaseUrlForAPI()}aboutUs/`;
     }
 
     static getAboutUs() {

@@ -112,13 +112,13 @@ class PuppyInitialForm extends Component {
     }
 
     getErrorClass(key) {
-        const validations = this.state.validations;
-        return (this.state.formSubmitted === true && validations[key] !== '') ? 'is-invalid' : '';
+        const { validations, formSubmitted } = this.state;
+        return (formSubmitted === true && validations[key] !== '') ? 'is-invalid' : '';
     }
 
     getErrorMessage(key) {
-        const validations = this.state.validations;
-        return (this.state.formSubmitted === true && validations[key] !== '') ? <small className="text-danger">{validations[key]}</small> : null;
+        const { validations, formSubmitted } = this.state;
+        return (formSubmitted === true && validations[key] !== '') ? <small className="text-danger">{validations[key]}</small> : null;
     }
 
     getColorOptions = () => {
@@ -141,8 +141,7 @@ class PuppyInitialForm extends Component {
 
     handleSetName = (event) => {
         const name = event.target.value.trim();
-        const selections = this.state.selections;
-        const validations = this.state.validations;
+        const { selections, validations } = this.state;
         if (name !== '') {
             validations.name = '';
         } else {
@@ -153,8 +152,7 @@ class PuppyInitialForm extends Component {
     }
 
     handleSelectDOB = (dateOfBirth) => {
-        const selections = this.state.selections;
-        const validations = this.state.validations;
+        const { selections, validations } = this.state;
         selections.dateOfBirth = dateOfBirth;
         if (dateOfBirth !== null) {
             validations.dateOfBirth = '';
@@ -167,8 +165,7 @@ class PuppyInitialForm extends Component {
 
     handleSetSex = (event) => {
         const sex = event.target.value;
-        const selections = this.state.selections;
-        const validations = this.state.validations;
+        const { selections, validations } = this.state;
         if (sex !== '') {
             validations.sex = '';
         } else {
@@ -180,8 +177,7 @@ class PuppyInitialForm extends Component {
 
     handleSetType = (event) => {
         const type = event.target.value;
-        const selections = this.state.selections;
-        const validations = this.state.validations;
+        const { selections, validations } = this.state;
         if (type !== '') {
             validations.type = '';
         } else {
@@ -193,8 +189,7 @@ class PuppyInitialForm extends Component {
 
     handleSetColor = (event) => {
         const color = event.target.value;
-        const selections = this.state.selections;
-        const validations = this.state.validations;
+        const { selections, validations } = this.state;
         if (color !== '') {
             validations.color = '';
         } else {
@@ -206,8 +201,7 @@ class PuppyInitialForm extends Component {
 
     handleSetDadId = (event) => {
         const dadID = event.target.value;
-        const selections = this.state.selections;
-        const validations = this.state.validations;
+        const { selections, validations } = this.state;
         selections.dadID = dadID;
         if (dadID !== '') {
             validations.dadID = '';
@@ -219,8 +213,7 @@ class PuppyInitialForm extends Component {
 
     handleSetMomId = (event) => {
         const momID = event.target.value;
-        const selections = this.state.selections;
-        const validations = this.state.validations;
+        const { selections, validations } = this.state;
         if (momID !== '') {
             validations.momID = '';
         } else {
@@ -250,8 +243,7 @@ class PuppyInitialForm extends Component {
 
     handleSetPrice = (event) => {
         let input = event.target.value;
-        const selections = this.state.selections;
-        const validations = this.state.validations;
+        const { selections, validations } = this.state;
         if (input.length > 0) {
             input = input.replace(/\D/g, '');
             if (input !== '') {
@@ -270,8 +262,7 @@ class PuppyInitialForm extends Component {
 
     handleSetDescription = (event) => {
         const description = event.target.value;
-        const selections = this.state.selections;
-        const validations = this.state.validations;
+        const { selections, validations } = this.state;
         if (description !== '') {
             validations.description = '';
         } else {
