@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import TestimonialsTable from './testimonialsTable';
 import TestimonialService from '../../services/testimonialService';
 
 class Testimonials extends Component {
@@ -15,3 +16,5 @@ class Testimonials extends Component {
         return null;
     }
 }
+
+export default Testimonials;

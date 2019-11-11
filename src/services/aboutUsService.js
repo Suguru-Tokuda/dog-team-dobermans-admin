@@ -10,7 +10,7 @@ export default class AboutUsService {
     }
 
     static getAboutUs() {
-        return axios.get(this.getServiceBase());
+        return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}`);
     }
 
     static updateAboutUs(aboutUsID, data) {
@@ -62,4 +62,5 @@ export default class AboutUsService {
         const desertRef = storage.ref(imageRef);
         return desertRef.delete();
     }
+    
 }

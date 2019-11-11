@@ -25,13 +25,13 @@ class AdminHeader extends Component {
                         <NavLink className="nav-link" activeClassName="active" to="/buyers">Buyers</NavLink>
                     </li>
                     <li className="nav-item px-3">
-                        <NavLink className="nav-link" activeClassName="active" to="/farm">Farm</NavLink>
+                        <NavLink className="nav-link" activeClassName="active" to="/testimonials">Testimonials</NavLink>
+                    </li>
+                    <li className="nav-item px-3">
+                        <NavLink className="nav-link" activeClassName="active" to="/about-us">About Us</NavLink>
                     </li>
                     <li className="nav-item px-3">
                         <NavLink className="nav-link" activeClassName="active" to="/contact-us">Contact Us</NavLink>
-                    </li>
-                    <li className="nav-item px-3">
-                        <NavLink className="nav-link" activeClassName="active" to="/testimonials">Testimonials</NavLink>
                     </li>
                 </ul>
                 <ul className="ml-auto navbar-nav mr-5"></ul>

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import AboutUsService from '../../services/aboutUsService';
 import toastr from 'toastr';
 
 class IntroductionsUpdateForm extends Component {
@@ -19,40 +18,79 @@ class IntroductionsUpdateForm extends Component {
         }
     }
 
-    getIntroductionForms() {
-        const { instructions } = this.state;
-        if (instructions.length > 0) {
-            return instructions.map(instruction, i => {
-                const title = instruction.title;
-                const description = instruction.description;
-                const picture = instruciton.picture;
+    // getIntroductionForms() {
+    //     const { instructions } = this.state;
+    //     if (instructions.length > 0) {
+    //         return instructions.map(instruction, i => {
+    //             const title = instruction.title;
+    //             const description = instruction.description;
+    //             const picture = instruciton.picture;
+    //             return (
+    //                 <div key={`intro-${i}`} className="row form-group">
+    //                     <div className="col-4">
+    //                         <label>Title</label>
+    //                         <input className="form-control" value={title} />
+    //                     </div>
+    //                     <div className="col-4">
+    //                         <label>Description</label>
+    //                         <textarea className="form-control" value={description} ></textarea>
+    //                     </div>
+    //                     <div className="col-4">
+    //                         {picture.url && (
+    //                             <img src={picture.url} alt={picture.reference} />
+    //                         )}
+    //                     </div>
+    //                 </div>
+    //             );
+    //         });
+    //     } else {
+    //         return null;
+    //     }
+    // }
+
+    getIntroductions() {
+        const { introductions } = this.state;
+        if (introductions.length > 0) {
+            const thead = (
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Picture</th>
+                    </tr>
+                </thead>
+            );
+            const rows = introductions.map(introduction => {
+                const { title, description, picture } = introduction;
                 return (
-                    <div key={`intro-${i}`} className="row form-group">
-                        <div className="col-4">
-                            <label>Title</label>
-                            <input className="form-control" value={title} />
-                        </div>
-                        <div className="col-4">
-                            <label>Description</label>
-                            <textarea className="form-control" value={description} ></textarea>
-                        </div>
-                        <div className="col-4">
-                            {picture.url && (
-                                <img src={picture.url} alt={picture.reference} />
-                            )}
-                        </div>
-                    </div>
+                    <tr>
+                        <td>{title}</td>
+                        <td>{description}</td>
+                        <td><img src={picture.url} className="img-fluid" alt={picture.reference} /></td>
+                    </tr>
                 );
             });
+            const tbody = (
+                <tbody>
+                    {rows}
+                </tbody>
+            );
+            return (
+                <div className="table-responsive">
+                    <table className="table table-hover">
+                        {thead}
+                        {tbody}
+                    </table>
+                </div>
+            );
         } else {
             return null;
         }
     }
 
     render() {
-        const { introductions } = this.state;
         return (
-            null
+            this.getIntroductions()
         );
     }
 

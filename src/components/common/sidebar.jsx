@@ -21,13 +21,13 @@ class AdminSidebar extends Component {
                         <NavLink className="nav-link" activeClassName="active" to="/buyers">Buyers</NavLink>
                     </li>
                     <li className="nav-item">
+                        <NavLink className="nav-link" activeClassName="active" to="/testimonials">Testimonials</NavLink>
+                    </li>
+                    <li className="nav-item">
                         <NavLink className="nav-link" activeClassName="active" to="/about-us">About Us</NavLink>
                     </li>
                     <li className="nav-item">
                         <NavLink className="nav-link" activeClassName="active" to="/contact-us">Contact Us</NavLink>
-                    </li>
-                    <li className="nav-item">
-                        <NavLink className="nav-link" activeClassName="active" to="/testimonials">Testimonials</NavLink>
                     </li>
                 </ul>
             </nav>

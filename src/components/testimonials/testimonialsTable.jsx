@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import SortService from '../../services/sortService';
-import Pagination from '../miscellaneous/pagination';
 import moment from 'moment';
 
-class PuppiesTable extends Component {
+class TestiminialsTable extends Component {
     state = {
         tableData: [],
         filteredData: [],
@@ -20,40 +18,39 @@ class PuppiesTable extends Component {
             key: 'name',
             orderAsc: false
         },
-        gridSearch: '',
+        girdSearch: '',
         pageSizes: [10, 25, 50],
         updateDisplayedData: false
     };
 
     constructor(props) {
         super(props);
-        this.state.tableData = props.puppies;
-        this.state.filteredData = JSON.parse(JSON.stringify(props.puppies));
+        this.state.tableData = props.testimonials;
+        this.state.filteredData = JSON.parse(JSON.stringify(props.testimonials));
         this.state.paginationInfo.totalItems = props.totalItems;
     }
 
     componentDidUpdate(props) {
         const { tableData, paginationInfo, gridSearch, updateDisplayedData } = this.state;
-        if (JSON.stringify(props.puppies) !== JSON.stringify(tableData)) {
+        if (JSON.stringify(props.testimonials) !== JSON.stringify(tableData)) {
             let filteredData;
             if (gridSearch !== '') {
                 const searchKeywords = gridSearch.toLowerCase().trim().split(' ');
-                filteredData = this.filterForKeywords(props.puppies, searchKeywords);
+                filteredData = this.filterForKeywords(props.testimonials, searchKeywords);
             } else {
-                filteredData = JSON.parse(JSON.stringify(props.puppies));
+                filteredData = JSON.parse(JSON.stringify(props.testimonials));
             }
-            if (props.totalItems !== paginationInfo.totalItems)
-                paginationInfo.totalItems = props.totalItems;
-            this.setState({ 
-                tableData: props.puppies,
+            paginationInfo.totalItems = props.totalItems;
+            this.setState({
+                tableData: props.testimonials,
                 filteredData: filteredData,
                 paginationInfo: paginationInfo,
                 updateDisplayedData: true
             });
         }
         if (updateDisplayedData === true) {
-            this.setState({ updateDisplayedData: false });
-            this.updateDisplayedData(paginationInfo.currentPage, paginationInfo.startIndex, paginationInfo.endIndex);
+            this.setState({ updateDisplayedData: false});
+            this.updateDisplayedData(paginationInfo.currentPage,, paginationInfo.startIndex, paginationInfo.endIndex);
         }
     }
 
@@ -104,76 +101,65 @@ class PuppiesTable extends Component {
     }
 
     getPagination() {
-        if (this.state.tableData.length > 0) {
+        const { tableData, paginationInfo } = this.state;
+        if (tableData.length > 0) {
             return <Pagination
                     onPageChange={this.updateDisplayedData.bind(this)}
-                    currentPage={this.state.paginationInfo.currentPage}
-                    totalItems={this.state.paginationInfo.totalItems}
-                    maxPages={this.state.paginationInfo.maxPages}
-                    pageSize={this.state.paginationInfo.pageSize}
+                    currentPage={paginationInfo.currentPage}
+                    totalItems={paginationInfo.totalItems}
+                    maxPages={paginationInfo.maxPages}
+                    pageSize={paginationInfo.pageSize}
                     />;
         }
     }
 
     getSortIcon(accessor) {
+        const { sortData } = this.state;
         let sortIcon = '';
-        if (accessor === this.state.sortData.key) {
-            sortIcon = this.state.sortData.orderAsc === true ? <span className="fa fa-sort-asc" /> : <span className="fa fa-sort-desc" />;
+        if (accessor === sortData.key) {
+            sortIcon = sortData.orderAsc === true ? <span className="fa fa-sort-asc" /> : <span className="fa fa-sort-desc" />;
         }
         return sortIcon;
     }
 
     getTable() {
+        const { displayedData, gridSearch } = this.state;
         const thead = (
             <thead>
                 <tr>
-                    <th className="pointer" onClick={() => this.sortTable('name')}>Name {this.getSortIcon('name')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('dateOfBirth')}>DOB {this.getSortIcon('dateOfBirth')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('sex')}>Sex {this.getSortIcon('sex')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('weight')}>Weight {this.getSortIcon('weight')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('price')}>Price {this.getSortIcon('price')}</th>
-                    <th>Picture</th>
-                    <th className="pointer" onClick={() => this.sortTable('sold')}>Sold {this.getSortIcon('sold')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('firstName')}>First Name {this.getSortIcon('firstName')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('lastName')}>Last Name {this.getSortIcon('lastName')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('email')}>Email {this.getSortIcon('email')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('phone')}>Phone {this.getSortIcon('phone')}</th>
                     <th className="pointer" onClick={() => this.sortTable('live')}>Live {this.getSortIcon('live')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('datePosted')}> {this.getSortIcon('datePosted')}</th>
+                    <th>Picture</th>
                     <th>Action</th>
                 </tr>
                 <tr>
                     <th colSpan="100%">
-                        <input type="text" className="form-control" placeholder="Search for puppies" defaultValue={this.state.gridSearch} onKeyUp={this.handleGirdSearch} />
+                        <input type="text" className="form-control" placeholder="Search for testimonials" defaultValue={gridSearch} onKeyUp={this.handleGridSearch} />
                     </th>
                 </tr>
             </thead>
         );
         let tbody;
-        if (this.state.displayedData.length > 0) {
-            const rows = this.state.displayedData.map((puppy, i) => {
-                let picture;
-                const pictures = puppy.pictures;
-                if (typeof pictures !== 'undefined' && pictures.length > 0) {
-                    picture = <img src={pictures[0].url} alt={pictures[0].reference} className="rounded" style={{ width: "50px"}} />;
-                } else {
-                    picture = <div className="rounded">Not available</div>
-                }
-                return (
-                    <tr key={`puppy-${puppy.puppyID}`}>
-                        <td>{puppy.name}</td>
-                        <td>{moment(puppy.dateOfBirth).format('MM/DD/YYYY')}</td>
-                        <td>{puppy.sex}</td>
-                        <td>{puppy.weight}</td>
-                        <td>{`$${puppy.price}`}</td>
-                        <td>{picture}</td>
-                        <td>{puppy.sold === true ? 'Sold' : 'Unsold'}</td>
-                        <td>{puppy.live === true ? 'Live' : 'No'}</td>
-                        <td>
-                            <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(puppy.puppyID)}><i className="fa fa-search"></i> View</button>
-                            <button type="button" className="btn btn-sm btn-success ml-1" onClick={() => this.props.onUpdateBtnClicked(puppy.puppyID)}><i className="fa fa-edit"></i> Update</button>
-                            <button type="button" className="btn btn-sm btn-info ml-1" onClick={() => this.props.onRecordSalesBtnClicked(puppy.puppyID)}><i className="fa fa-dollar"></i> Sell</button>
-                            <button type="button" className="btn btn-sm btn-info ml-1" onClick={() => this.props.onLiveBtnClicked(puppy.puppyID)}><i className={`${puppy.live === true ? 'fa fa-eye-slash' : 'fa fa-eye'}`}></i> {`${puppy.live === true ? 'Hide' : 'Go Live'}`}</button>
-                            <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(puppy.puppyID)}><i className="fa fa-close"></i> Delete</button>
-                        </td>
-                    </tr>
-                );
-            });
+        if (displayedData.length > 0) {
+            const rows = displayedData.map((testimonial, i) => 
+                <tr key={`testimonial-${i}`}>
+                    <td>{testimonial.firstName}</td>
+                    <td>{testimonial.lastName}</td>
+                    <td>{testimonial.email}</td>
+                    <td>{testimonial.phone}</td>
+                    <td>{testimonial.live === true ? 'Live' : 'Not Live'}</td>
+                    <td>{moment(testimonial.datePosted).format('MM/DD/YYYY')}</td>
+                    <td><img src={testimonial} className="rounded" style={{width: "50px"}} alt={testimonial.picture.reference}  /></td>
+                    <td>
+                        <button className="btn btn-sm btn-success">{testimonial.live === true ? 'Hide' : 'Go Live'}</button>
+                        <button className="btn btn-sm btt-danger">Delete</button>
+                    </td>
+                </tr>
+            );
             tbody = <tbody>{rows}</tbody>;
         }
         return (
@@ -218,29 +204,6 @@ class PuppiesTable extends Component {
         });
     }
 
-    filterForKeywords(tableData, searchKeywords) {
-        let retVal;
-        if (searchKeywords.length > 0) {
-            retVal = tableData.filter(puppy => {
-                let foundCount = 0;
-                searchKeywords.forEach(searchKeyword => {
-                    if (puppy.name.toLowerCase().indexOf(searchKeyword) !== -1)
-                        foundCount++;
-                    if (puppy.sex.toLowerCase() === searchKeyword)
-                        foundCount++;
-                    if (puppy.weight === parseFloat(searchKeyword))
-                        foundCount++;
-                    if (puppy.price === parseInt(searchKeyword))
-                        foundCount++;
-                });
-                return foundCount === searchKeywords.length;
-            });
-        } else {
-            retVal = tableData;
-        }
-        return retVal;
-    }
-
     render() {
         return (
             <div className="animated fadeIn">
@@ -249,7 +212,7 @@ class PuppiesTable extends Component {
                         <div className="row">
                             <div className="col-12">
                                 <div className="float-right">
-                                    {this.getPageSizeOptions()}
+                                    {this.getPageSizaeOptions()}
                                 </div>
                             </div>
                         </div>
@@ -268,7 +231,6 @@ class PuppiesTable extends Component {
             </div>
         );
     }
-
 }
 
-export default PuppiesTable;
+export default TestimonialsTable;
