@@ -140,7 +140,7 @@ class PuppyInitialForm extends Component {
     }
 
     handleSetName = (event) => {
-        const name = event.target.value.trim();
+        const name = event.target.value;
         const { selections, validations } = this.state;
         if (name !== '') {
             validations.name = '';

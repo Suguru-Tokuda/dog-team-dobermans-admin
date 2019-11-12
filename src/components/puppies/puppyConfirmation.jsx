@@ -60,7 +60,11 @@ class PuppyConfirmation extends Component {
     }
 
     getPictures = () => {
-        const pictures = this.state.pictures;
+        const { pictures } = this.state;
+        console.log(pictures);
+        pictures.forEach(picture => {
+            console.log(typeof picture);
+        });
         if (pictures.length > 0) {
             const pictureCards = pictures.map((picture, i) => {
                 const imageURL = URL.createObjectURL(picture);

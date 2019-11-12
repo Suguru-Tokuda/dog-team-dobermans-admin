@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import SortService from '../../services/sortService';
+import Pagination from '../miscellaneous/pagination';
 import moment from 'moment';
 
-class TestiminialsTable extends Component {
+class TestimonialsTable extends Component {
     state = {
         tableData: [],
         filteredData: [],
@@ -50,7 +52,7 @@ class TestiminialsTable extends Component {
         }
         if (updateDisplayedData === true) {
             this.setState({ updateDisplayedData: false});
-            this.updateDisplayedData(paginationInfo.currentPage,, paginationInfo.startIndex, paginationInfo.endIndex);
+            this.updateDisplayedData(paginationInfo.currentPage, paginationInfo.startIndex, paginationInfo.endIndex);
         }
     }
 

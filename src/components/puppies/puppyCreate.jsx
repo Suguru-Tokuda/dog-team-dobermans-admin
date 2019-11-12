@@ -12,7 +12,8 @@ class PuppyCreate extends Component {
         initialParams: {},
         pictures: [],
         dads: [],
-        moms: []
+        moms: [],
+        dadtaLoaded: false
     };
 
     constructor(props) {
@@ -57,6 +58,7 @@ class PuppyCreate extends Component {
             })
             .finally(() => {
                 this.props.onDoneLoading();
+                this.setState({ dadtaLoaded: true });
             });
     }
 
@@ -78,43 +80,47 @@ class PuppyCreate extends Component {
 
     render() {
         const url = this.props.url;
-        const { dads, moms } = this.state;
-        return (
-            <React.Fragment>
-                <Route 
-                    path={`${url}/initial-params`} 
-                    render={(props) => <PuppyInitialForm {...props} 
-                                        initialParams={this.state.initialParams}
-                                        dads={dads}
-                                        moms={moms}
-                                        onToPictureBtnClicked={this.handleNextBtnClicked.bind(this)} 
-                                        onCancelBtnClicked={this.handleCancelClicked} 
-                                        onShowLoading={this.props.onShowLoading.bind(this)} 
-                                        onDoneLoading={this.props.onDoneLoading.bind(this)} />}
-                />
-                <Route 
-                    path={`${url}/pictures`} 
-                    render={(props) => <PuppyPictureForm {...props} 
-                                        onToConfirmBtnClicked={this.handleConfBtnClicked.bind(this)} 
-                                        initialParams={this.state.initialParams} 
-                                        pictures={this.state.pictures}
-                                        onShowLoading={this.props.onShowLoading.bind(this)} 
-                                        onDoneLoading={this.props.onDoneLoading.bind(this)} />} 
-                />
-                <Route 
-                    path={`${url}/confirmation`} 
-                    render={(props) => <PuppyConfirmation {...props} 
-                                            dads={this.state.dads} 
-                                            moms={this.state.moms} 
-                                            initialParams={this.state.initialParams} 
-                                            pictures={this.state.pictures} 
+        const { dads, moms, dadtaLoaded } = this.state;
+        if (dadtaLoaded === true) {
+            return (
+                <React.Fragment>
+                    <Route 
+                        path={`${url}/initial-params`} 
+                        render={(props) => <PuppyInitialForm {...props} 
+                                            initialParams={this.state.initialParams}
+                                            dads={dads}
+                                            moms={moms}
+                                            onToPictureBtnClicked={this.handleNextBtnClicked.bind(this)} 
                                             onCancelBtnClicked={this.handleCancelClicked} 
-                                            puppyID={this.state.puppyID} 
                                             onShowLoading={this.props.onShowLoading.bind(this)} 
-                                            onDoneLoading={this.props.onDoneLoading.bind(this)} 
-                />} />
-            </React.Fragment>
-        );
+                                            onDoneLoading={this.props.onDoneLoading.bind(this)} />}
+                    />
+                    <Route 
+                        path={`${url}/pictures`} 
+                        render={(props) => <PuppyPictureForm {...props} 
+                                            onToConfirmBtnClicked={this.handleConfBtnClicked.bind(this)} 
+                                            initialParams={this.state.initialParams} 
+                                            pictures={this.state.pictures}
+                                            onShowLoading={this.props.onShowLoading.bind(this)} 
+                                            onDoneLoading={this.props.onDoneLoading.bind(this)} />} 
+                    />
+                    <Route 
+                        path={`${url}/confirmation`} 
+                        render={(props) => <PuppyConfirmation {...props} 
+                                                dads={this.state.dads} 
+                                                moms={this.state.moms} 
+                                                initialParams={this.state.initialParams} 
+                                                pictures={this.state.pictures} 
+                                                onCancelBtnClicked={this.handleCancelClicked} 
+                                                puppyID={this.state.puppyID} 
+                                                onShowLoading={this.props.onShowLoading.bind(this)} 
+                                                onDoneLoading={this.props.onDoneLoading.bind(this)} 
+                    />} />
+                </React.Fragment>
+            );
+        } else {
+            return null;
+        }
     }
 }
 

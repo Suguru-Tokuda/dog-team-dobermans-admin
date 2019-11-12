@@ -3,20 +3,20 @@ import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 
 const SortableItem = SortableElement(({value, index, myIndex, onDeletePictureBtnClicked}) => {
     return (
-                    <div className="col-3">
-                        <div className="row">
-                            <div className="col-12">
-                                <img src={value.url} alt={value.reference} className="img-fluid" />
-                            </div>
-                        </div>
-                        <div className="row mt-1">
-                            <div className="col-6">
-                                <div className="float-left">
-                                    <button className="btn btn-sm btn-danger" onClick={() => onDeletePictureBtnClicked(myIndex)}>x</button>
-                                </div>
-                            </div>
-                        </div>
+        <div className="col-3">
+            <div className="row">
+                <div className="col-12">
+                    <img src={value.url} alt={value.reference} className="img-fluid" />
+                </div>
+            </div>
+            <div className="row mt-1">
+                <div className="col-6">
+                    <div className="float-left">
+                        <button className="btn btn-sm btn-danger" onClick={() => onDeletePictureBtnClicked(myIndex)}>x</button>
                     </div>
+                </div>
+            </div>
+        </div>
     );
 });
 const SortableList = SortableContainer(({items, onDeletePictureBtnClicked}) => {
