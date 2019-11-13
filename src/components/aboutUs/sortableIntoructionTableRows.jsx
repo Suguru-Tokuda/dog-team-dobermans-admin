@@ -56,13 +56,13 @@ const SortableItem = SortableElement(({value, index, myIndex, onDeleteBtnClicked
             <td>
                 <input type="text" className="form-control" value={value.title} onChange={() => onTitleChanged.bind(this, myIndex)} />
                 {typeof validations.title !== 'undefined' && (
-                    <span className="text-danger">{validation.title}</span>
+                    <span className="text-danger">{validations.title}</span>
                 )}
             </td>
             <td>
                 <textarea className="form-control" value={value.description} onChange={() => onDescriptionChanged.bind(this, index)}></textarea>
                 {typeof validations.description !== 'undefined' && (
-                    <span className="text-danger">{validation.description}</span>
+                    <span className="text-danger">{validations.description}</span>
                 )}
             </td>
             <td>
@@ -72,7 +72,7 @@ const SortableItem = SortableElement(({value, index, myIndex, onDeleteBtnClicked
                     </div>
                 </div>
                 {typeof validations.picture !== 'undefined' && (
-                    <span className="text-danger">{validadtion.picture}</span>
+                    <span className="text-danger">{validations.picture}</span>
                 )}
             </td>
             <td>
