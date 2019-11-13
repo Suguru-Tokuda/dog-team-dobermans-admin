@@ -12,7 +12,7 @@ class PictureCropModal extends Component {
         crop: {
             unit: "%",
             width: 30,
-            aspect: 1 / 1
+            aspect: 1
         }
     };
 
@@ -21,6 +21,9 @@ class PictureCropModal extends Component {
         if (this.state.pictureFile !== null) {
             this.state.pictureFile = props.pictureFile;
             this.state.pictureFileName= props.pictureFile[0].name;
+        }
+        if (typeof props.aspect !== 'undefined') {
+            this.state.crop.aspect = props.aspect;
         }
     }
 
@@ -45,12 +48,12 @@ class PictureCropModal extends Component {
 
     componentDidMount() {
         $('#pictureCropModal').on('hidden.bs.modal', () => {
+            const { crop } = this.state;
+            if (typeof this.props.aspect !== 'undefined') {
+                crop.aspect = crop;
+            }
             this.setState({ 
-                crop: {
-                unit: "%",
-                width: 30,
-                aspect: 1 / 1
-                },
+                crop: crop,
                 croppedImageUrl: ''
             });
             this.props.onResetTempPictureFile();
