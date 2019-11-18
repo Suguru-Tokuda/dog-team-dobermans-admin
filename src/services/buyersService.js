@@ -32,7 +32,7 @@ export default class BuyersService {
         return axios.post(`${this.getServiceBase()}/buyer?key=${api.API_KEY}`, data);
     }
 
-    static updateBuyer(firstName, lastName, email, phone, state, city, puppyIDs) {
+    static updateBuyer(buyerID, firstName, lastName, email, phone, state, city, puppyIDs) {
         const data = {
             firstName: firstName,
             lastName: lastName,
@@ -42,7 +42,7 @@ export default class BuyersService {
             city: city,
             puppyIDs: puppyIDs
         };
-        return axios.put(`${this.getServiceBase()}/buyer?key=${api.API_KEY}`, data);
+        return axios.put(`${this.getServiceBase()}/buyer?buyerID=${buyerID}&key=${api.API_KEY}`, data);
     }
 
     static deleteBuyer(buyerID) {
