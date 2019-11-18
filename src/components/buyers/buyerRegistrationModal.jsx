@@ -6,6 +6,8 @@ import ConstantsService from '../../services/constantsService';
 
 class BuyerRegistrationModal extends Component {
     state = {
+        buyerID: undefined,
+        buyerToUpdate: {},
         selections: {
             firstName: '',
             lastName: '',
@@ -27,27 +29,64 @@ class BuyerRegistrationModal extends Component {
 
     componentDidUpdate() {
         $('#buyerRegistrationModal').on('hidden.bs.modal', () => {
-            this.setState({
-                selections: {
-                    firstName: '',
-                    lastName: '',
-                    email: '',
-                    phone: '',
-                    city: '',
-                    state: ''
-                },
-                validations: {
-                    firstName: '',
-                    lastName: '',
-                    email: '',
-                    phone: '',
-                    city: '',
-                    state: ''
-                },
-                formSubmitted: false
-            });
+            const { buyerID } = this.state;
+            if (typeof buyerID === 'undefined') {
+                this.setState({
+                    selections: {
+                        firstName: '',
+                        lastName: '',
+                        email: '',
+                        phone: '',
+                        city: '',
+                        state: ''
+                    },
+                    validations: {
+                        firstName: '',
+                        lastName: '',
+                        email: '',
+                        phone: '',
+                        city: '',
+                        state: ''
+                    },
+                    formSubmitted: false
+                });
+            }
         });
     }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.buyerID !== prevState.buyerID) {
+            const state = prevState;
+            if (typeof nextProps.buyerID !== 'undefined') {
+                const { buyerToUpdate } = nextProps;
+                state.selections = {
+                    firstName: buyerToUpdate.firstName,
+                    lastName: buyerToUpdate.lastName,
+                    email: buyerToUpdate.email,
+                    phone: buyerToUpdate.phone,
+                    city: buyerToUpdate.city,
+                    state: buyerToUpdate.state
+                };
+                state.buyerToUpdate = nextProps.buyerToUpdate;
+                state.buyerID = nextProps.buyerID;
+            } else if (typeof nextProps.buyerID === 'undefined') {
+                state.selections = {
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    phone: '',
+                    city: '',
+                    state: ''
+                };
+                state.buyerID = undefined;
+                state.buyerToUpdate = {};
+            }
+            return state;
+        }
+        return null;
+    }
+
+
 
     getStateOptions = () => {
         const states = ConstantsService.getStates();
@@ -153,6 +192,7 @@ class BuyerRegistrationModal extends Component {
                 validations[key] = `Enter ${key}`;
             }
         }
+        this.setState({ validations });
         if (isValid === true) {
             this.props.onShowLoading(true, 1);
             BuyersService.createBuyer(selections.firstName, selections.lastName, selections.email, selections.phone, selections.state, selections.city)
@@ -189,12 +229,45 @@ class BuyerRegistrationModal extends Component {
         }
     }
 
+    handleUpdateBtnClicked = (event) => {
+        this.setState({ formSubmitted: true });
+        event.preventDefault();
+        let isValid = true;
+        const { buyerID, selections, validations } = this.state;
+        for (const key in selections) {
+            if (selections[key] === '') {
+                isValid = false;
+                validations[key] = `Enter ${key}`;
+            }
+        }
+        this.setState({ validations });
+        if (isValid === true) {
+            this.props.onShowLoading(true, 1);
+            const { firstName, lastName, email, phone, city, state } = selections;
+            const { puppyIDs } = this.state.buyerToUpdate;
+            this.props.onShowLoading(true, 1);
+            BuyersService.updateBuyer(buyerID, firstName, lastName, email, phone, state, city, puppyIDs)
+                .then(res => {
+                    this.props.onBuyerUpdated();
+                    toastr.success('Successfully updated a buyer');
+                    $('#buyerRegistrationModal').modal('hide');
+                })
+                .catch(err => {
+                    console.log(err);
+                    toastr.error('There was an error in updating the buyer information')
+                })
+                .finally(() => {
+                    this.props.onDoneLoading();
+                });
+        }
+    }
+
     handleCancelBtnClicked = () => {
         $('#buyerRegistrationModal').modal('hide');
     }
 
     render() {
-        const { selections } = this.state;
+        const { buyerID, selections } = this.state;
         return (
             <div className="modal fade" id="buyerRegistrationModal" role="dialog" aria-hidden="true">
                 <div className="modal-dialog modal-lg" role="document">
@@ -263,7 +336,12 @@ class BuyerRegistrationModal extends Component {
                                 </div>
                             </div>
                             <div className="modal-footer">
-                                <button type="submit" className="btn btn-success" onClick={this.handleCreateBtnClicked}>Create</button>
+                                {typeof buyerID === 'undefined' && (
+                                    <button type="submit" className="btn btn-success" onClick={this.handleCreateBtnClicked}>Create</button>
+                                )}
+                                {typeof buyerID !== 'undefined' && (
+                                    <button type="submit" className="btn btn-success" onClick={this.handleUpdateBtnClicked}>Update</button>
+                                )}
                                 <button type="button" className="btn btn-secondary" onClick={this.handleCancelBtnClicked}>Cancel</button>
                             </div>
                        </form>

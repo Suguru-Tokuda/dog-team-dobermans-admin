@@ -154,7 +154,7 @@ class BuyersTable extends Component {
                         <td>{buyer.hasBought === true ? 'Yes' : 'No' }</td>
                         <td>
                             <button type="button" className="btn btn-sm btn-primary"><i className="fa fa-search"></i> View</button>
-                            <button type="button" className="btn btn-sm btn-primary ml-1"><i className="fa fa-edit"></i> Update</button>
+                            <button type="button" className="btn btn-sm btn-primary ml-1" onClick={() => this.props.onUpdateBtnClicked(buyer.buyerID)}><i className="fa fa-edit"></i> Update</button>
                             {buyer.hasBought === true && (
                                 <button type="button" className="btn btn-sm btn-primary ml-1">View Puppies</button>
                             )}

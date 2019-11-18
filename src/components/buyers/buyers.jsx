@@ -8,9 +8,10 @@ import $ from 'jquery';
 
 class Buyers extends Component {
     state = {
+        buyerIDToUpdate: undefined,
         buyerToUpdate: {},
         buyers: [],
-        buyerIDToDelete: '',
+        buyerIDToDelete: undefined,
         buyerToDelete: {}
     };
     
@@ -60,10 +61,24 @@ class Buyers extends Component {
                 <BuyersTable
                  buyers={buyers}
                  totalItems={buyers.length}
+                 onUpdateBtnClicked={this.handleUpdateBtnClicked.bind(this)}
                  onDeleteBtnClicked={this.handleDeleteBtnClicked.bind(this)}
                 />
             );
         }
+    }
+
+    handleUpdateBtnClicked = (buyerID) => {
+        const { buyers } = this.state;
+        let buyerToUpdate;
+        for (let i = 0, max = buyers.length; i < max; i++) {
+            if (buyers[i].buyerID === buyerID) {
+                buyerToUpdate = buyers[i];
+                break;
+            }
+        }
+        this.setState({ buyerIDToUpdate: buyerToUpdate.buyerID, buyerToUpdate });
+        $('#buyerRegistrationModal').modal('show');
     }
 
     handleDeleteBtnClicked = (buyerID) => {
@@ -103,15 +118,18 @@ class Buyers extends Component {
             .finally(() => {
                 this.props.onDoneLoading();
             });
-
     }
 
     handleBuyerCreated = () => {
         this.getBuyers();
     }
 
+    handleBuyerUpdated = () => {
+        this.getBuyers();
+    }
+
     render() {
-        const { buyerIDToDelete, buyerToDelete } = this.state;
+        const { buyerIDToUpdate, buyerToUpdate, buyerIDToDelete, buyerToDelete } = this.state;
         return (
             <React.Fragment>
                 <div className="row">
@@ -124,8 +142,11 @@ class Buyers extends Component {
                         </div>
                     </div>
                 </div>
-                <BuyerRegistrationModal 
+                <BuyerRegistrationModal
+                 buyerID={buyerIDToUpdate}
+                 buyerToUpdate={buyerToUpdate}
                  onBuyerSelected={this.handleBuyerCreated.bind(this)}
+                 onBuyerUpdated={this.handleBuyerUpdated}
                  onShowLoading={this.props.onShowLoading.bind(this)} 
                  onDoneLoading={this.props.onDoneLoading.bind(this)} />
                 <BuyerDeleteConfModal
