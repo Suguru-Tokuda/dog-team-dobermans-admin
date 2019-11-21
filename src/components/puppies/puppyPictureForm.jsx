@@ -150,6 +150,7 @@ class PuppyPictureForm extends Component {
                     </div>
                 </div>
                 <PictureCropModal 
+                    aspect={1/1}
                     pictureFile={tempPictureFile} 
                     onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
                     onResetTempPictureFile={this.handleResetTempPictureFile} />
