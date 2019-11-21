@@ -2,7 +2,7 @@ import SessionInfoService from './sessionInfoService';
 import * as api from '../api.json';
 import axios from 'axios';
 
-export default class ParentsService {
+export default class ContactUsService {
     static getServiceBase() {
         return `${SessionInfoService.getBaseUrlForAPI()}contactus/`;
     }
