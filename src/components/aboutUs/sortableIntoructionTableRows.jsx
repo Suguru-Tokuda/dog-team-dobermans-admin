@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-import SortablePictureList from '../miscellaneous/sortablePictureList';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+
+const DragHandle = SortableHandle(() => <span>::</span>);
 
 const SortableItem = SortableElement(({value, index, myIndex, onDeleteBtnClicked, onDeletePictureBtnClicked, onTitleChanged, onDescriptionChanged, uploadBtnClicked, onImageChanged}) => {
     let imageElement;
@@ -74,9 +75,10 @@ const SortableItem = SortableElement(({value, index, myIndex, onDeleteBtnClicked
                 )}
             </td>
             <td colSpan="10%">
-                <button className="btn btn-sm btn-danger" onClick={() => onDeleteBtnClicked(myIndex)}>Delete</button>
+                <button className="btn btn-sm btn-danger" onClick={() => onDeleteBtnClicked(myIndex)}>-</button>
             </td>
         </tr>
+        // </div>
     );
 });
 
@@ -104,7 +106,6 @@ const SortableList = SortableContainer(({items, onDeleteBtnClicked, onDeletePict
 class SortableIntroductionTableRows extends Component {
     constructor(props) {
         super(props);
-        console.log(props);
     }
 
     state = {
@@ -123,13 +124,15 @@ class SortableIntroductionTableRows extends Component {
         return null;
     }
 
-    onSortEnd = ({prevIndex, nextIndex}) => {
-        const { introductions } = this.state;
-        if (introductions.length > 1) {
-            const tempIntroduction = introductions[prevIndex];
-            introductions.splice(prevIndex, 1);
-            SortablePictureList.splice(nextIndex, 0, tempIntroduction);
-            this.props.onSortEnd(introductions);
+    onSortEnd = ({oldIndex, newIndex}) => {
+        if (typeof oldIndex !== 'undefined' && typeof newIndex !== 'undefined' && oldIndex !== newIndex) {
+            const { introductions } = this.state;
+            if (introductions.length > 1) {
+                const tempIntroduction = introductions[oldIndex];
+                introductions.splice(oldIndex, 1);
+                introductions.splice(newIndex, 0, tempIntroduction);
+                this.props.onSortEnd(introductions);
+            }
         }
     }
 

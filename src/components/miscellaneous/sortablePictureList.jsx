@@ -34,11 +34,11 @@ class SortablePictureList extends Component {
         pictures: this.props.pictures
     };
 
-    onSortEnd = ({prevIndex, nextIndex}) => {
+    onSortEnd = ({oldIndex, newIndex}) => {
         const { pictures } = this.state;
-        const tempPicture = pictures[prevIndex];
-        pictures.splice(prevIndex, 1);
-        pictures.splice(nextIndex, 0, tempPicture);
+        const tempPicture = pictures[oldIndex];
+        pictures.splice(oldIndex, 1);
+        pictures.splice(newIndex, 0, tempPicture);
         this.setState({ pictures });
         this.props.onSortEnd(pictures);
     }
