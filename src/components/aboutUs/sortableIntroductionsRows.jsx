@@ -41,7 +41,7 @@ class SortableIntroductionRows extends Component {
                             </div>
                         </React.Fragment>
                     );
-                } else if (picture !== null && typeof picture === 'object' && typeof picture.url === 'undefined' && picture.reference === 'undefined') {
+                } else if (picture !== null && typeof picture.type !== 'undefined' && picture.type.indexOf('image') !== -1) {
                     const url = URL.createObjectURL(picture);
                     imageElement = (
                         <React.Fragment>

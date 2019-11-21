@@ -4,10 +4,13 @@ import { Link } from 'react-router-dom';
 import toastr from 'toastr';
 import $ from 'jquery';
 import SortableIntroductionRows from './sortableIntroductionsRows';
+import PictureCropModal from '../miscellaneous/pictureCropModal';
 
 class IntroductionsEditor extends Component {
     state = {
-        introductions: []
+        introductions: [],
+        tempPictureFile: null,
+        pictureIndex: -1
     };
 
     constructor(props) {
@@ -58,7 +61,7 @@ class IntroductionsEditor extends Component {
                             introductions={introductions} 
                             onTitleChanged={this.handleTitleChanged.bind(this)}
                             onDescriptionChanged={this.handleDescriptionChanged.bind(this)}
-                            onDeleteBtnClickd={this.handleDeleteBtnClicked.bind(this)}
+                            onDeleteBtnClicked={this.handleDeleteBtnClicked.bind(this)}
                             onImageChanged={this.handleImageChanged.bind(this)}
                             onSortEnd={this.handleSortEnd.bind(this)}
                              />;
@@ -106,13 +109,33 @@ class IntroductionsEditor extends Component {
         this.setState({ introductions });
     }
 
-    handleDeletePictureBtnClicked = (index) => {
-
+    handleImageChanged = (index, event) => {
+        if (event.target.files && event.target.files[0]) {
+            const reader = new FileReader();
+            reader.addEventListener('load', () => {
+                this.setState({
+                    tempPictureFile: reader.result
+                });
+            });
+            this.setState({ pictureIndex: index });
+            reader.readAsDataURL(event.target.files[0]);
+        }
+        $('#picture-upload').val(null);
+    }
+    
+    handleFinishImageCropping = (newFile) => {
+        const { introductions, pictureIndex } = this.state;
+        introductions[pictureIndex].picture = newFile;
+        this.setState({
+            introductions: introductions,
+            pictureIndex: -1
+        });
     }
 
-    handleImageChanged = (index, event) => {
-        console.log(index);
-        console.log(event);
+    handleDeletePictureBtnClicked = (index) => {
+        const { introductions } = this.state;
+        introductions[index].picture = null;
+        this.setState({ introductions });
     }
 
     handleTitleChanged = (index, event) => {
@@ -133,22 +156,33 @@ class IntroductionsEditor extends Component {
 
     }
 
+    handleResetTempPictureFile = () => {
+        this.setState({ tempPictureFile: null });
+    }
+
     render() {
+        const { tempPictureFile } = this.state;
         return (
-            <div className="card">
-                <div className="card-header">
-                    <h4>Introductions Editor</h4>
+            <React.Fragment>
+                <div className="card">
+                    <div className="card-header">
+                        <h4>Introductions Editor</h4>
+                    </div>
+                    <div className="card-body">
+                        {this.getSortableTable()}
+                    </div>
+                    <div className="card-footer">
+                        <Link className="btn btn-secondary" to="/about-us">Back</Link>
+                        <button type="button" className="btn btn-secondary ml-2">Undo</button>
+                        <button type="submit" className="btn btn-primary ml-2" onClick={this.handleSubmitBtnClicked}>{this.getSubmitBtnLabel()}</button>
+                    </div>
                 </div>
-                <div className="card-body">
-                    {/* {this.getSortableTable()} */}
-                    {this.getSortableTable2()}
-                </div>
-                <div className="card-footer">
-                    <Link className="btn btn-secondary" to="/about-us">Back</Link>
-                    <button type="button" className="btn btn-secondary ml-2">Undo</button>
-                    <button type="submit" className="btn btn-primary ml-2" onClick={this.handleSubmitBtnClicked}>{this.getSubmitBtnLabel()}</button>
-                </div>
-            </div>
+                <PictureCropModal
+                    aspect={16/9}
+                    pictureFile={tempPictureFile}
+                    onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
+                    onResetTempPictureFile={this.handleResetTempPictureFile} />
+            </React.Fragment>
         );
     }
 }
