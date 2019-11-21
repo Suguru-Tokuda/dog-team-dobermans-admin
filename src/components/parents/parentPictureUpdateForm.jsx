@@ -72,7 +72,7 @@ class ParentPictureUpdateForm extends Component {
     }
 
     handleImageChange = async (event) => {
-        if (event.target.files & event.target.files[0]) {
+        if (event.target.files && event.target.files[0]) {
             const reader = new FileReader();
             reader.addEventListener('load', () => {
                 this.setState({
