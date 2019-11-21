@@ -140,7 +140,8 @@ class IntroductionsEditor extends Component {
                     <h4>Introductions Editor</h4>
                 </div>
                 <div className="card-body">
-                    {this.getSortableTable()}
+                    {/* {this.getSortableTable()} */}
+                    {this.getSortableTable2()}
                 </div>
                 <div className="card-footer">
                     <Link className="btn btn-secondary" to="/about-us">Back</Link>

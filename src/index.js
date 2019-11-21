@@ -9,6 +9,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import 'react-image-crop/dist/ReactCrop.css';
 import './index.css';
 import 'jquery';
+import 'jquery/dist/jquery';
+import 'jquery-sortable/source/js/jquery-sortable-min';
 import 'jquery-ui';
 import 'popper.js';
 import 'bootstrap/dist/js/bootstrap.min.js';
