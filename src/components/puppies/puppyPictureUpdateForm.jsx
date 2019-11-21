@@ -146,7 +146,8 @@ class PuppyPictureUpdateForm extends Component {
                         <Link className="btn btn-sm btn-secondary" to={`/puppy/update/${puppyID}`}>Back</Link>
                     </div>
                 </div>
-                <PictureCropModal 
+                <PictureCropModal
+                    aspect={1/1}
                     pictureFile={tempPictureFile} 
                     onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
                     onResetTempPictureFile={this.handleResetTempPictureFile} />
