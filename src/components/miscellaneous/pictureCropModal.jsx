@@ -31,32 +31,41 @@ class PictureCropModal extends Component {
         if (nextProps.pictureFile !== prevState.pictureFile) {
             const state = prevState;
             if (nextProps.pictureFile !== null) {
-                if ($('#pictureCropModal').is(':visible') === false) {
-                    $('#pictureCropModal').modal('show');
-                }  
                 state.pictureFile = nextProps.pictureFile;
                 state.pictureFileName = nextProps.pictureFile[0].name;
             } else {
-                $('#pictureCropModal').modal('hide');
                 state.pictureFile = null;
                 state.pictureFileName = '';
             }
             return state;
+        } else {
+            return null;
         }
-        return null;
+    }
+
+    componentDidUpdate() {
+        if (this.state.pictureFile !== null) {
+            if ($('#pictureCropModal').is(':visible') === false) {
+                $('#pictureCropModal').modal('show');
+            }
+        } else {
+            $('#pictureCropModal').modal('hide');
+        }
     }
 
     componentDidMount() {
         $('#pictureCropModal').on('hidden.bs.modal', () => {
             const { crop } = this.state;
             if (typeof this.props.aspect !== 'undefined') {
-                crop.aspect = crop;
+                crop.aspect = this.props.aspect;
             }
+            this.props.onResetTempPictureFile();
             this.setState({ 
+                pictureFile: null,
+                pictureFileName: '',
                 crop: crop,
                 croppedImageUrl: ''
             });
-            this.props.onResetTempPictureFile();
         });
     }
 
@@ -90,7 +99,6 @@ class PictureCropModal extends Component {
         canvas.width = crop.width;
         canvas.height = crop.height;
         const ctx = canvas.getContext("2d");
-
         ctx.drawImage(
             image,
             crop.x * scaleX,
@@ -102,7 +110,6 @@ class PictureCropModal extends Component {
             crop.width,
             crop.height
         );
-
         return new Promise((resolve, reject) => {
             canvas.toBlob(blob => {
             if (!blob) {
@@ -134,12 +141,9 @@ class PictureCropModal extends Component {
                                 };
                                 const compressedFile = await imageCompression(newFile, options);
                                 this.props.onFinishImageCropping(compressedFile);
+                                const { crop } = this.state;
                                 this.setState({ 
-                                    crop: {
-                                    unit: "%",
-                                    width: 30,
-                                    aspect: 1 / 1
-                                    },
+                                    crop: crop,
                                     croppedImageUrl: ''
                                 });
                                 $('#pictureCropModal').modal('hide');
