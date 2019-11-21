@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import AboutUsService from '../../services/aboutUsService';
 import { Link } from 'react-router-dom';
-import SortableIntroductionTableRows from './sortableIntoructionTableRows';
 import toastr from 'toastr';
 import $ from 'jquery';
+import SortableIntroductionRows from './sortableIntroductionsRows';
 
 class IntroductionsEditor extends Component {
     state = {
@@ -22,7 +22,7 @@ class IntroductionsEditor extends Component {
                     this.setState({ introductions: res.data.introductions });
                 } else {
                     const introductions = [
-                        {title: '', description: '', picture: null, validations: {} }
+                        {title: '', description: '', picture: null, validations: {}}
                     ];
                     this.setState({ introductions });
                 }
@@ -54,24 +54,28 @@ class IntroductionsEditor extends Component {
                     </tr>
                 </thead>
             );
-            const tbody = (
-                <tbody>
-                    <SortableIntroductionTableRows 
-                        introductions={introductions}
-                        onDeleteBtnClicked={this.handleDeleteBtnClicked.bind(this)}
-                        onDeletePictureBtnClicked={this.handleDeletePictureBtnClicked.bind(this)}
-                        onImageChanged={this.handleImageChanged.bind(this)}
-                        uploadBtnClicked={this.handleUploadBtnClicked}
-                        onTitleChanged={this.handleTitleChanged.bind(this)}
-                        onDescriptionChanged={this.handleDescriptionChanged.bind(this)}
-                         />
-                </tbody>
-            );
+            const tbody = <SortableIntroductionRows 
+                            introductions={introductions} 
+                            onTitleChanged={this.handleTitleChanged.bind(this)}
+                            onDescriptionChanged={this.handleDescriptionChanged.bind(this)}
+                            onDeleteBtnClickd={this.handleDeleteBtnClicked.bind(this)}
+                            onImageChanged={this.handleImageChanged.bind(this)}
+                            onSortEnd={this.handleSortEnd.bind(this)}
+                             />;
             return (
                 <div className="table-responsive">
                     <table className="table">
                         {thead}
                         {tbody}
+                        {introductions.length <= 4 && (
+                            <tbody>
+                                <tr key="button" data-id="button">
+                                    <td>
+                                        <button className="btn btn-success" onClick={this.handleAddBtnClicked}>+</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        )}
                     </table>
                 </div>
             );
@@ -80,12 +84,26 @@ class IntroductionsEditor extends Component {
         }
     }
 
+    handleSortEnd = (introductions) => {
+        this.setState({ introductions });
+    }
+
+    handleAddBtnClicked = () => {
+        const { introductions } = this.state;
+        if (introductions.length <= 4) {
+            introductions.push({title: '', description: '', picture: null, validations: {}});
+            this.setState({ introductions });
+        }
+    }
+
     handleUploadBtnClicked() {
         $('#picture-upload').click();
     }
 
     handleDeleteBtnClicked = (index) => {
-        console.log(index);
+        const { introductions } = this.state;
+        introductions.splice(index, 1);
+        this.setState({ introductions });
     }
 
     handleDeletePictureBtnClicked = (index) => {
