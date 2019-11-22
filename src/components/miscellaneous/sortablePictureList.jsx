@@ -1,56 +1,64 @@
 import React, { Component } from 'react';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
-
-const SortableItem = SortableElement(({value, index, myIndex, onDeletePictureBtnClicked}) => {
-    return (
-        <div className="col-3">
-            <div className="row">
-                <div className="col-12">
-                    <img src={value.url} alt={value.reference} className="img-fluid" />
-                </div>
-            </div>
-            <div className="row mt-1">
-                <div className="col-6">
-                    <div className="float-left">
-                        <button className="btn btn-sm btn-danger" onClick={() => onDeletePictureBtnClicked(myIndex)}>x</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-});
-const SortableList = SortableContainer(({items, onDeletePictureBtnClicked}) => {
-    return (
-        <div className="row">
-            {items.map((value, index) => {
-               return <SortableItem key={`item-${index}`} myIndex={index} index={index} value={value} onDeletePictureBtnClicked={onDeletePictureBtnClicked.bind(this)} />;
-            })}
-        </div>
-    );
-});
+import Sortable from 'react-sortablejs';
 
 class SortablePictureList extends Component {
     state = {
-        pictures: this.props.pictures
+        pictures: []
     };
 
-    onSortEnd = ({oldIndex, newIndex}) => {
+    constructor(props) {
+        super(props);
+        this.state.pictures = props.pictures;
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (JSON.stringify(nextProps.pictures) !== JSON.stringify(prevState.pictures)) {
+            return { pictures: nextProps };
+        }
+        return null;
+    }
+
+    getPictures = () => {
+        const { pictures } = this.state;
+        if (pictures.length > 0) {
+            const pictureGrids = pictures.map((picture, i) => {
+                return (
+                    <div key={`picture-${i}`}>
+                         <div className="row">
+                             <div className="col-12">
+                                 <img src={picture.url} alt={picture.reference} className="img-fluid" />
+                             </div>
+                         </div>
+                         <div className="row mt-1">
+                             <div className="col-12">
+                                 <div className="float-right">
+                                     <button className="btn btn-sm btn-danger" onClick={() => this.props.onDeletePictureBtnClicked(i)}>x</button>
+                                 </div>
+                             </div>
+                         </div>
+                    </div>
+                );
+            });
+            return pictureGrids;
+        } else {
+            return null;
+        }
+    }
+
+    handleSortChange = (order, sortable, event) => {
+        const { newIndex, oldIndex } = event;
         const { pictures } = this.state;
         const tempPicture = pictures[oldIndex];
-        pictures.splice(oldIndex, 1);
-        pictures.splice(newIndex, 0, tempPicture);
-        this.setState({ pictures });
+        pictures[oldIndex] = pictures[newIndex];
+        pictures[newIndex] = tempPicture;
         this.props.onSortEnd(pictures);
     }
 
     render() {
         return (
-            <div className="col-12">
-                <SortableList items={this.state.pictures} onSortEnd={this.onSortEnd} onDeletePictureBtnClicked={this.props.onDeletePictureBtnClicked.bind(this)} />
-            </div>
-        );
+            <Sortable tag="div" className="grid-wrapper" style={{columns: 3, listStyle: 'none'}} onChange={this.handleSortChange}>{this.getPictures()}</Sortable>
+        )
     }
-
 }
 
 export default SortablePictureList;

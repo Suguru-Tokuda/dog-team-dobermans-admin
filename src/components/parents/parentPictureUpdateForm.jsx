@@ -49,7 +49,7 @@ class ParentPictureUpdateForm extends Component {
         }
         if (pictures.length <= 4) {
             pictureAddCard = (
-                <div className="col-3">
+                <div className="col-12">
                     <label htmlFor="picture-upload" className="custom-file-upload">
                         <i className="fa fa-cloud-upload"></i> Upload
                     </label>
@@ -59,7 +59,9 @@ class ParentPictureUpdateForm extends Component {
         }
         return (
             <React.Fragment>
-                {pictureCards}
+                <div className="col-12">
+                    {pictureCards}
+                </div>
                 {pictureAddCard}
             </React.Fragment>
         );
@@ -68,6 +70,7 @@ class ParentPictureUpdateForm extends Component {
     handleUpdatePictureOrder = (pictures) => {
         const { parentID, parentDetail } = this.state;
         parentDetail.pictures = pictures;
+        this.setState({ parentDetail });
         ParentsService.updateParent(parentID, parentDetail);
     }
 
@@ -134,7 +137,7 @@ class ParentPictureUpdateForm extends Component {
                 <div className="card">
                     <div className="card-body">
                         <h1>Pictures</h1>
-                        <div className="row form-group">
+                        <div className="row form-group" style={{padding: '25px'}}>
                             {this.getPictures()}
                         </div>
                     </div>
@@ -143,6 +146,7 @@ class ParentPictureUpdateForm extends Component {
                     </div>
                 </div>
                 <PictureCropModal 
+                    aspect={1/1}
                     pictureFile={tempPictureFile} 
                     onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
                     onResetTempPictureFile={this.handleResetTempPictureFile}

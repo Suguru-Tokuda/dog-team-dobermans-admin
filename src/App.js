@@ -12,7 +12,7 @@ import Parents from './components/parents/parents';
 import Buyers from './components/buyers/buyers';
 import Testimonials from './components/testimonials/testimonials';
 import AboutUs from './components/aboutUs/aboutUs';
-import ContactUs from './components/contactus/contactUs';
+import ContactUs from './components/contactUs/contactUs';
 
 class App extends Component {
 

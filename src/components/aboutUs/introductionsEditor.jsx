@@ -9,8 +9,10 @@ import PictureCropModal from '../miscellaneous/pictureCropModal';
 class IntroductionsEditor extends Component {
     state = {
         introductions: [],
+        originalIntroductions: [],
         tempPictureFile: null,
-        pictureIndex: -1
+        pictureIndex: -1,
+        formSubmitted: false
     };
 
     constructor(props) {
@@ -22,12 +24,12 @@ class IntroductionsEditor extends Component {
         AboutUsService.getAboutUs()
             .then(res => {
                 if (typeof res.data.introductions !== 'undefined') {
-                    this.setState({ introductions: res.data.introductions });
+                    this.setState({ introductions: res.data.introductions, originalIntroductions: JSON.parse(JSON.stringify(res.data.introductions)) });
                 } else {
                     const introductions = [
                         {title: '', description: '', picture: null, validations: {}}
                     ];
-                    this.setState({ introductions });
+                    this.setState({ introductions: introductions, originalIntroductions: JSON.parse(JSON.stringify(introductions)) });
                 }
             })
             .catch(err => {
@@ -44,21 +46,21 @@ class IntroductionsEditor extends Component {
     }
 
     getSortableTable = () => {
-        const { introductions } = this.state;
+        const { introductions, formSubmitted } = this.state;
         if (introductions.length > 0) {
             const thead = (
                 <thead>
                     <tr>
-                        <th colSpan="5%"></th>
                         <th colSpan="10%">Title</th>
                         <th colSpan="40%">Description</th>
-                        <th colSpan="25%">Picture</th>
+                        <th colSpan="5%">Picture</th>
                         <th colSpan="10%">Action</th>
                     </tr>
                 </thead>
             );
             const tbody = <SortableIntroductionRows 
-                            introductions={introductions} 
+                            introductions={introductions}
+                            formSubmitted={formSubmitted}
                             onTitleChanged={this.handleTitleChanged.bind(this)}
                             onDescriptionChanged={this.handleDescriptionChanged.bind(this)}
                             onDeleteBtnClicked={this.handleDeleteBtnClicked.bind(this)}
@@ -126,6 +128,7 @@ class IntroductionsEditor extends Component {
     handleFinishImageCropping = (newFile) => {
         const { introductions, pictureIndex } = this.state;
         introductions[pictureIndex].picture = newFile;
+        delete introductions[pictureIndex].validations.picture;
         this.setState({
             introductions: introductions,
             pictureIndex: -1
@@ -135,6 +138,7 @@ class IntroductionsEditor extends Component {
     handleDeletePictureBtnClicked = (index) => {
         const { introductions } = this.state;
         introductions[index].picture = null;
+        introductions[index].validations.picture = 'Select picture';
         this.setState({ introductions });
     }
 
@@ -142,6 +146,11 @@ class IntroductionsEditor extends Component {
         const { introductions } = this.state;
         const title = event.target.value;
         introductions[index].title = title;
+        if (title.length === 0) {
+            introductions[index].validations.title = 'Enter title';
+        } else {
+            delete introductions[index].validations.title;
+        }
         this.setState({ introductions });
     }
 
@@ -149,15 +158,67 @@ class IntroductionsEditor extends Component {
         const { introductions } = this.state;
         const description = event.target.value;
         introductions[index].description = description;
+        if (description.length === 0) {
+            introductions[index].validations.description = 'Enter description';
+        } else {
+            delete introductions[index].validations.description;
+        }
         this.setState({ introductions });
     }
 
-    handleSubmitBtnClicked = () => {
-
+    handleSubmitBtnClicked = async (event) => {
+        event.preventDefault();
+        this.setState({ formSubmitted: true });
+        let valid = true;
+        const { introductions } = this.state;
+        introductions.forEach((introduction, i) => {
+            if (introduction.title === '') {
+                introductions[i].validations.title = 'Enter title';
+                valid = false;
+            } else {
+                delete introductions[i].validations.title;
+            }
+            if (introduction.description === '') {
+                introductions[i].validations.description = 'Enter description';
+                valid = false;
+            } else {
+                delete introductions[i].validations.description;
+            }
+            if (introduction.picture === null) {
+                introductions[i].validations.picture = 'Select image';
+                valid = false;
+            } else {
+                delete introductions[i].validations.picture;
+            }
+        });
+        this.setState({ introductions });
+        if (valid === true) {
+            this.props.onShowLoading(true, 1);
+            introductions.forEach(async (introduction, i) => {
+                if (typeof introduction.picture === 'undefined') {
+                    const picture = await AboutUsService.uploadPicture(introduction.picture, 'introductions');
+                    introductions[i].picture = picture;
+                }
+            });
+            AboutUsService.updateIntroductions(introductions)
+                .then(() => {
+                    toastr.success('Introductions successfully updated');
+                })
+                .catch(() => {
+                    toastr.error('There was an error in updating introductions');
+                })
+                .finally(() => {
+                    this.props.onDoneLoading();
+                })
+        }
     }
 
     handleResetTempPictureFile = () => {
         this.setState({ tempPictureFile: null });
+    }
+
+    handleUndo = () => {
+        this.setState({ introductions: this.state.originalIntroductions });
     }
 
     render() {
@@ -169,11 +230,13 @@ class IntroductionsEditor extends Component {
                         <h4>Introductions Editor</h4>
                     </div>
                     <div className="card-body">
-                        {this.getSortableTable()}
+                        <form noValidate>
+                            {this.getSortableTable()}
+                        </form>
                     </div>
                     <div className="card-footer">
                         <Link className="btn btn-secondary" to="/about-us">Back</Link>
-                        <button type="button" className="btn btn-secondary ml-2">Undo</button>
+                        <button type="button" className="btn btn-secondary ml-2" onClick={this.handleUndo}>Undo</button>
                         <button type="submit" className="btn btn-primary ml-2" onClick={this.handleSubmitBtnClicked}>{this.getSubmitBtnLabel()}</button>
                     </div>
                 </div>

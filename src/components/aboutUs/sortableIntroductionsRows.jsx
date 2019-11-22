@@ -12,14 +12,21 @@ class SortableIntroductionRows extends Component {
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        if (JSON.stringify(nextProps.introductions) !== JSON.stringify(prevState.introductions)) {
-            return { introductions: nextProps.introductions };
+        if (JSON.stringify(nextProps.introductions) !== JSON.stringify(prevState.introductions) || nextProps.formSubmitted !== prevState.formSubmitted) {
+            const state = prevState;
+            if (JSON.stringify(nextProps.introductions) !== JSON.stringify(prevState.introductions)) {
+                state.introductions = nextProps.introductions;
+            }
+            if (nextProps.formSubmitted !== prevState.formSubmitted) {
+                state.formSubmitted = nextProps.formSubmitted;
+            }
+            return state;
         }
         return null;
     }
 
     getRows = () => {
-        const { introductions } = this.state;
+        const { introductions, formSubmitted } = this.state;
         if (introductions.length > 0) {
             const rows = introductions.map((introduction, i) => {
                 let imageElement;
@@ -33,9 +40,9 @@ class SortableIntroductionRows extends Component {
                                 </div>
                             </div>
                             <div className="row mt-1">
-                                <div className="col-6">
-                                    <div className="float-left">
-                                        <button className="btn btn-sm btn-danger" onClick={() => this.props.onDeletePictureBtnClicked(i)} >-</button>
+                                <div className="col-12">
+                                    <div className="float-right">
+                                        <button className="btn btn-sm btn-danger" onClick={() => this.props.onDeletePictureBtnClicked(i)} >x</button>
                                     </div>
                                 </div>
                             </div>
@@ -51,9 +58,9 @@ class SortableIntroductionRows extends Component {
                                 </div>
                             </div>
                             <div className="row mt-1">
-                                <div className="col-6">
+                                <div className="col-12">
                                     <div className="float-right">
-                                        <button className="btn btn-sm btn-danger" onClick={() => this.props.onDeletePictureBtnClicked(i)}>-</button>
+                                        <button className="btn btn-sm btn-danger" onClick={() => this.props.onDeletePictureBtnClicked(i)}>x</button>
                                     </div>
                                 </div>
                             </div>
@@ -71,32 +78,31 @@ class SortableIntroductionRows extends Component {
                 }
                 return (
                     <tr key={`intro-${i}`} data-id={i}>
-                        <td colSpan="5%"><i className="fa fa-bars"></i></td>
                         <td colSpan="10%">
                             <input type="text" className="form-control" value={introduction.title} onChange={this.props.onTitleChanged.bind(this, i)} />
-                            {typeof validations.title !== 'undefined' && (
+                            {(typeof validations.title !== 'undefined' && formSubmitted === true) && (
                                 <small className="text-danger">{validations.title}</small>
                             )}
                         </td>
                         <td colSpan="40%">
                             <textarea className="form-control" value={introduction.description} onChange={this.props.onDescriptionChanged.bind(this, i)} rows="10" style={{resize: 'none'}}/>
-                            {typeof validations.description !== 'undefined' && (
+                            {(typeof validations.description !== 'undefined' && formSubmitted === true) && (
                                 <small className="text-danger">{validations.description}</small>
                             )}
                         </td>
-                        <td colSpan="25%">
+                        <td colSpan="5%" style={{ height: 100, width: 100 }}>
                             <div className="row">
                                 <div className="col-12">
                                     {imageElement}
                                 </div>
                             </div>
-                            {typeof validations.picture !== 'undefined' && (
+                            {(typeof validations.picture !== 'undefined' && formSubmitted === true) &&  (
                                 <small className="text-danger">{validations.picture}</small>
                             )}
                         </td>
                         <td colSpan="10%">
                             {introductions.length > 1 && (
-                                <button className="btn btn-sm btn-danger" onClick={() => this.props.onDeleteBtnClickd(i)}>-</button>
+                                <button className="btn btn-sm btn-danger" onClick={() => this.props.onDeleteBtnClickd(i)}>x</button>
                             )}
                         </td>
                     </tr>

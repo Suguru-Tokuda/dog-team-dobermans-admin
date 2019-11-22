@@ -50,7 +50,7 @@ class PuppyPictureUpdateForm extends Component {
         }
         if (pictures.length <= 4) {
             pictureAddCard = (
-                <div className="col-3">
+                <div className="col-12">
                     <label htmlFor="picture-upload" className="custom-file-upload">
                         <i className="fa fa-cloud-upload"></i> Upload
                     </label>
@@ -60,7 +60,9 @@ class PuppyPictureUpdateForm extends Component {
         }
         return (
             <React.Fragment>
-                {pictureCards}
+                <div className="co-12">
+                    {pictureCards}
+                </div>
                 {pictureAddCard}
             </React.Fragment>
         );
@@ -69,6 +71,7 @@ class PuppyPictureUpdateForm extends Component {
     handleUpdatePictureOrder = (pictures) => {
         const puppyData = this.state.puppyData;
         puppyData.pictures = pictures;
+        this.setState({ puppyData });
         PuppiesService.updatePuppy(this.state.puppyID, puppyData);
     }
 
@@ -138,7 +141,7 @@ class PuppyPictureUpdateForm extends Component {
                 <div className="card">
                     <div className="card-body">
                         <h1>Pictures</h1>
-                        <div className="row form-group">
+                        <div className="row form-group" style={{padding: '25px'}}>
                             {this.getPictures()}
                         </div>
                     </div>

@@ -17,10 +17,14 @@ export default class AboutUsService {
         return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}&aboutUsID=${aboutUsID}`, data);
     }
 
-    static uploadPicture(imageFile) {
+    static updateIntroductions(data) {
+        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
+    }
+
+    static uploadPicture(imageFile, directory) {
         return new Promise((resolve) => {
             const pictureID = UtilService.generateID(10);
-            const reference = `/aboutus/${pictureID}`;
+            const reference = `/aboutus/${directory}/${pictureID}`;
             const task = storage.ref(reference).put(imageFile);
             task.on('state_changed',
                 function (snapshot) {
