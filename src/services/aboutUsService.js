@@ -18,7 +18,7 @@ export default class AboutUsService {
     }
 
     static updateIntroductions(data) {
-        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
+        return axios.put(`${this.getServiceBase()}introductions?key=${api.API_KEY}`, data);
     }
 
     static uploadPicture(imageFile, directory) {
