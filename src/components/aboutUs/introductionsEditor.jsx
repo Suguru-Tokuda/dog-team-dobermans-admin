@@ -24,7 +24,8 @@ class IntroductionsEditor extends Component {
         AboutUsService.getAboutUs()
             .then(res => {
                 if (typeof res.data.introductions !== 'undefined') {
-                    this.setState({ introductions: res.data.introductions, originalIntroductions: JSON.parse(JSON.stringify(res.data.introductions)) });
+                    const introductions = res.data.introductions.map(introduction => { introduction.validations = {}; return introduction });
+                    this.setState({ introductions: introductions, originalIntroductions: JSON.parse(JSON.stringify(introductions)) });
                 } else {
                     const introductions = [
                         {title: '', description: '', picture: null, validations: {}}
@@ -194,15 +195,16 @@ class IntroductionsEditor extends Component {
         this.setState({ introductions });
         if (valid === true) {
             this.props.onShowLoading(true, 1);
-            introductions.forEach(async (introduction, i) => {
-                if (typeof introduction.picture === 'undefined') {
-                    if (typeof introduction.picture.reference === 'undefined') {
-                        const picture = await AboutUsService.uploadPicture(introduction.picture, 'introductions');
-                        introductions[i].picture = picture;
-                    }
+            const introductionsToSend = JSON.parse(JSON.stringify(introductions));
+            for (let i = 0, max = introductionsToSend.length; i < max; i++) {
+                const introduction = introductionsToSend[i];
+                if (typeof introduction.picture.reference === 'undefined') {
+                    const picture = await AboutUsService.uploadPicture(introduction.picture, 'introductions');
+                    introductionsToSend[i].picture = picture;
                 }
-            });
-            AboutUsService.updateIntroductions(introductions)
+                delete introductionsToSend[i].validations;
+            }
+            AboutUsService.updateIntroductions(introductionsToSend)
                 .then(() => {
                     toastr.success('Introductions successfully updated');
                 })
