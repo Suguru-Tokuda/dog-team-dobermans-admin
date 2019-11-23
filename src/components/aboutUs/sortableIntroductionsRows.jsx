@@ -42,7 +42,7 @@ class SortableIntroductionRows extends Component {
                             <div className="row mt-1">
                                 <div className="col-12">
                                     <div className="float-right">
-                                        <button className="btn btn-sm btn-danger" onClick={() => this.props.onDeletePictureBtnClicked(i)} >x</button>
+                                        <button type="button" className="btn btn-sm btn-danger" onClick={() => this.props.onDeletePictureBtnClicked(i)} >x</button>
                                     </div>
                                 </div>
                             </div>
@@ -60,7 +60,7 @@ class SortableIntroductionRows extends Component {
                             <div className="row mt-1">
                                 <div className="col-12">
                                     <div className="float-right">
-                                        <button className="btn btn-sm btn-danger" onClick={() => this.props.onDeletePictureBtnClicked(i)}>x</button>
+                                        <button type="button" className="btn btn-sm btn-danger" onClick={() => this.props.onDeletePictureBtnClicked(i)}>x</button>
                                     </div>
                                 </div>
                             </div>
@@ -102,7 +102,7 @@ class SortableIntroductionRows extends Component {
                         </td>
                         <td colSpan="10%">
                             {introductions.length > 1 && (
-                                <button className="btn btn-sm btn-danger" onClick={() => this.props.onDeleteBtnClickd(i)}>x</button>
+                                <button type="button" className="btn btn-sm btn-danger" onClick={() => this.props.onDeleteBtnClickd(i)}>x</button>
                             )}
                         </td>
                     </tr>

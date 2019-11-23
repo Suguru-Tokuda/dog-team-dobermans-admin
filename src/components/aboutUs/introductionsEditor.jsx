@@ -76,7 +76,7 @@ class IntroductionsEditor extends Component {
                             <tbody>
                                 <tr key="button" data-id="button">
                                     <td>
-                                        <button className="btn btn-success" onClick={this.handleAddBtnClicked}>+</button>
+                                        <button type="button" className="btn btn-success" onClick={this.handleAddBtnClicked}>+</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -196,8 +196,10 @@ class IntroductionsEditor extends Component {
             this.props.onShowLoading(true, 1);
             introductions.forEach(async (introduction, i) => {
                 if (typeof introduction.picture === 'undefined') {
-                    const picture = await AboutUsService.uploadPicture(introduction.picture, 'introductions');
-                    introductions[i].picture = picture;
+                    if (typeof introduction.picture.reference === 'undefined') {
+                        const picture = await AboutUsService.uploadPicture(introduction.picture, 'introductions');
+                        introductions[i].picture = picture;
+                    }
                 }
             });
             AboutUsService.updateIntroductions(introductions)
