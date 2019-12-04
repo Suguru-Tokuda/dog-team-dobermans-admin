@@ -1,35 +1,38 @@
 import React, { Component } from 'react';
-import toastr from 'toastr';
 
-class IntroductionsUpdateForm extends Component {
+class OurTeam extends Component {
     state = {
-        introductions: []
+        ourTeam: []
     };
 
     constructor(props) {
         super(props);
-        this.state.introductions = props.introductions;
+        this.state.ourTeam = props.ourTeam;
     }
 
-    getIntroductions() {
-        const { introductions } = this.state;
-        if (introductions.length > 0) {
+    getOurTeam() {
+        const { ourTeam } = this.state;
+        if (ourTeam.length > 0) {
             const thead = (
                 <thead>
                     <tr>
+                        <th>Name</th>
                         <th>Title</th>
                         <th>Description</th>
                         <th>Picture</th>
                     </tr>
                 </thead>
             );
-            const rows = introductions.map(introduction => {
-                const { title, description, picture } = introduction;
+            const rows = ourTeam.map(member => {
+                const { name, title, description, picture } = member;
                 return (
                     <tr>
+                        <td>{name}</td>
                         <td>{title}</td>
                         <td>{description}</td>
-                        <td><img src={picture.url} className="img-fluid" alt={picture.reference} /></td>
+                        <td>
+                            <img src={picture.url} alt={picture.reference} />
+                        </td>
                     </tr>
                 );
             });
@@ -52,11 +55,9 @@ class IntroductionsUpdateForm extends Component {
     }
 
     render() {
-        return (
-            this.getIntroductions()
-        );
+        return this.getOurTeam();
     }
 
 }
 
-export default IntroductionsUpdateForm;
+export default OurTeam;

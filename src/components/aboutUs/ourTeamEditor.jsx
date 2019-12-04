@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import AboutUsService from '../../services/aboutUsService';
 import { Link } from 'react-router-dom';
+import AboutUsService from '../../services/aboutUsService';
 import toastr from 'toastr';
 import $ from 'jquery';
-import SortableIntroductionRows from './sortableIntroductionsRows';
+import SortableOurTeamRows from './sortableOurTeamRows';
 import PictureCropModal from '../miscellaneous/pictureCropModal';
 
-class IntroductionsEditor extends Component {
+class OurTeamEditor extends Component {
     state = {
-        introductions: [],
-        originalIntroductions: [],
+        ourTeam: [],
+        originalOurTeam: [],
         tempPictureFile: null,
         pictureIndex: -1,
         formSubmitted: false
@@ -23,18 +23,25 @@ class IntroductionsEditor extends Component {
         this.props.onShowLoading(true, 1);
         AboutUsService.getAboutUs()
             .then(res => {
-                if (typeof res.data.introductions !== 'undefined') {
-                    const introductions = res.data.introductions.map(introduction => { introduction.validations = {}; return introduction });
-                    this.setState({ introductions: introductions, originalIntroductions: JSON.parse(JSON.stringify(introductions)) });
+                let ourTeam;
+                if (typeof res.data.ourTeam !== 'undefined') {
+                    if (res.data.ourTeam.length > 0) {
+                        ourTeam = res.data.ourTeam.map(member => { member.validations = {}; return member });
+                        this.setState({ ourTeam: ourTeam, originalOurTeam: JSON.parse(JSON.stringify(ourTeam) )});
+                    } else {
+                        ourTeam = [
+                            {name: '', title: '', description: '', picture: null, validations: {}}
+                        ];
+                    }
                 } else {
-                    const introductions = [
-                        {title: '', description: '', picture: null, validations: {}}
-                    ];
-                    this.setState({ introductions: introductions, originalIntroductions: JSON.parse(JSON.stringify(introductions)) });
+                    ourTeam = [
+                        {name: '', title: '', description: '', picture: null, validations: {}}
+                    ];    
                 }
+                this.setState({ ourTeam: ourTeam, originalOurTeam: JSON.parse(JSON.stringify(ourTeam) )});
             })
             .catch(() => {
-                toastr.error('There was an error in loading introductions data');
+                toastr.error('There was an error in loading our team data');
             })
             .finally(() => {
                 this.props.onDoneLoading();
@@ -42,39 +49,41 @@ class IntroductionsEditor extends Component {
     }
 
     getSubmitBtnLabel = () => {
-        const { introductions } = this.state;
-        return introductions.length === 0 ? 'Submit' : 'Update';
+        const { ourTeam } = this.state;
+        return ourTeam.length === 0 ? 'Submit' : 'Update';
     }
 
     getSortableTable = () => {
-        const { introductions, formSubmitted } = this.state;
-        if (introductions.length > 0) {
+        const { ourTeam, formSubmitted } = this.state;
+        if (ourTeam.length > 0) {
             const thead = (
                 <thead>
                     <tr>
-                        <th colSpan="10%">Title</th>
+                        <th colSpan="15%">Name</th>
+                        <th colSpan="15%">Title</th>
                         <th colSpan="40%">Description</th>
-                        <th colSpan="5%">Picture</th>
+                        <th colSpan="20%">Picture</th>
                         <th colSpan="10%">Action</th>
                     </tr>
                 </thead>
             );
-            const tbody = <SortableIntroductionRows 
-                            introductions={introductions}
+            const tbody = <SortableOurTeamRows
+                            ourTeam={ourTeam}
                             formSubmitted={formSubmitted}
+                            onNameChanged={this.handleNameChanged.bind(this)}
                             onTitleChanged={this.handleTitleChanged.bind(this)}
                             onDescriptionChanged={this.handleDescriptionChanged.bind(this)}
                             onDeleteBtnClicked={this.handleDeleteBtnClicked.bind(this)}
                             onDeletePictureBtnClicked={this.handleDeletePictureBtnClicked.bind(this)}
                             onImageChanged={this.handleImageChanged.bind(this)}
                             onSortEnd={this.handleSortEnd.bind(this)}
-                             />;
+                            />;
             return (
                 <div className="table-responsive">
                     <table className="table">
                         {thead}
                         {tbody}
-                        {introductions.length <= 4 && (
+                        {ourTeam.length <= 4 && (
                             <tbody>
                                 <tr key="button" data-id="button">
                                     <td>
@@ -91,22 +100,22 @@ class IntroductionsEditor extends Component {
         }
     }
 
-    handleSortEnd = (introductions) => {
-        this.setState({ introductions });
+    handleSortEnd = (ourTeam) => {
+        this.setState({ ourTeam });
     }
 
     handleAddBtnClicked = () => {
-        const { introductions } = this.state;
-        if (introductions.length <= 4) {
-            introductions.push({title: '', description: '', picture: null, validations: {}});
-            this.setState({ introductions });
+        const { ourTeam } = this.state;
+        if (ourTeam.length <= 4) {
+            ourTeam.push({name: '', title: '', description: '', picture: null, validations: {}});
+            this.setState({ ourTeam });
         }
     }
 
     handleDeleteBtnClicked = (index) => {
-        const { introductions } = this.state;
-        introductions.splice(index, 1);
-        this.setState({ introductions });
+        const { ourTeam } = this.state;
+        ourTeam.splice(index, 1);
+        this.setState({ ourTeam });
     }
 
     handleImageChanged = (index, event) => {
@@ -122,92 +131,110 @@ class IntroductionsEditor extends Component {
         }
         $('#picture-upload').val(null);
     }
-    
+
     handleFinishImageCropping = (newFile) => {
-        const { introductions, pictureIndex } = this.state;
-        introductions[pictureIndex].picture = newFile;
-        delete introductions[pictureIndex].validations.picture;
+        const { ourTeam, pictureIndex } = this.state;
+        ourTeam[pictureIndex].picture = newFile;
+        delete ourTeam[pictureIndex].validations.picture;
         this.setState({
-            introductions: introductions,
+            ourTeam: ourTeam,
             pictureIndex: -1
         });
     }
 
     handleDeletePictureBtnClicked = (index) => {
-        const { introductions } = this.state;
-        introductions[index].picture = null;
-        introductions[index].validations.picture = 'Select picture';
-        this.setState({ introductions });
+        const { ourTeam } = this.state;
+        ourTeam[index].picture = null;
+        ourTeam[index].validations.picture = 'Select picture';
+        this.setState({ ourTeam });
+    }
+
+    handleNameChanged = (index, event) => {
+        const { ourTeam } = this.state;
+        const name = event.target.value;
+        ourTeam[index].name = name;
+        if (name.length === 0) {
+            ourTeam[index].validations.name = 'Enter name';
+        } else {
+            delete ourTeam[index].validations.name;
+        }
+        this.setState({ ourTeam });
     }
 
     handleTitleChanged = (index, event) => {
-        const { introductions } = this.state;
+        const { ourTeam } = this.state;
         const title = event.target.value;
-        introductions[index].title = title;
+        ourTeam[index].title = title;
         if (title.length === 0) {
-            introductions[index].validations.title = 'Enter title';
+            ourTeam[index].validations.title = 'Enter title';
         } else {
-            delete introductions[index].validations.title;
+            delete ourTeam[index].validations.title;
         }
-        this.setState({ introductions });
+        this.setState({ ourTeam });
     }
 
     handleDescriptionChanged = (index, event) => {
-        const { introductions } = this.state;
+        const { ourTeam } = this.state;
         const description = event.target.value;
-        introductions[index].description = description;
+        ourTeam[index].description = description;
         if (description.length === 0) {
-            introductions[index].validations.description = 'Enter description';
+            ourTeam[index].validations.description = 'Enter description';
         } else {
-            delete introductions[index].validations.description;
+            delete ourTeam[index].validations.description;
         }
-        this.setState({ introductions });
+        this.setState({ ourTeam });
     }
 
     handleSubmitBtnClicked = async (event) => {
         event.preventDefault();
         this.setState({ formSubmitted: true });
         let valid = true;
-        const { introductions } = this.state;
-        introductions.forEach((introduction, i) => {
-            if (introduction.title === '') {
-                introductions[i].validations.title = 'Enter title';
+        const { ourTeam } = this.state;
+        ourTeam.forEach((member, i) => {
+            if (member.name === '') {
+                ourTeam[i].validations.name = 'Enter name';
                 valid = false;
             } else {
-                delete introductions[i].validations.title;
+                delete ourTeam[i].validations.name;
             }
-            if (introduction.description === '') {
-                introductions[i].validations.description = 'Enter description';
+            if (member.title === '') {
+                ourTeam[i].validations.title = 'Enter title';
                 valid = false;
             } else {
-                delete introductions[i].validations.description;
+                delete ourTeam[i].validations.title;
             }
-            if (introduction.picture === null) {
-                introductions[i].validations.picture = 'Select image';
+            if (member.description === '') {
+                ourTeam[i].validations.description = 'Enter description';
                 valid = false;
             } else {
-                delete introductions[i].validations.picture;
+                delete ourTeam[i].validations.description;
+            }
+            if (member.picture === null) {
+                ourTeam[i].validations.picture = 'Select picture';
+                valid = false;
+            } else {
+                delete ourTeam[i].validations.picture;
             }
         });
-        this.setState({ introductions });
+        this.setState({ ourTeam });
         if (valid === true) {
             this.props.onShowLoading(true, 1);
-            for (let i = 0, max = introductions.length; i < max; i++) {
-                const introduction = introductions[i];
-                if (typeof introduction.picture.reference === 'undefined') {
-                    const picture = await AboutUsService.uploadPicture(introduction.picture, 'introductions');
-                    introductions[i].picture = picture;
+            for (let i = 0, max = ourTeam.length; i < max; i++) {
+                const member = ourTeam[i];
+                if (typeof member.picture.reference === 'undefined') {
+                    const picture = await AboutUsService.uploadPicture(member.picture, 'ourTeam');
+                    ourTeam[i].picture = picture;
                 }
             }
-            // remove pictures that have been removed
-            const { originalIntroductions } = this.state;
-            for (let i = 0, max = originalIntroductions.length; i < max; i++) {
-                const introduction = originalIntroductions[i];
-                if (introduction.picture !== null && typeof introduction.picture.reference !== 'undefined') {
-                    const targetRef = introduction.picture.reference;
+            // remove picture that have been removed
+            const { originalOurTeam } = this.state;
+            for (let i = 0, max = originalOurTeam.length; i < max; i++) {
+                const member = originalOurTeam[i];
+                if (member.picture !== null && typeof member.picture.reference !== 'undefined') {
+                    const targetRef = member.picture.reference;
                     let toDelete = true;
-                    for (let j = 0, maxJ = introductions.length; j < maxJ; j++) {
-                        if (introductions[j].picture.reference === targetRef) {
+                    for (let j = 0, maxJ = ourTeam.length; j < maxJ; j++) {
+                        if (ourTeam[j].picture.reference === targetRef) {
                             toDelete = false;
                         }
                     }
@@ -216,22 +243,22 @@ class IntroductionsEditor extends Component {
                     }
                 }
             }
-            let introductionsToSend = JSON.parse(JSON.stringify(introductions));
-            introductionsToSend = introductionsToSend.map(introduction => {
-                delete introduction.validations;
-                return introduction;
+            let ourTeamToSend = JSON.parse(JSON.stringify(ourTeam));
+            ourTeamToSend = ourTeamToSend.map(member => {
+                delete member.validations;
+                return member;
             });
-            AboutUsService.updateIntroductions(introductionsToSend)
+            AboutUsService.updateOurTeam(ourTeamToSend)
                 .then(() => {
-                    toastr.success('Introductions successfully updated');
+                    toastr.success('Our team successfully updated');
                     this.props.history.push('/about-us');
                 })
                 .catch(() => {
-                    toastr.error('There was an error in updating introductions');
+                    toastr.error('There was an error in updating our team');
                 })
                 .finally(() => {
                     this.props.onDoneLoading();
-                })
+                });
         }
     }
 
@@ -240,7 +267,7 @@ class IntroductionsEditor extends Component {
     }
 
     handleUndo = () => {
-        this.setState({ introductions: this.state.originalIntroductions });
+        this.setState({ ourTeam: this.state.originalOurTeam });
     }
 
     render() {
@@ -249,7 +276,7 @@ class IntroductionsEditor extends Component {
             <React.Fragment>
                 <div className="card">
                     <div className="card-header">
-                        <h4>Introductions Editor</h4>
+                        <h4>Our Teams Editor</h4>
                     </div>
                     <div className="card-body">
                         <form noValidate>
@@ -263,7 +290,7 @@ class IntroductionsEditor extends Component {
                     </div>
                 </div>
                 <PictureCropModal
-                    aspect={16/9}
+                    aspect={1/1}
                     pictureFile={tempPictureFile}
                     onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
                     onResetTempPictureFile={this.handleResetTempPictureFile} />
@@ -272,4 +299,4 @@ class IntroductionsEditor extends Component {
     }
 }
 
-export default IntroductionsEditor;
+export default OurTeamEditor;

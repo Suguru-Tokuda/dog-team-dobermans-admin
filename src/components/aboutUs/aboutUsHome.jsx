@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Introductions from './introductions';
-import OurTeams from './ourTeams';
+import OurTeam from './ourTeam';
 import AboutUsService from '../../services/aboutUsService';
 import toastr from 'toastr';
 
@@ -31,16 +31,30 @@ class AboutUsHome extends Component {
     getIntroductions() {
         const { introductions } = this.state.aboutUsDetail;
         if (typeof introductions !== 'undefined' && introductions.length > 0) {
-            return <Introductions introductions={introductions} />
+            return (
+                <div className="row mt-5">
+                    <div className="col-12">
+                        <h4>Introductions</h4>
+                        <Introductions introductions={introductions} />
+                    </div>
+                </div>
+            );
         } else {
             return null;
         }
     }
 
-    getOurTeams() {
-        const { ourTeams } = this.state.aboutUsDetail;
-        if (typeof ourTeams !== 'undefined' && ourTeams.length > 0) {
-            return <OurTeams outTeams={ourTeams} />
+    getOurTeam() {
+        const { ourTeam } = this.state.aboutUsDetail;
+        if (typeof ourTeam !== 'undefined' && ourTeam.length > 0) {
+            return (
+                <div className="row mt-5">
+                    <div className="col-12">
+                        <h4>Our Team</h4>
+                        <OurTeam ourTeam={ourTeam} />
+                    </div>
+                </div>
+            );
         } else {
             return null;
         }
@@ -52,8 +66,8 @@ class AboutUsHome extends Component {
     }
 
     getOutTeamsEditorBtnLabel() {
-        const { ourTeams } = this.state.aboutUsDetail;
-        return (typeof ourTeams !== 'undefined' && ourTeams.length > 0) ? 'Update Our Teams' : 'Create Our Teams';
+        const { ourTeam } = this.state.aboutUsDetail;
+        return (typeof ourTeam !== 'undefined' && ourTeam.length > 0) ? 'Update Our Teams' : 'Create Our Teams';
     }
 
     getHeader() {
@@ -65,8 +79,10 @@ class AboutUsHome extends Component {
                     </div>
                 </div>
                 <div className="row mt-2">
-                    <Link className="btn btn-sm btn-primary" to="/about-us/introductions-editor">{this.getIntroductionEditorBtnLabel()}</Link>
-                    <Link className="btn btn-sm btn-success ml-2" to="/about-us/our-teams-editor">{this.getOutTeamsEditorBtnLabel()}</Link>
+                    <div className="col-12">
+                        <Link className="btn btn-sm btn-primary" to="/about-us/introductions-editor">{this.getIntroductionEditorBtnLabel()}</Link>
+                        <Link className="btn btn-sm btn-success ml-2" to="/about-us/our-teams-editor">{this.getOutTeamsEditorBtnLabel()}</Link>
+                    </div>
                 </div>
             </React.Fragment>
         );
@@ -80,7 +96,7 @@ class AboutUsHome extends Component {
                        <div className="card-body">
                            {this.getHeader()}
                            {this.getIntroductions()}
-                           {this.getOurTeams()}
+                           {this.getOurTeam()}
                        </div>
                    </div>
                </div>

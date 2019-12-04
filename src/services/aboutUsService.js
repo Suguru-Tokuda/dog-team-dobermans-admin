@@ -18,8 +18,11 @@ export default class AboutUsService {
     }
 
     static updateIntroductions(data) {
-        console.log(data);
         return axios.put(`${this.getServiceBase()}introductions?key=${api.API_KEY}`, data);
+    }
+
+    static updateOurTeam(data) {
+        return axios.put(`${this.getServiceBase()}ourTeam?key=${api.API_KEY}`, data);
     }
 
     static uploadPicture(imageFile, directory) {

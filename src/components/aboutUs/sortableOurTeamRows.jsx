@@ -1,22 +1,23 @@
 import React, { Component } from 'react';
 import Sortable from 'react-sortablejs';
 
-class SortableIntroductionRows extends Component {
+class SortableOurTeamRows extends Component {
     state = {
-        introductions: [],
+        ourTeam: [],
         formSubmitted: false
     };
 
     constructor(props) {
         super(props);
-        this.state.introductions = props.introductions;
+        this.state.ourTeam = props.ourTeam;
+
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        if (JSON.stringify(nextProps.introductions) !== JSON.stringify(prevState.introductions) || nextProps.formSubmitted !== prevState.formSubmitted) {
+        if (JSON.stringify(nextProps.ourTeam) !== JSON.stringify(prevState.ourTeam) || nextProps.formSubmitted !== prevState.formSubmitted) {
             const state = prevState;
-            if (JSON.stringify(nextProps.introductions) !== JSON.stringify(prevState.introductions)) {
-                state.introductions = nextProps.introductions;
+            if (JSON.stringify(nextProps.ourTeam) !== JSON.stringify(prevState.ourTeam)) {
+                state.ourTeam = nextProps.ourTeam;
             }
             if (nextProps.formSubmitted !== prevState.formSubmitted) {
                 state.formSubmitted = nextProps.formSubmitted;
@@ -27,17 +28,17 @@ class SortableIntroductionRows extends Component {
     }
 
     getRows = () => {
-        const { introductions, formSubmitted } = this.state;
-        if (introductions.length > 0) {
-            const rows = introductions.map((introduction, i) => {
+        const { ourTeam, formSubmitted } = this.state;
+        if (ourTeam.length > 0) {
+            const rows = ourTeam.map((member, i) => {
                 let imageElement;
-                const { picture, validations } = introduction;
+                const { picture, validations } = member;
                 if (picture !== null && typeof picture.url !== 'undefined') {
                     imageElement = (
                         <React.Fragment>
                             <div className="row">
                                 <div className="col-12">
-                                    <img src={picture.url} alt={picture.reference} className="img-fluid" />
+                                    <img src={picture.url} alt={picture.reference} className="img-thumbnail" />
                                 </div>
                             </div>
                             <div className="row mt-1">
@@ -55,13 +56,13 @@ class SortableIntroductionRows extends Component {
                         <React.Fragment>
                             <div className="row">
                                 <div className="col-12">
-                                    <img src={url} alt={introduction.title} className="img-fluid" />
+                                    <img src={url} alt={member.name} className="img-thumbnail" />
                                 </div>
-                            </div>
-                            <div className="row mt-1">
-                                <div className="col-12">
-                                    <div className="float-right">
-                                        <button type="button" className="btn btn-sm btn-danger" onClick={() => this.props.onDeletePictureBtnClicked(i)}>x</button>
+                                <div className="row mt-1">
+                                    <div className="col-12">
+                                        <div className="float-right">
+                                            <button type="button" className="btn btn-sm btn-danger" onClick={() => this.props.onDeletePictureBtnClicked(i)}>x</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -78,20 +79,26 @@ class SortableIntroductionRows extends Component {
                     );
                 }
                 return (
-                    <tr key={`intro-${i}`} data-id={i}>
-                        <td colSpan="10%">
-                            <input type="text" className="form-control" value={introduction.title} onChange={this.props.onTitleChanged.bind(this, i)} />
+                    <tr key={`member-${i}`} data-id={i}>
+                        <td colSpan="15%">
+                            <input type="text" className="form-control" value={member.name} onChange={this.props.onNameChanged.bind(this, i)} />
+                            {(typeof validations !== 'undefined' && typeof validations.name !== 'undefined' && formSubmitted === true) && (
+                                <small className="text-danger">{validations.name}</small>
+                            )}
+                        </td>
+                        <td colSpan="15%">
+                            <input type="text" className="form-control" value={member.title} onChange={this.props.onTitleChanged.bind(this, i)} />
                             {(typeof validations !== 'undefined' && typeof validations.title !== 'undefined' && formSubmitted === true) && (
                                 <small className="text-danger">{validations.title}</small>
                             )}
                         </td>
                         <td colSpan="40%">
-                            <textarea className="form-control" value={introduction.description} onChange={this.props.onDescriptionChanged.bind(this, i)} rows="10" style={{resize: 'none'}}/>
+                            <textarea className="form-control" value={member.description} onChange={this.props.onDescriptionChanged.bind(this, i)} rows="10" style={{resize: 'none'}}/>
                             {(typeof validations !== 'undefined' && typeof validations.description !== 'undefined' && formSubmitted === true) && (
                                 <small className="text-danger">{validations.description}</small>
                             )}
                         </td>
-                        <td colSpan="5%" style={{ height: 100, width: 100 }}>
+                        <td colSpan="20%" style={{ height: 100, width: 100 }}>
                             <div className="row">
                                 <div className="col-12">
                                     {imageElement}
@@ -102,7 +109,7 @@ class SortableIntroductionRows extends Component {
                             )}
                         </td>
                         <td colSpan="10%">
-                            {introductions.length > 1 && (
+                            {ourTeam.length > 1 && (
                                 <button type="button" className="btn btn-sm btn-danger" onClick={() => this.props.onDeleteBtnClicked(i)}>x</button>
                             )}
                         </td>
@@ -116,11 +123,11 @@ class SortableIntroductionRows extends Component {
 
     handleSortChange = (order, sortable, event) => {
         const { newIndex, oldIndex } = event;
-        const { introductions } = this.state;
-        const tempIntro = introductions[oldIndex];
-        introductions[oldIndex] = introductions[newIndex];
-        introductions[newIndex] = tempIntro;
-        this.props.onSortEnd(introductions);
+        const { ourTeam } = this.state;
+        const tempMember = ourTeam[oldIndex];
+        ourTeam[oldIndex] = ourTeam[newIndex];
+        ourTeam[newIndex] = tempMember;
+        this.props.onSortEnd(ourTeam);
     }
 
     render() {
@@ -130,4 +137,4 @@ class SortableIntroductionRows extends Component {
     }
 }
 
-export default SortableIntroductionRows;
+export default SortableOurTeamRows;
