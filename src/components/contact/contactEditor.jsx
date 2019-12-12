@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import ContactUsService from '../../services/contactUsService';
+import { Link } from 'react-router-dom';
+import ContactService from '../../services/contactService';
 import ConstantsService from '../../services/constantsService';
 import toastr from 'toastr';
 
 class ContactUsEditor extends Component {
     state = {
-        contactUsID: '',
-        contactUsInfo: {},
+        contactID: '',
+        contactInfo: {},
         selections: {
             firstName: '',
             lastName: '',
@@ -30,32 +31,33 @@ class ContactUsEditor extends Component {
 
     constructor(props) {
         super(props);
-        console.log(props.contactUsInfo);
-        const { contactUsInfo } = props;
-        this.state.contactUsInfo = contactUsInfo;
-        this.contactUsID = contactUsInfo.contactUsID;
-        this.state.selections.firstName = contactUsInfo.firstName;
-        this.state.selections.lastName = contactUsInfo.lastName;
-        this.state.selections.street = contactUsInfo.street;
-        this.state.selections.city = contactUsInfo.city;
-        this.state.selections.state = contactUsInfo.state;
-        this.state.selections.email = contactUsInfo.email;
-        this.state.selections.phone = contactUsInfo.phone;
     }
 
-    componentDidUpdate(props) {
-        if (JSON.stringify(this.state.contactUsInfo) !== JSON.stringify(props.contactUsInfo)) {
-            const { contactUsInfo } = props;
-            const { selections } = this.state;
-            selections.firstName = contactUsInfo.firstName;
-            selections.lastName = contactUsInfo.lastName;
-            selections.street = contactUsInfo.street;
-            selections.city = contactUsInfo.city;
-            selections.state = contactUsInfo.state;
-            selections.email = contactUsInfo.email;
-            selections.phone = contactUsInfo.phone;
-            this.setState({ contactUsInfo: props.contactUsInfo });
-        }
+    componentDidMount() {
+        this.props.onShowLoading(true, 1);
+        ContactService.getContactusInfo()
+            .then(res => {
+                const selections = {
+                    firstName: res.data.firstName,
+                    lastName: res.data.lastName,
+                    street: res.data.street,
+                    city: res.data.city,
+                    state: res.data.state,
+                    email: res.data.email,
+                    phone: res.data.phone
+                }
+                this.setState({
+                    contacdtID: res.data.contactID,
+                    selections: selections,
+                    contactInfo: res.data
+                });
+            })
+            .catch(err => {
+               toastr.error('There was an error in loading contact us info');
+            })
+            .finally(() => {
+                this.props.onDoneLoading();
+            });
     }
 
     getStateOptions() {
@@ -74,8 +76,8 @@ class ContactUsEditor extends Component {
     }
 
     getSubmitBtnLabel() {
-        const { contactUsInfo } = this.state;
-        return Object.keys(contactUsInfo).length === 0 ? 'Create' : 'Update';
+        const { contactInfo } = this.state;
+        return Object.keys(contactInfo).length === 0 ? 'Create' : 'Update';
     }
 
     handleSetFirstName = (event) => {
@@ -172,7 +174,7 @@ class ContactUsEditor extends Component {
         this.setState({ formSubmitted: true });
         event.preventDefault();
         let isValid = true;
-        const { selections, validations, contactUsInfo } = this.state;
+        const { selections, validations, contactInfo } = this.state;
         for (const key in selections) {
             if (selections[key] === '') {
                 isValid = false;
@@ -182,16 +184,16 @@ class ContactUsEditor extends Component {
         if (isValid === true) {
             this.props.onShowLoading(true, 1);
             const { firstName, lastName, street, city, state, email, phone } = selections;
-            const { contactUsID } = contactUsInfo;
-            ContactUsService.updateContactdInfo(firstName, lastName, street, city, state, email, phone, contactUsID)
+            const { contactID } = contactInfo;
+            ContactService.updateContactdInfo(firstName, lastName, street, city, state, email, phone, contactID)
                 .then(() => {
-                    if (Object.keys(contactUsInfo).length > 0) {
+                    if (Object.keys(contactInfo).length > 0) {
                         toastr.success('Successfully updated contact info');
                     } else {
                         toastr.success('Successfully created contact info');
                     }
                     this.props.onUpdateContactUsInfo();
-                    this.props.history.push('/contact-us/view');
+                    this.props.history.push('/contact/view');
                 })
                 .catch(() => {
                     toastr.error('There was an error in posting contact us data');
@@ -211,49 +213,49 @@ class ContactUsEditor extends Component {
                     <div className="row form-group">
                         <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">First Name</label>
                         <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">
-                            <input type="text" className={`form-control ${this.getErrorClass('firstName')}`} value={selections.firstName} onChange={this.handleSetFirstName} />
+                            <input type="text" className={`form-control ${this.getErrorClass('firstName')}`} value={selections.firstName || ''} onChange={this.handleSetFirstName} />
                             {this.getErrorMessage('firstName')}
                         </div>
                     </div>
                     <div className="row form-group">
                         <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Last Name</label>
                         <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">
-                            <input type="text" className={`form-control ${this.getErrorClass('lastName')}`} value={selections.lastName} onChange={this.handleSetLastName} />
+                            <input type="text" className={`form-control ${this.getErrorClass('lastName')}`} value={selections.lastName || ''} onChange={this.handleSetLastName} />
                             {this.getErrorMessage('lastName')}
                         </div>
                     </div>
                     <div className="row form-group">
                         <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Email</label>
                         <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">
-                            <input type="text" className={`form-control ${this.getErrorClass('email')}`} value={selections.email} onChange={this.handleSetEmail} />
+                            <input type="text" className={`form-control ${this.getErrorClass('email')}`} value={selections.email || ''} onChange={this.handleSetEmail} />
                             {this.getErrorMessage('email')}
                         </div>
                     </div>
                     <div className="row form-group">
                         <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Phone</label>
                         <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">
-                            <input type="text" className={`form-control ${this.getErrorClass('phone')}`} value={selections.phone} onChange={this.handleSetPhone} />
+                            <input type="text" className={`form-control ${this.getErrorClass('phone')}`} value={selections.phone || ''} onChange={this.handleSetPhone} />
                             {this.getErrorMessage('phone')}
                         </div>
                     </div>
                     <div className="row form-group">
                         <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Street</label>
                         <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">
-                            <input type="text" className={`form-control ${this.getErrorClass('street')}`} value={selections.street} onChange={this.handleSetStreet} />
+                            <input type="text" className={`form-control ${this.getErrorClass('street')}`} value={selections.street || ''} onChange={this.handleSetStreet} />
                             {this.getErrorMessage('street')}
                         </div>
                     </div>
                     <div className="row form-group">
                         <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">City</label>
                         <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">
-                            <input type="text" className={`form-control ${this.getErrorClass('city')}`} value={selections.city} onChange={this.handleSetCity} />
+                            <input type="text" className={`form-control ${this.getErrorClass('city')}`} value={selections.city || ''} onChange={this.handleSetCity} />
                             {this.getErrorMessage('city')}
                         </div>
                     </div>
                     <div className="row form-group">
                         <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">State</label>
                         <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">
-                            <select className={`form-control ${this.getErrorClass('state')}`} value={selections.state} onChange={this.handleSetState}>
+                            <select className={`form-control ${this.getErrorClass('state')}`} value={selections.state || ''} onChange={this.handleSetState}>
                                 <option value="">--Select State--</option>
                                 {this.getStateOptions()}
                             </select>
@@ -262,7 +264,8 @@ class ContactUsEditor extends Component {
                     </div>
                 </div>
                 <div className="card-footer">
-                    <button type="submit" className="btn btn-primary" onClick={this.submitContactInfo}>{this.getSubmitBtnLabel()}</button>
+                    <Link to="/contact" className="btn btn-secondary">Back</Link>
+                    <button type="submit" className="btn btn-primary ml-2" onClick={this.submitContactInfo}>{this.getSubmitBtnLabel()}</button>
                 </div>
             </form>
         )

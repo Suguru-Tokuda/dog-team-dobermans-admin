@@ -64,12 +64,12 @@ class PuppiesTable extends Component {
         } else {
             displayedData = this.state.filteredData.slice(startIndex, startIndex + 1);
         }
-        const tempPagination = this.state.paginationInfo;
-        tempPagination.currentPage = currentPage;
-        tempPagination.startIndex = startIndex;
-        tempPagination.endIndex = endIndex;
+        const { paginationInfo } = this.state;
+        paginationInfo.currentPage = currentPage;
+        paginationInfo.startIndex = startIndex;
+        paginationInfo.endIndex = endIndex;
         this.setState({
-            paginationInfo: tempPagination,
+            paginationInfo: paginationInfo,
             displayedData: displayedData
         });
     }

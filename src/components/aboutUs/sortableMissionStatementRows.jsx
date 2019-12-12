@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
 import Sortable from 'react-sortablejs';
 
-class SortableIntroductionRows extends Component {
+class SortableMissionStatementRows extends Component {
     state = {
-        introductions: [],
+        missionStatements: [],
         formSubmitted: false
     };
 
     constructor(props) {
         super(props);
-        this.state.introductions = props.introductions;
+        this.state.missionStatements = props.missionStatements;
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        if (JSON.stringify(nextProps.introductions) !== JSON.stringify(prevState.introductions) || nextProps.formSubmitted !== prevState.formSubmitted) {
+        if (JSON.stringify(nextProps.missionStatements) !== JSON.stringify(prevState.missionStatements) || nextProps.formSubmitted !== prevState.formSubmitted) {
             const state = prevState;
-            if (JSON.stringify(nextProps.introductions) !== JSON.stringify(prevState.introductions)) {
-                state.introductions = nextProps.introductions;
+            if (JSON.stringify(nextProps.missionStatements) !== JSON.stringify(prevState.missionStatements)) {
+                state.missionStatements = nextProps.missionStatements;
             }
             if (nextProps.formSubmitted !== prevState.formSubmitted) {
                 state.formSubmitted = nextProps.formSubmitted;
@@ -27,11 +27,11 @@ class SortableIntroductionRows extends Component {
     }
 
     getRows = () => {
-        const { introductions, formSubmitted } = this.state;
-        if (introductions.length > 0) {
-            const rows = introductions.map((introduction, i) => {
+        const { missionStatements, formSubmitted } = this.state;
+        if (missionStatements.length > 0) {
+            const rows = missionStatements.map((missionStatement, i) => {
                 let imageElement;
-                const { picture, validations } = introduction;
+                const { picture, validations } = missionStatement;
                 if (picture !== null && typeof picture.url !== 'undefined') {
                     imageElement = (
                         <React.Fragment>
@@ -55,7 +55,7 @@ class SortableIntroductionRows extends Component {
                         <React.Fragment>
                             <div className="row">
                                 <div className="col-12">
-                                    <img src={url} alt={introduction.title} className="img-fluid" />
+                                    <img src={url} alt={missionStatement.title} className="img-fluid" />
                                 </div>
                             </div>
                             <div className="row mt-1">
@@ -80,13 +80,13 @@ class SortableIntroductionRows extends Component {
                 return (
                     <tr key={`intro-${i}`} data-id={i}>
                         <td colSpan="10%">
-                            <input type="text" className="form-control" value={introduction.title} onChange={this.props.onTitleChanged.bind(this, i)} />
+                            <input type="text" className="form-control" value={missionStatement.title} onChange={this.props.onTitleChanged.bind(this, i)} />
                             {(typeof validations !== 'undefined' && typeof validations.title !== 'undefined' && formSubmitted === true) && (
                                 <small className="text-danger">{validations.title}</small>
                             )}
                         </td>
                         <td colSpan="40%">
-                            <textarea className="form-control" value={introduction.description} onChange={this.props.onDescriptionChanged.bind(this, i)} rows="10" style={{resize: 'none'}}/>
+                            <textarea className="form-control" value={missionStatement.description} onChange={this.props.onDescriptionChanged.bind(this, i)} rows="10" style={{resize: 'none'}}/>
                             {(typeof validations !== 'undefined' && typeof validations.description !== 'undefined' && formSubmitted === true) && (
                                 <small className="text-danger">{validations.description}</small>
                             )}
@@ -102,7 +102,7 @@ class SortableIntroductionRows extends Component {
                             )}
                         </td>
                         <td colSpan="10%">
-                            {introductions.length > 1 && (
+                            {missionStatements.length > 1 && (
                                 <button type="button" className="btn btn-sm btn-danger" onClick={() => this.props.onDeleteBtnClicked(i)}>x</button>
                             )}
                         </td>
@@ -116,11 +116,11 @@ class SortableIntroductionRows extends Component {
 
     handleSortChange = (order, sortable, event) => {
         const { newIndex, oldIndex } = event;
-        const { introductions } = this.state;
-        const tempIntro = introductions[oldIndex];
-        introductions[oldIndex] = introductions[newIndex];
-        introductions[newIndex] = tempIntro;
-        this.props.onSortEnd(introductions);
+        const { missionStatements } = this.state;
+        const tempIntro = missionStatements[oldIndex];
+        missionStatements[oldIndex] = missionStatements[newIndex];
+        missionStatements[newIndex] = tempIntro;
+        this.props.onSortEnd(missionStatements);
     }
 
     render() {
@@ -130,4 +130,4 @@ class SortableIntroductionRows extends Component {
     }
 }
 
-export default SortableIntroductionRows;
+export default SortableMissionStatementRows;

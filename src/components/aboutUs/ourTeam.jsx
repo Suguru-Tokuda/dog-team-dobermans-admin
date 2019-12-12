@@ -23,10 +23,10 @@ class OurTeam extends Component {
                     </tr>
                 </thead>
             );
-            const rows = ourTeam.map(member => {
+            const rows = ourTeam.map((member, i) => {
                 const { name, title, description, picture } = member;
                 return (
-                    <tr>
+                    <tr key={`member-${i}`}>
                         <td>{name}</td>
                         <td>{title}</td>
                         <td>{description}</td>

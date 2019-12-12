@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import Introductions from './introductions';
+import MissionStatements from './missionStatements';
 import OurTeam from './ourTeam';
 import AboutUsService from '../../services/aboutUsService';
 import toastr from 'toastr';
@@ -28,14 +28,14 @@ class AboutUsHome extends Component {
             });
     }
 
-    getIntroductions() {
-        const { introductions } = this.state.aboutUsDetail;
-        if (typeof introductions !== 'undefined' && introductions.length > 0) {
+    getMissionStatements() {
+        const { missionStatements } = this.state.aboutUsDetail;
+        if (typeof missionStatements !== 'undefined' && missionStatements.length > 0) {
             return (
                 <div className="row mt-5">
                     <div className="col-12">
-                        <h4>Introductions</h4>
-                        <Introductions introductions={introductions} />
+                        <h4>Mission Statements</h4>
+                        <MissionStatements missionStatements={missionStatements} />
                     </div>
                 </div>
             );
@@ -60,12 +60,12 @@ class AboutUsHome extends Component {
         }
     }
 
-    getIntroductionEditorBtnLabel() {
-        const { introductions } = this.state.aboutUsDetail;
-        return (typeof introductions !== 'undefined' && introductions.length > 0) ? 'Update Introductions' : 'Create Introductions';
+    getMissionStatementsEditorBtnLabel() {
+        const { missionStatements } = this.state.aboutUsDetail;
+        return (typeof missionStatements !== 'undefined' && missionStatements.length > 0) ? 'Update Mission Statements' : 'Create Mission Statements';
     }
 
-    getOutTeamsEditorBtnLabel() {
+    getOurTeamEditorBtnLabel() {
         const { ourTeam } = this.state.aboutUsDetail;
         return (typeof ourTeam !== 'undefined' && ourTeam.length > 0) ? 'Update Our Teams' : 'Create Our Teams';
     }
@@ -80,8 +80,8 @@ class AboutUsHome extends Component {
                 </div>
                 <div className="row mt-2">
                     <div className="col-12">
-                        <Link className="btn btn-sm btn-primary" to="/about-us/introductions-editor">{this.getIntroductionEditorBtnLabel()}</Link>
-                        <Link className="btn btn-sm btn-success ml-2" to="/about-us/our-teams-editor">{this.getOutTeamsEditorBtnLabel()}</Link>
+                        <Link className="btn btn-sm btn-primary" to="/about-us/mission-statements-editor">{this.getMissionStatementsEditorBtnLabel()}</Link>
+                        <Link className="btn btn-sm btn-success ml-2" to="/about-us/our-teams-editor">{this.getOurTeamEditorBtnLabel()}</Link>
                     </div>
                 </div>
             </React.Fragment>
@@ -95,7 +95,7 @@ class AboutUsHome extends Component {
                    <div className="card">
                        <div className="card-body">
                            {this.getHeader()}
-                           {this.getIntroductions()}
+                           {this.getMissionStatements()}
                            {this.getOurTeam()}
                        </div>
                    </div>

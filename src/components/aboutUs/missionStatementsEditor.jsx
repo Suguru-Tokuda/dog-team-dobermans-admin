@@ -3,13 +3,13 @@ import AboutUsService from '../../services/aboutUsService';
 import { Link } from 'react-router-dom';
 import toastr from 'toastr';
 import $ from 'jquery';
-import SortableIntroductionRows from './sortableIntroductionsRows';
+import SortableIntroductionRows from './sortableMissionStatementRows';
 import PictureCropModal from '../miscellaneous/pictureCropModal';
 
-class IntroductionsEditor extends Component {
+class MissionStatementsEditor extends Component {
     state = {
-        introductions: [],
-        originalIntroductions: [],
+        missionStatements: [],
+        originalMissionStatements: [],
         tempPictureFile: null,
         pictureIndex: -1,
         formSubmitted: false
@@ -23,18 +23,18 @@ class IntroductionsEditor extends Component {
         this.props.onShowLoading(true, 1);
         AboutUsService.getAboutUs()
             .then(res => {
-                if (typeof res.data.introductions !== 'undefined') {
-                    const introductions = res.data.introductions.map(introduction => { introduction.validations = {}; return introduction });
-                    this.setState({ introductions: introductions, originalIntroductions: JSON.parse(JSON.stringify(introductions)) });
+                if (typeof res.data.missionStatements !== 'undefined') {
+                    const missionStatements = res.data.missionStatements.map(missionStatement => { missionStatement.validations = {}; return missionStatement });
+                    this.setState({ missionStatements: missionStatements, originalMissionStatements: JSON.parse(JSON.stringify(missionStatements)) });
                 } else {
-                    const introductions = [
+                    const missionStatements = [
                         {title: '', description: '', picture: null, validations: {}}
                     ];
-                    this.setState({ introductions: introductions, originalIntroductions: JSON.parse(JSON.stringify(introductions)) });
+                    this.setState({ missionStatements: missionStatements, originalMissionStatements: JSON.parse(JSON.stringify(missionStatements)) });
                 }
             })
             .catch(() => {
-                toastr.error('There was an error in loading introductions data');
+                toastr.error('There was an error in loading missionStatements data');
             })
             .finally(() => {
                 this.props.onDoneLoading();
@@ -42,13 +42,13 @@ class IntroductionsEditor extends Component {
     }
 
     getSubmitBtnLabel = () => {
-        const { introductions } = this.state;
-        return introductions.length === 0 ? 'Submit' : 'Update';
+        const { missionStatements } = this.state;
+        return missionStatements.length === 0 ? 'Submit' : 'Update';
     }
 
     getSortableTable = () => {
-        const { introductions, formSubmitted } = this.state;
-        if (introductions.length > 0) {
+        const { missionStatements, formSubmitted } = this.state;
+        if (missionStatements.length > 0) {
             const thead = (
                 <thead>
                     <tr>
@@ -60,7 +60,7 @@ class IntroductionsEditor extends Component {
                 </thead>
             );
             const tbody = <SortableIntroductionRows 
-                            introductions={introductions}
+                            missionStatements={missionStatements}
                             formSubmitted={formSubmitted}
                             onTitleChanged={this.handleTitleChanged.bind(this)}
                             onDescriptionChanged={this.handleDescriptionChanged.bind(this)}
@@ -74,7 +74,7 @@ class IntroductionsEditor extends Component {
                     <table className="table">
                         {thead}
                         {tbody}
-                        {introductions.length <= 4 && (
+                        {missionStatements.length <= 4 && (
                             <tbody>
                                 <tr key="button" data-id="button">
                                     <td>
@@ -91,22 +91,22 @@ class IntroductionsEditor extends Component {
         }
     }
 
-    handleSortEnd = (introductions) => {
-        this.setState({ introductions });
+    handleSortEnd = (missionStatements) => {
+        this.setState({ missionStatements });
     }
 
     handleAddBtnClicked = () => {
-        const { introductions } = this.state;
-        if (introductions.length <= 4) {
-            introductions.push({title: '', description: '', picture: null, validations: {}});
-            this.setState({ introductions });
+        const { missionStatements } = this.state;
+        if (missionStatements.length <= 4) {
+            missionStatements.push({title: '', description: '', picture: null, validations: {}});
+            this.setState({ missionStatements });
         }
     }
 
     handleDeleteBtnClicked = (index) => {
-        const { introductions } = this.state;
-        introductions.splice(index, 1);
-        this.setState({ introductions });
+        const { missionStatements } = this.state;
+        missionStatements.splice(index, 1);
+        this.setState({ missionStatements });
     }
 
     handleImageChanged = (index, event) => {
@@ -124,90 +124,90 @@ class IntroductionsEditor extends Component {
     }
     
     handleFinishImageCropping = (newFile) => {
-        const { introductions, pictureIndex } = this.state;
-        introductions[pictureIndex].picture = newFile;
-        delete introductions[pictureIndex].validations.picture;
+        const { missionStatements, pictureIndex } = this.state;
+        missionStatements[pictureIndex].picture = newFile;
+        delete missionStatements[pictureIndex].validations.picture;
         this.setState({
-            introductions: introductions,
+            missionStatements: missionStatements,
             pictureIndex: -1
         });
     }
 
     handleDeletePictureBtnClicked = (index) => {
-        const { introductions } = this.state;
-        introductions[index].picture = null;
-        introductions[index].validations.picture = 'Select picture';
-        this.setState({ introductions });
+        const { missionStatements } = this.state;
+        missionStatements[index].picture = null;
+        missionStatements[index].validations.picture = 'Select picture';
+        this.setState({ missionStatements });
     }
 
     handleTitleChanged = (index, event) => {
-        const { introductions } = this.state;
+        const { missionStatements } = this.state;
         const title = event.target.value;
-        introductions[index].title = title;
+        missionStatements[index].title = title;
         if (title.length === 0) {
-            introductions[index].validations.title = 'Enter title';
+            missionStatements[index].validations.title = 'Enter title';
         } else {
-            delete introductions[index].validations.title;
+            delete missionStatements[index].validations.title;
         }
-        this.setState({ introductions });
+        this.setState({ missionStatements });
     }
 
     handleDescriptionChanged = (index, event) => {
-        const { introductions } = this.state;
+        const { missionStatements } = this.state;
         const description = event.target.value;
-        introductions[index].description = description;
+        missionStatements[index].description = description;
         if (description.length === 0) {
-            introductions[index].validations.description = 'Enter description';
+            missionStatements[index].validations.description = 'Enter description';
         } else {
-            delete introductions[index].validations.description;
+            delete missionStatements[index].validations.description;
         }
-        this.setState({ introductions });
+        this.setState({ missionStatements });
     }
 
     handleSubmitBtnClicked = async (event) => {
         event.preventDefault();
         this.setState({ formSubmitted: true });
         let valid = true;
-        const { introductions } = this.state;
-        introductions.forEach((introduction, i) => {
-            if (introduction.title === '') {
-                introductions[i].validations.title = 'Enter title';
+        const { missionStatements } = this.state;
+        missionStatements.forEach((missionStatement, i) => {
+            if (missionStatement.title === '') {
+                missionStatements[i].validations.title = 'Enter title';
                 valid = false;
             } else {
-                delete introductions[i].validations.title;
+                delete missionStatements[i].validations.title;
             }
-            if (introduction.description === '') {
-                introductions[i].validations.description = 'Enter description';
+            if (missionStatement.description === '') {
+                missionStatements[i].validations.description = 'Enter description';
                 valid = false;
             } else {
-                delete introductions[i].validations.description;
+                delete missionStatements[i].validations.description;
             }
-            if (introduction.picture === null) {
-                introductions[i].validations.picture = 'Select image';
+            if (missionStatement.picture === null) {
+                missionStatements[i].validations.picture = 'Select image';
                 valid = false;
             } else {
-                delete introductions[i].validations.picture;
+                delete missionStatements[i].validations.picture;
             }
         });
-        this.setState({ introductions });
+        this.setState({ missionStatements });
         if (valid === true) {
             this.props.onShowLoading(true, 1);
-            for (let i = 0, max = introductions.length; i < max; i++) {
-                const introduction = introductions[i];
-                if (typeof introduction.picture.reference === 'undefined') {
-                    const picture = await AboutUsService.uploadPicture(introduction.picture, 'introductions');
-                    introductions[i].picture = picture;
+            for (let i = 0, max = missionStatements.length; i < max; i++) {
+                const missionStatement = missionStatements[i];
+                if (typeof missionStatement.picture.reference === 'undefined') {
+                    const picture = await AboutUsService.uploadPicture(missionStatement.picture, 'missionStatements');
+                    missionStatements[i].picture = picture;
                 }
             }
             // remove pictures that have been removed
-            const { originalIntroductions } = this.state;
-            for (let i = 0, max = originalIntroductions.length; i < max; i++) {
-                const introduction = originalIntroductions[i];
-                if (introduction.picture !== null && typeof introduction.picture.reference !== 'undefined') {
-                    const targetRef = introduction.picture.reference;
+            const { originalMissionStatements } = this.state;
+            for (let i = 0, max = originalMissionStatements.length; i < max; i++) {
+                const missionStatement = originalMissionStatements[i];
+                if (missionStatement.picture !== null && typeof missionStatement.picture.reference !== 'undefined') {
+                    const targetRef = missionStatement.picture.reference;
                     let toDelete = true;
-                    for (let j = 0, maxJ = introductions.length; j < maxJ; j++) {
-                        if (introductions[j].picture.reference === targetRef) {
+                    for (let j = 0, maxJ = missionStatements.length; j < maxJ; j++) {
+                        if (missionStatements[j].picture.reference === targetRef) {
                             toDelete = false;
                         }
                     }
@@ -216,18 +216,18 @@ class IntroductionsEditor extends Component {
                     }
                 }
             }
-            let introductionsToSend = JSON.parse(JSON.stringify(introductions));
-            introductionsToSend = introductionsToSend.map(introduction => {
-                delete introduction.validations;
-                return introduction;
+            let introductionsToSend = JSON.parse(JSON.stringify(missionStatements));
+            introductionsToSend = introductionsToSend.map(missionStatement => {
+                delete missionStatement.validations;
+                return missionStatement;
             });
             AboutUsService.updateIntroductions(introductionsToSend)
                 .then(() => {
-                    toastr.success('Introductions successfully updated');
+                    toastr.success('Mission Statements successfully updated');
                     this.props.history.push('/about-us');
                 })
                 .catch(() => {
-                    toastr.error('There was an error in updating introductions');
+                    toastr.error('There was an error in updating missionStatements');
                 })
                 .finally(() => {
                     this.props.onDoneLoading();
@@ -240,7 +240,7 @@ class IntroductionsEditor extends Component {
     }
 
     handleUndo = () => {
-        this.setState({ introductions: this.state.originalIntroductions });
+        this.setState({ missionStatements: this.state.originalMissionStatements });
     }
 
     render() {
@@ -249,7 +249,7 @@ class IntroductionsEditor extends Component {
             <React.Fragment>
                 <div className="card">
                     <div className="card-header">
-                        <h4>Introductions Editor</h4>
+                        <h4>Mission Statements Editor</h4>
                     </div>
                     <div className="card-body">
                         <form noValidate>
@@ -272,4 +272,4 @@ class IntroductionsEditor extends Component {
     }
 }
 
-export default IntroductionsEditor;
+export default MissionStatementsEditor;
