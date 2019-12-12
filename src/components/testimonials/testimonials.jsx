@@ -55,7 +55,20 @@ class Testimonials extends Component {
     }
 
     render() {
-        return this.getTable();
+        return (
+            <div className="row">
+                <div className="col-12">
+                    <div className="card">
+                        <div className="card-header">
+                            <h3>Testimonials</h3>
+                        </div>
+                        <div className="card-body">
+                            {this.getTable()}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     }
 }
 

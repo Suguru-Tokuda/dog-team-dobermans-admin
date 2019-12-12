@@ -10,6 +10,7 @@
     "browser-image-resizer": "^2.0.1",
     "firebase": "^6.6.1",
     "font-awesome": "^4.7.0",
+    "icheck": "^1.0.2",
     "jquery": "^3.4.1",
     "jquery-ui": "^1.12.1",
     "moment": "^2.24.0",

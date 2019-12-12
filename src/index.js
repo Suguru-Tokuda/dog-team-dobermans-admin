@@ -14,6 +14,7 @@ import 'popper.js';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import 'toastr/build/toastr.min.js';
 import '@coreui/coreui';
+import 'icheck/skins/all.css';
 
 ReactDOM.render(<App />, document.getElementById('root'));
 serviceWorker.unregister();

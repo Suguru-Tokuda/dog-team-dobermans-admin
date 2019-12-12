@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { Checkbox } from 'react-ui-icheck';
 import SortService from '../../services/sortService';
 import Pagination from '../miscellaneous/pagination';
 import moment from 'moment';
+import { thisExpression } from '@babel/types';
 
 class TestimonialsTable extends Component {
     state = {
@@ -20,6 +22,7 @@ class TestimonialsTable extends Component {
             key: 'name',
             orderAsc: false
         },
+        checkAll: false,
         girdSearch: '',
         pageSizes: [10, 25, 50],
         updateDisplayedData: false
@@ -27,7 +30,7 @@ class TestimonialsTable extends Component {
 
     constructor(props) {
         super(props);
-        this.state.tableData = props.testimonials;
+        this.state.tableData = props.testimonials.map(testimonial => { testimonial.selected = false; return testimonial; });
         this.state.filteredData = JSON.parse(JSON.stringify(props.testimonials));
         this.state.paginationInfo.totalItems = props.totalItems;
     }
@@ -67,9 +70,16 @@ class TestimonialsTable extends Component {
         tempPagination.currentPage = currentPage;
         tempPagination.startIndex = startIndex;
         tempPagination.endIndex = endIndex;
+        let counter = 0;
+        displayedData.forEach(testimonial => {
+            if (testimonial.selected === true)
+                counter++;
+        });
+        const checkAll = counter === displayedData.length;
         this.setState({
             paginationInfo: tempPagination,
-            displayedData: displayedData
+            displayedData: displayedData,
+            checkAll: checkAll
         });
     }
 
@@ -125,18 +135,18 @@ class TestimonialsTable extends Component {
     }
 
     getTable() {
-        const { displayedData, gridSearch } = this.state;
+        const { displayedData, gridSearch, checkAll } = this.state;
         const thead = (
             <thead>
                 <tr>
+                    <th className="text-center"><Checkbox checkboxClass="icheckbox_square-blue" increaseArea="-100%" checked={checkAll} onChange={this.handleAllCheckChanged} label=" "></Checkbox></th>
+                    <th>TestimonialID</th>
                     <th className="pointer" onClick={() => this.sortTable('firstName')}>First Name {this.getSortIcon('firstName')}</th>
                     <th className="pointer" onClick={() => this.sortTable('lastName')}>Last Name {this.getSortIcon('lastName')}</th>
                     <th className="pointer" onClick={() => this.sortTable('email')}>Email {this.getSortIcon('email')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('phone')}>Phone {this.getSortIcon('phone')}</th>
                     <th className="pointer" onClick={() => this.sortTable('live')}>Live {this.getSortIcon('live')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('datePosted')}> {this.getSortIcon('datePosted')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('created')}>Created {this.getSortIcon('created')}</th>
                     <th>Picture</th>
-                    <th>Action</th>
                 </tr>
                 <tr>
                     <th colSpan="100%">
@@ -149,17 +159,22 @@ class TestimonialsTable extends Component {
         if (displayedData.length > 0) {
             const rows = displayedData.map((testimonial, i) => 
                 <tr key={`testimonial-${i}`}>
+                    <td className="text-center">
+                        <Checkbox 
+                        checkboxClass="icheckbox_square-blue" 
+                        increaseArea="-100%"
+                        checked={testimonial.selected}
+                        onChange={this.handleCheckChanged.bind(this, i)}
+                        label=" "
+                        />
+                    </td>
+                    <td>{testimonial.testimonialID}</td>
                     <td>{testimonial.firstName}</td>
                     <td>{testimonial.lastName}</td>
                     <td>{testimonial.email}</td>
-                    <td>{testimonial.phone}</td>
                     <td>{testimonial.live === true ? 'Live' : 'Not Live'}</td>
-                    <td>{moment(testimonial.datePosted).format('MM/DD/YYYY')}</td>
-                    <td><img src={testimonial} className="rounded" style={{width: "50px"}} alt={testimonial.picture.reference}  /></td>
-                    <td>
-                        <button className="btn btn-sm btn-success">{testimonial.live === true ? 'Hide' : 'Go Live'}</button>
-                        <button className="btn btn-sm btt-danger">Delete</button>
-                    </td>
+                    <td>{moment(testimonial.created).format('MM/DD/YYYY')}</td>
+                    <td><img src={testimonial.picture.url} className="rounded" style={{width: "50px"}} alt={testimonial.picture.reference}  /></td>
                 </tr>
             );
             tbody = <tbody>{rows}</tbody>;
@@ -172,6 +187,43 @@ class TestimonialsTable extends Component {
                 </table>
             </div>
         );
+    }
+
+    getNumberOfSelectedTestimonials() {
+        const { displayedData } = this.state;
+        let count = 0;
+        displayedData.forEach(testimonial => {
+            if (testimonial.selected === true)
+                count++;
+        });
+        return count;
+    }
+
+    handleCheckChanged = (index, e, checked) => {
+        const { displayedData, tableData, filteredData } = this.state;
+        displayedData[index].selected = checked;
+        const testimonialID = displayedData[index].testimonialID;
+        let checkCounter = 0;
+        for (let i = 0, max = tableData.length; i < max; i++) {
+            if (tableData[i].testimonialID === testimonialID) {
+                tableData[i].selected = checked;
+            }
+            if (tableData[i].selected === true) {
+                checkCounter++;
+            }
+        }
+        let checkAll = checkCounter === tableData.length;
+        for (let i = 0, max = filteredData.length; i < max; i++) {
+            if (filteredData[i].testimonialID === testimonialID) {
+                filteredData[i].selected = checked;
+                break;
+            }
+        }
+        this.setState({ displayedData, tableData, filteredData, checkAll });
+    }
+
+    handleAllCheckChanged = (e, checked) => {
+        this.setState({ checkAll: checked });
     }
 
     handleGirdSearch = (input) => {
@@ -207,18 +259,23 @@ class TestimonialsTable extends Component {
     }
 
     render() {
+        const buttonDisabled = this.getNumberOfSelectedTestimonials() === 0;
         return (
             <div className="animated fadeIn">
                 <div className="row">
                     <div className="col-12">
                         <div className="row">
-                            <div className="col-12">
+                            <div className="col-6">
+                                <button className="btn btn-primary" disabled={buttonDisabled}>Approve</button>
+                                <button className="btn btn-danger ml-2" disabled={buttonDisabled}>Delete</button>
+                            </div>
+                            <div className="col-6">
                                 <div className="float-right">
-                                    {this.getPageSizaeOptions()}
+                                    {this.getPageSizeOptions()}
                                 </div>
                             </div>
                         </div>
-                        <div className="row">
+                        <div className="row mt-3">
                             <div className="col-12">
                                 {this.getTable()}
                             </div>
