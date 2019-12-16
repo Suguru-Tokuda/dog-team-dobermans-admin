@@ -32,10 +32,16 @@ class AboutUsHome extends Component {
         const { missionStatements } = this.state.aboutUsDetail;
         if (typeof missionStatements !== 'undefined' && missionStatements.length > 0) {
             return (
-                <div className="row mt-5">
+                <div className="row mt-3">
                     <div className="col-12">
-                        <h4>Mission Statements</h4>
-                        <MissionStatements missionStatements={missionStatements} />
+                        <div className="card">
+                            <div className="card-header">
+                                <h4>Mission Statements</h4>
+                            </div>
+                            <div className="card-body">
+                                <MissionStatements missionStatements={missionStatements} />
+                            </div>
+                        </div>
                     </div>
                 </div>
             );
@@ -48,10 +54,16 @@ class AboutUsHome extends Component {
         const { ourTeam } = this.state.aboutUsDetail;
         if (typeof ourTeam !== 'undefined' && ourTeam.length > 0) {
             return (
-                <div className="row mt-5">
+                <div className="row mt-3">
                     <div className="col-12">
-                        <h4>Our Team</h4>
-                        <OurTeam ourTeam={ourTeam} />
+                        <div className="card">
+                            <div className="card-header">
+                                <h4>Our Team</h4>
+                            </div>
+                            <div className="card-body">
+                                <OurTeam ourTeam={ourTeam} />
+                            </div>
+                        </div>
                     </div>
                 </div>
             );
@@ -90,17 +102,19 @@ class AboutUsHome extends Component {
 
     render() {
         return (
-           <div className="row">
-               <div className="col-12">
-                   <div className="card">
-                       <div className="card-body">
-                           {this.getHeader()}
-                           {this.getMissionStatements()}
-                           {this.getOurTeam()}
-                       </div>
-                   </div>
-               </div>
-           </div>
+            <React.Fragment>
+                <div className="row">
+                    <div className="col-12">
+                        <div className="card">
+                            <div className="card-body">
+                                {this.getHeader()}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {this.getMissionStatements()}
+                {this.getOurTeam()}
+            </React.Fragment>
         );
     }
 }

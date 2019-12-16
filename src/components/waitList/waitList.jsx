@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import TestimonialsTable from './testimonialsTable';
-import TestimonialService from '../../services/testimonialService';
+import WaitListTable from './waitListTable';
+import WaitListService from '.../../services/';
 import toastr from 'toastr';
 
-class Testimonials extends Component {
+class WaitList extends Component {
     state = {
-        testimonials: [],
+        waitRequests: [],
         loaded: false
     };
 
@@ -15,12 +15,12 @@ class Testimonials extends Component {
 
     componentDidMount() {
         this.props.onShowLoading(true, 1);
-        TestimonialService.getAllTestimonials()
+        WaitListService.getWaitList()
             .then(res => {
-                this.setState({ testimonials: res.data });
+                this.setState({ waitRequests: res.data });
             })
             .catch(() => {
-                toastr.error('There was an error in loading testimonials data');
+                toastr.error('There was an error in loading wait list data');
             })
             .finally(() => {
                 this.props.onDoneLoading();
@@ -29,17 +29,17 @@ class Testimonials extends Component {
     }
 
     getTable() {
-        const { testimonials, loaded } = this.state;
+        const { waitRequests, loaded } = this.state;
         if (loaded === true) {
-            if (testimonials.length > 0) {
+            if (waitRequests.length > 0) {
                 return (
-                    <TestimonialsTable 
-                     testimonials={testimonials}
-                     totalItems={testimonials.length}
-                     />
+                    <WaitListTable
+                    waitRequests={waitRequests}
+                    totalItems={waitRequests.length}
+                    />
                 );
-            } else if (testimonials.length === 0) {
-                return <h4>No testimonials available</h4>;
+            } else if (waitRequests.length === 0) {
+                return <h4>No requests</h4>;
             }
         }
         return null;
@@ -51,7 +51,7 @@ class Testimonials extends Component {
                 <div className="col-12">
                     <div className="card">
                         <div className="card-header">
-                            <h3>Testimonials</h3>
+                            <h3>Wait List</h3>
                         </div>
                         <div className="card-body">
                             {this.getTable()}
@@ -59,8 +59,6 @@ class Testimonials extends Component {
                     </div>
                 </div>
             </div>
-        );
+        )
     }
 }
-
-export default Testimonials;

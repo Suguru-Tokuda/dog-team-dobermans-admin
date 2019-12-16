@@ -19,5 +19,4 @@ export default class TestimonialService {
         return axios.delete(`${this.getServiceBase()}?key=${api.API_KEY}`);
     }
 
-
 }

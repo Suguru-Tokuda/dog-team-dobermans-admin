@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
 import { Checkbox } from 'react-ui-icheck';
+import DeleteTestimonialsModal from './deleteTestimonialsModal';
 import SortService from '../../services/sortService';
 import Pagination from '../miscellaneous/pagination';
+import $ from 'jquery';
 import moment from 'moment';
-import { thisExpression } from '@babel/types';
 
 class TestimonialsTable extends Component {
     state = {
         tableData: [],
         filteredData: [],
         displayedData: [],
+        testimonialsToDelete: [],
         paginationInfo: {
             currentPage: 1,
             startIndex: 0,
@@ -31,23 +33,25 @@ class TestimonialsTable extends Component {
     constructor(props) {
         super(props);
         this.state.tableData = props.testimonials.map(testimonial => { testimonial.selected = false; return testimonial; });
-        this.state.filteredData = JSON.parse(JSON.stringify(props.testimonials));
+        this.state.filteredData = JSON.parse(JSON.stringify(this.state.tableData));
         this.state.paginationInfo.totalItems = props.totalItems;
     }
 
     componentDidUpdate(props) {
         const { tableData, paginationInfo, gridSearch, updateDisplayedData } = this.state;
-        if (JSON.stringify(props.testimonials) !== JSON.stringify(tableData)) {
+        const newTestimonials = JSON.parse(JSON.stringify(props.testimonials)).map(testimonial => { testimonial.selected = false; return testimonial; });
+        const currentTableData = JSON.parse(JSON.stringify(tableData)).map(testimonial => { testimonial.selected = false; return testimonial; });
+        if (JSON.stringify(newTestimonials) !== JSON.stringify(currentTableData)) {
             let filteredData;
             if (gridSearch !== '') {
                 const searchKeywords = gridSearch.toLowerCase().trim().split(' ');
-                filteredData = this.filterForKeywords(props.testimonials, searchKeywords);
+                filteredData = this.filterForKeywords(newTestimonials, searchKeywords);
             } else {
-                filteredData = JSON.parse(JSON.stringify(props.testimonials));
+                filteredData = JSON.parse(JSON.stringify(newTestimonials));
             }
             paginationInfo.totalItems = props.totalItems;
             this.setState({
-                tableData: props.testimonials,
+                tableData: newTestimonials,
                 filteredData: filteredData,
                 paginationInfo: paginationInfo,
                 updateDisplayedData: true
@@ -61,15 +65,15 @@ class TestimonialsTable extends Component {
 
     updateDisplayedData = (currentPage, startIndex, endIndex) => {
         let displayedData;
+        const { filteredData, paginationInfo } = this.state;
         if (startIndex !== endIndex) {
-            displayedData = this.state.filteredData.slice(startIndex, endIndex + 1);
+            displayedData = filteredData.slice(startIndex, endIndex + 1);
         } else {
-            displayedData = this.state.filteredData.slice(startIndex, startIndex + 1);
+            displayedData = filteredData.slice(startIndex, startIndex + 1);
         }
-        const tempPagination = this.state.paginationInfo;
-        tempPagination.currentPage = currentPage;
-        tempPagination.startIndex = startIndex;
-        tempPagination.endIndex = endIndex;
+        paginationInfo.currentPage = currentPage;
+        paginationInfo.startIndex = startIndex;
+        paginationInfo.endIndex = endIndex;
         let counter = 0;
         displayedData.forEach(testimonial => {
             if (testimonial.selected === true)
@@ -77,20 +81,15 @@ class TestimonialsTable extends Component {
         });
         const checkAll = counter === displayedData.length;
         this.setState({
-            paginationInfo: tempPagination,
+            paginationInfo: paginationInfo,
             displayedData: displayedData,
             checkAll: checkAll
         });
     }
 
     sortTable = (accessor) => {
-        const tableData = SortService.sortDisplayedData(
-            this.state.filteredData,
-            accessor,
-            this.state.sortData,
-            this.state.paginationInfo.startIndex,
-            this.state.paginationInfo.endIndex
-        );
+        const { filteredData, sortData, paginationInfo } = this.state;
+        const tableData = SortService.sortDisplayedData(filteredData, accessor, sortData, paginationInfo.startIndex, paginationInfo.endIndex);
         this.setState({
             filteredData: tableData.filteredData,
             displayedData: tableData.displayedData,
@@ -174,7 +173,7 @@ class TestimonialsTable extends Component {
                     <td>{testimonial.email}</td>
                     <td>{testimonial.live === true ? 'Live' : 'Not Live'}</td>
                     <td>{moment(testimonial.created).format('MM/DD/YYYY')}</td>
-                    <td><img src={testimonial.picture.url} className="rounded" style={{width: "50px"}} alt={testimonial.picture.reference}  /></td>
+                    <td><img src={testimonial.picture.url} className="rounded" style={{width: "50px"}} alt={testimonial.picture.reference} /></td>
                 </tr>
             );
             tbody = <tbody>{rows}</tbody>;
@@ -203,27 +202,43 @@ class TestimonialsTable extends Component {
         const { displayedData, tableData, filteredData } = this.state;
         displayedData[index].selected = checked;
         const testimonialID = displayedData[index].testimonialID;
-        let checkCounter = 0;
         for (let i = 0, max = tableData.length; i < max; i++) {
             if (tableData[i].testimonialID === testimonialID) {
                 tableData[i].selected = checked;
             }
-            if (tableData[i].selected === true) {
-                checkCounter++;
-            }
         }
-        let checkAll = checkCounter === tableData.length;
         for (let i = 0, max = filteredData.length; i < max; i++) {
             if (filteredData[i].testimonialID === testimonialID) {
                 filteredData[i].selected = checked;
                 break;
             }
         }
-        this.setState({ displayedData, tableData, filteredData, checkAll });
+        let counter = 0;
+        displayedData.forEach(testimonial => {
+            if (testimonial.selected === true)
+                counter++;
+        });
+        const checkAll = counter === displayedData.length;
+        this.setState({ displayedData: displayedData, tableData: tableData, filteredData: filteredData, checkAll: checkAll });
     }
 
     handleAllCheckChanged = (e, checked) => {
-        this.setState({ checkAll: checked });
+        const { tableData, filteredData, displayedData } = this.state;
+        for (let i = 0, max = displayedData.length; i < max; i++) {
+            displayedData[i].selected = checked;
+        }
+        const testimonialIDs = displayedData.map(testimonial => testimonial.testimonialID);
+        for (let i = 0, max = tableData.length; i < max; i++) {
+            if (testimonialIDs.indexOf(tableData[i].testimonialID) !== -1) {
+                tableData[i].selected = checked;
+            }
+        }
+        for (let i = 0, max = filteredData.length; i < max; i++) {
+            if (testimonialIDs.indexOf(filteredData[i].testimonialID) !== -1) {
+                filteredData[i].selected = checked;
+            }
+        }
+        this.setState({ checkAll: checked, tableData: tableData, filteredData: filteredData, displayedData: displayedData });
     }
 
     handleGirdSearch = (input) => {
@@ -237,6 +252,41 @@ class TestimonialsTable extends Component {
         this.setState({ paginationInfo: paginationInfo });
     }
 
+    handleApproveSelectedTestimonials = async () => {
+        const { tableData } = this.state;
+        for (let i = 0, max = tableData.length; i < max; i++) {
+            const testimonialToUpdate = JSON.parse(JSON.stringify(tableData[i]));
+
+        }
+    }
+
+    handleDeleteSelectedTestimonials = () => {
+        const { tableData } = this.state;
+        const testimonialsToDelete = [];
+        for (let i = 0, max = tableData.length; i < max; i++) {
+            if (tableData[i].selected === true) {
+                const testimonialToDelete = JSON.parse(JSON.stringify(tableData[i]));
+                delete testimonialToDelete.selected;
+                testimonialsToDelete.push(testimonialToDelete);
+            }
+        }
+        this.setState({ testimonialsToDelete });
+        if ($('#deleteTestimonialsModal').is(':visible') === false) {
+            $('#deleteTestimonialsModal').modal('show');
+        }
+    }
+
+    handleCancelBtnClicked = () => {
+        this.setState({ testimonialsToDelete: [] });
+        if ($('#deleteTestimonialsModal').is(':visible') === true) {
+            $('#deleteTestimonialsModal').modal('hide');
+        }
+    }
+
+    handleDoDeleteBtnClicked = () => {
+
+    }
+
     processGridSearch = (inputStr) => {
         let tempTableData;
         if (inputStr !== '') {
@@ -246,7 +296,7 @@ class TestimonialsTable extends Component {
                 if (uniqueKeywords.indexOf(keyword) === -1)
                     uniqueKeywords.push(keyword);
             });
-            tempTableData = this.filterForKeywords(this.state.tableData, searchKeywords)
+            tempTableData = this.filterForKeywords(this.state.tableData, searchKeywords);
         } else {
             tempTableData = this.state.tableData;
         }
@@ -259,35 +309,39 @@ class TestimonialsTable extends Component {
     }
 
     render() {
+        const { testimonialsToDelete } = this.state;
         const buttonDisabled = this.getNumberOfSelectedTestimonials() === 0;
         return (
-            <div className="animated fadeIn">
-                <div className="row">
-                    <div className="col-12">
-                        <div className="row">
-                            <div className="col-6">
-                                <button className="btn btn-primary" disabled={buttonDisabled}>Approve</button>
-                                <button className="btn btn-danger ml-2" disabled={buttonDisabled}>Delete</button>
-                            </div>
-                            <div className="col-6">
-                                <div className="float-right">
-                                    {this.getPageSizeOptions()}
+            <React.Fragment>
+                <div className="animated fadeIn">
+                    <div className="row">
+                        <div className="col-12">
+                            <div className="row">
+                                <div className="col-6">
+                                    <button className="btn btn-primary" disabled={buttonDisabled} onClick={this.handleApproveSelectedTestimonials}>Approve</button>
+                                    <button className="btn btn-danger ml-2" disabled={buttonDisabled} onClick={this.handleDeleteSelectedTestimonials}>Delete</button>
+                                </div>
+                                <div className="col-6">
+                                    <div className="float-right">
+                                        {this.getPageSizeOptions()}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="row mt-3">
-                            <div className="col-12">
-                                {this.getTable()}
+                            <div className="row mt-3">
+                                <div className="col-12">
+                                    {this.getTable()}
+                                </div>
                             </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-12">
-                                {this.getPagination()}
+                            <div className="row">
+                                <div className="col-12">
+                                    {this.getPagination()}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <DeleteTestimonialsModal testimonials={testimonialsToDelete} onCancelBtnClicked={this.handleCancelBtnClicked} onDoDeleteBtnClicked={this.handleDoDeleteBtnClicked} />
+            </React.Fragment>
         );
     }
 }
