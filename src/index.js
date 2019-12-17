@@ -7,6 +7,7 @@ import 'toastr/build/toastr.min.css';
 import 'font-awesome/css/font-awesome.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-image-crop/dist/ReactCrop.css';
+import 'react-trumbowyg/dist/trumbowyg.min.css';
 import './index.css';
 import 'jquery';
 import 'jquery-ui';

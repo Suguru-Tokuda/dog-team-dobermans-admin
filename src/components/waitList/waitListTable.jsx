@@ -128,6 +128,7 @@ class WaitListTable extends Component {
                     <th className="pointer" onClick={() => this.sortTable('email')}>Email {this.getSortIcon('email')}</th>
                     <th className="pointer" onClick={() => this.sortTable('phone')}>Phone {this.getSortIcon('phone')}</th>
                     <th className="pointer" onClick={() => this.sortTable('color')}>Color {this.getSortIcon('color')}</th>
+                    <th>Message</th>
                     <th className="pointer" onClick={() => this.sortTable('created')}>Created {this.getSortIcon('created')}</th>
                     <th className="pointer" onClick={() => this.sortTable('notified')}>Notified {this.getSortIcon('notified')}</th>
                 </tr>
@@ -156,6 +157,7 @@ class WaitListTable extends Component {
                     <td>{waitRequest.email}</td>
                     <td>{waitRequest.phone}</td>
                     <td>{waitRequest.color}</td>
+                    <td>{waitRequest.message}</td>
                     <td>{waitRequest.created}</td>
                     <td>{waitRequest.notified}</td>
                 </tr>
@@ -239,6 +241,35 @@ class WaitListTable extends Component {
         }
         paginationInfo.totalItems = tempTableData.length;
         this.setState({ filteredData, paginationInfo });
+    }
+
+    filterForKeywords(tableData, searchKeywords) {
+        let retVal;
+        if (searchKeywords.length > 0) {
+            retVal = tableData.filter(waitRequest => {
+                let foundCount = 0;
+                searchKeywords.forEach(searchKeyword => {
+                    if (waitRequest.firstName.toLowerCase().indexOf(searchKeyword) !== -1)
+                        foundCount++;
+                    if (waitRequest.lastName.toLowerCase().indexOf(searchKeyword) !== -1)
+                        foundCount++;
+                    if (waitRequest.email.toLowerCase().indexOf(searchKeyword) !== -1)
+                        foundCount++;
+                    if (waitRequest.color.toLowerCase().indexOf(searchKeyword) !== -1)
+                        foundCount++;
+                    if (waitRequest.message.toLowerCase().indexOf(searchKeyword) !== -1)
+                        foundCount++;
+                    if (waitRequest.phone.indexOf(searchKeyword) !== -1)
+                        foundCount++;
+                    if (waitRequest.create.indexOf(searchKeyword) !== -1)
+                        foundCount++;
+                });
+                return foundCount === searchKeywords.length;
+            });
+        } else {
+            retVal = tableData;
+        }
+        return retVal;
     }
 
     render() {
