@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Checkbox } from 'react-ui-icheck';
 import DeleteTestimonialsModal from './deleteTestimonialsModal';
 import SortService from '../../services/sortService';
+import TestimonialService from '../../services/testimonialService';
 import Pagination from '../miscellaneous/pagination';
 import $ from 'jquery';
 import moment from 'moment';
@@ -79,7 +80,7 @@ class TestimonialsTable extends Component {
             if (testimonial.selected === true)
                 counter++;
         });
-        const checkAll = counter === displayedData.length;
+        const checkAll = (counter === displayedData.length && counter !== 0);
         this.setState({
             paginationInfo: paginationInfo,
             displayedData: displayedData,
@@ -138,12 +139,17 @@ class TestimonialsTable extends Component {
         const thead = (
             <thead>
                 <tr>
-                    <th className="text-center"><Checkbox checkboxClass="icheckbox_square-blue" increaseArea="-100%" checked={checkAll} onChange={this.handleAllCheckChanged} label=" "></Checkbox></th>
+                    <th className="text-center">
+                        {displayedData.length > 0 && (
+                            <Checkbox checkboxClass="icheckbox_square-blue" increaseArea="-100%" checked={checkAll} onChange={this.handleAllCheckChanged} label=" "></Checkbox>
+                        )}
+                    </th>
                     <th>TestimonialID</th>
                     <th className="pointer" onClick={() => this.sortTable('firstName')}>First Name {this.getSortIcon('firstName')}</th>
                     <th className="pointer" onClick={() => this.sortTable('lastName')}>Last Name {this.getSortIcon('lastName')}</th>
                     <th className="pointer" onClick={() => this.sortTable('email')}>Email {this.getSortIcon('email')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('live')}>Live {this.getSortIcon('live')}</th>
+                    <th>Message</th>
+                    <th className="pointer" onClick={() => this.sortTable('approved')}>Approved {this.getSortIcon('approved')}</th>
                     <th className="pointer" onClick={() => this.sortTable('created')}>Created {this.getSortIcon('created')}</th>
                     <th>Picture</th>
                 </tr>
@@ -171,7 +177,8 @@ class TestimonialsTable extends Component {
                     <td>{testimonial.firstName}</td>
                     <td>{testimonial.lastName}</td>
                     <td>{testimonial.email}</td>
-                    <td>{testimonial.live === true ? 'Live' : 'Not Live'}</td>
+                    <td>{testimonial.message}</td>
+                    <td>{testimonial.approved === true ? 'True' : 'False'}</td>
                     <td>{moment(testimonial.created).format('MM/DD/YYYY')}</td>
                     <td><img src={testimonial.picture.url} className="rounded" style={{width: "50px"}} alt={testimonial.picture.reference} /></td>
                 </tr>
@@ -241,7 +248,7 @@ class TestimonialsTable extends Component {
         this.setState({ checkAll: checked, tableData: tableData, filteredData: filteredData, displayedData: displayedData });
     }
 
-    handleGirdSearch = (input) => {
+    handleGridSearch = (input) => {
         this.processGridSearch(input.target.value);
         this.setState({ gridSearch: input.target.value });
     }
@@ -252,12 +259,32 @@ class TestimonialsTable extends Component {
         this.setState({ paginationInfo: paginationInfo });
     }
 
-    handleApproveSelectedTestimonials = async () => {
+    handleApproveSelectedTestimonials = () => {
         const { tableData } = this.state;
-        for (let i = 0, max = tableData.length; i < max; i++) {
-            const testimonialToUpdate = JSON.parse(JSON.stringify(tableData[i]));
+        const testimonialsToApprove = [];
+        tableData.forEach(testimonial => {
+            if (testimonial.selected === true) {
+                const testimonialToApprove = JSON.parse(JSON.stringify(testimonial));
+                testimonialToApprove.approved = true;
+                delete testimonialToApprove.selected;
+                testimonialsToApprove.push(testimonialToApprove);
+            }
+        });
+        this.props.onUpdateBtnClicked(testimonialsToApprove);
+    }
 
-        }
+    handleDisapproveSelectedTestimonials = () => {
+        const { tableData } = this.state;
+        const testimonialsToDisapprove = []
+        tableData.forEach(testimonial => {
+            if (testimonial.selected === true) {
+                const testimonialToDisapprove = JSON.parse(JSON.stringify(testimonial));
+                testimonialToDisapprove.approved = false;
+                delete testimonialToDisapprove.selected;
+                testimonialsToDisapprove.push(testimonialToDisapprove);
+            }
+        });
+        this.props.onUpdateBtnClicked(testimonialsToDisapprove);
     }
 
     handleDeleteSelectedTestimonials = () => {
@@ -284,7 +311,14 @@ class TestimonialsTable extends Component {
     }
 
     handleDoDeleteBtnClicked = () => {
-
+        const { testimonialsToDelete } = this.state;
+        const testimonialIDs = [];
+        testimonialsToDelete.forEach(async (testimonial) => {
+            testimonialIDs.push(testimonial.testimonialID);
+            await TestimonialService.deleteImage(testimonial.picture.reference);
+        })
+        this.handleCancelBtnClicked();
+        this.props.onDeleteConfBtnClicked(testimonialIDs);
     }
 
     processGridSearch = (inputStr) => {
@@ -308,6 +342,31 @@ class TestimonialsTable extends Component {
         });
     }
 
+    filterForKeywords(tableData, searchKeywords) {
+        let retVal;
+        if (searchKeywords.length > 0) {
+            retVal = tableData.filter(testimonial => {
+                let foundCount = 0;
+                searchKeywords.forEach(searchKeyword => {
+                    if (testimonial.firstName.toLowerCase().indexOf(searchKeyword) !== -1)
+                        foundCount++;
+                    if (testimonial.lastName.toLowerCase().indexOf(searchKeyword) !== -1)
+                        foundCount++;
+                    if (testimonial.dogName.toLowerCase().indexOf(searchKeyword) !== -1)
+                        foundCount++;
+                    if (testimonial.message.toLowerCase().indexOf(searchKeyword) !== -1)
+                        foundCount++;
+                    if (testimonial.created.toLowerCase().indexOf(searchKeyword) !== -1)
+                        foundCount++;
+                });
+                return foundCount === searchKeywords.length;
+            })
+        } else {
+            retVal = tableData;
+        }
+        return retVal;
+    }
+
     render() {
         const { testimonialsToDelete } = this.state;
         const buttonDisabled = this.getNumberOfSelectedTestimonials() === 0;
@@ -319,6 +378,7 @@ class TestimonialsTable extends Component {
                             <div className="row">
                                 <div className="col-6">
                                     <button className="btn btn-primary" disabled={buttonDisabled} onClick={this.handleApproveSelectedTestimonials}>Approve</button>
+                                    <button className="btn btn-warning ml-2" disabled={buttonDisabled} onClick={this.handleDisapproveSelectedTestimonials}>Disapprove</button>
                                     <button className="btn btn-danger ml-2" disabled={buttonDisabled} onClick={this.handleDeleteSelectedTestimonials}>Delete</button>
                                 </div>
                                 <div className="col-6">

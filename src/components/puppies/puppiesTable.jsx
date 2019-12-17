@@ -139,7 +139,7 @@ class PuppiesTable extends Component {
                 </tr>
                 <tr>
                     <th colSpan="100%">
-                        <input type="text" className="form-control" placeholder="Search for puppies" defaultValue={this.state.gridSearch} onKeyUp={this.handleGirdSearch} />
+                        <input type="text" className="form-control" placeholder="Search for puppies" value ={this.state.gridSearch} onKeyUp={this.handleGirdSearch} />
                     </th>
                 </tr>
             </thead>
