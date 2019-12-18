@@ -47,13 +47,25 @@ class Testimonials extends Component {
         return null;
     }
 
-    handleUpdateBtnClicked = (testimonials) => {
+    handleUpdateBtnClicked = async (testimonials) => {
         this.props.onShowLoading(true, 1);
         try {
             testimonials.forEach(async (testimonial) => {
                 await TestimonialService.updateTestimonial(testimonial);
             });
+            await TestimonialService.getAllTestimonials()
+                .then(res => {
+                    console.log(res.data);
+                    console.log('setting new data');
+                    this.setState({ testimonials: JSON.parse(JSON.stringify(res.data)) });
+                })
+                .catch(() => {
+                    toastr.error('There was an error in loading testimonials data');
+                });
+            const message = testimonials.length > 1 ? `Successfuly updated ${testimonials.length} testimonials.` : 'Successfully updated 1 testimonial.';
+            toastr.success(message);
         } catch (err) {
+            toastr.error('There was an error in updating testimonial(s)'); 
             console.log(err);
         } finally {
             this.props.onDoneLoading();
@@ -66,11 +78,14 @@ class Testimonials extends Component {
             .then(async () => {
                 await TestimonialService.getAllTestimonials()
                     .then(res => {
+                        console.log(res.data);
                         this.setState({ testimonials: res.data });
                     })
                     .catch(() => {
                         toastr.error('There was an error in loading testimonials data');
                     });
+                const message = testimonialIDs.length > 1 ? `Successfully deleted ${testimonialIDs.length} testimonials.` : 'Successfully deleted 1 testimonial.';
+                toastr.success(message);
             })
             .catch((err) => {
                 toastr.error('There was an error in deleting testimonials');

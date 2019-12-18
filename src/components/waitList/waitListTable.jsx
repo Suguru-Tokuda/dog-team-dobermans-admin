@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import { Checkbox } from 'react-ui-icheck';
 import SortService from '../../services/sortService';
-import Pagination from '../miscellaneous/pagation';
+import Pagination from '../miscellaneous/pagination';
 import moment from 'moment';
+import $ from 'jquery';
+import WaitListEmailModal from './waitListEmailModal';
 
 class WaitListTable extends Component {
     state = {
         tableData: [],
         filteredData: [],
         displayedData: [],
+        waitRequestsToNotify: [],
         paginationInfo: {
             currentPage: 1,
             startIndex: 0,
@@ -24,6 +27,7 @@ class WaitListTable extends Component {
         checkAll: false,
         gridSearch: '',
         pageSizes: [10, 25, 50],
+        updateFilteredData: false,
         updateDisplayedData: false
     };
 
@@ -35,29 +39,39 @@ class WaitListTable extends Component {
     }
 
     componentDidUpdate(props) {
-        const { tableData, paginationInfo, gridSearch, updateDisplayedData } = this.state;
-        const newWaitRequests = JSON.parse(JSON.stringify(props.waitRequests)).map(waitRequest => { waitRequest.selected = false; return waitRequest; });
-        const currentTableData = JSON.parse(JSON.stringify(tableData)).map(waitRequest => { waitRequest.selected = false; return waitRequest; });
-        if (JSON.stringify(newWaitRequests) !== JSON.stringify(currentTableData)) {
+        const { tableData, paginationInfo, gridSearch, updateDisplayedData, updateFilteredData } = this.state;
+        if (updateFilteredData === true) {
             let filteredData;    
             if (gridSearch !== '') {
                 const searchKeywords = gridSearch.toLowerCase().trim().split(' ');
-                filteredData = this.filterForKeywords(newWaitRequests, searchKeywords);
+                filteredData = this.filterForKeywords(tableData, searchKeywords);
             } else {
-                filteredData = JSON.parse(JSON.stringify(newWaitRequests));
+                filteredData = JSON.parse(JSON.stringify(tableData));
             }
             paginationInfo.totalItems = props.totalItems;
             this.setState({
-                tableData: newWaitRequests,
                 filteredData: filteredData,
                 paginationInfo: paginationInfo,
-                updateDisplayedData: true
+                updateDisplayedData: true,
+                updateFilteredData: false
             });
         }
         if (updateDisplayedData === true) {
             this.setState({ updateDisplayedData: false });
             this.updateDisplayedData(paginationInfo.currentPage, paginationInfo.startIndex, paginationInfo.endIndex);
         }
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        const newWaitRequests = JSON.parse(JSON.stringify(nextProps.waitRequests)).map(waitRequest => { waitRequest.selected = false; return waitRequest; });
+        const currentTableData = JSON.parse(JSON.stringify(prevState.tableData)).map(waitRequest => { waitRequest.selected = false; return waitRequest; });
+        if (JSON.stringify(newWaitRequests) !== JSON.stringify(currentTableData)) {
+            return {
+                tableData: newWaitRequests,
+                updateFilteredData: true
+            };
+        }
+        return null;
     }
 
     updateDisplayedData = (currentPage, startIndex, endIndex) => {
@@ -94,16 +108,30 @@ class WaitListTable extends Component {
         });
     }
 
+    getPageSizeOptions() {
+        const pageSizeOptions = this.state.pageSizes.map(pageSize => 
+            <option key={pageSize}>{pageSize}</option>
+        );
+        return (
+                <div className="form-inline">
+                    Page size:
+                    <select value={this.state.paginationInfo.pageSize} className="form-control" onChange={this.handlePageSizeChanged}>
+                        {pageSizeOptions}
+                    </select>
+                </div>
+        );
+    }
+
     getPagination() {
         const { tableData, paginationInfo } = this.state;
         if (tableData.length > 0) {
             return <Pagination
                     onPageChange={this.updateDisplayedData.bind(this)}
                     currentPage={paginationInfo.currentPage}
-                    totalItems={paginationInfo.tottalItems}
+                    totalItems={paginationInfo.totalItems}
                     maxPages={paginationInfo.maxPages}
                     pageSize={paginationInfo.pageSize}
-                    />
+                    />;
         }
     }
 
@@ -121,7 +149,7 @@ class WaitListTable extends Component {
         const thead = (
             <thead>
                 <tr>
-                    <th className="text-center"><Checkbox checkboxClass="icheckbox_square-blue" increaseArea="-100%" checked={checkAll} onChange={this.handleAllCheckChanged} lable=" " /></th>
+                    <th className="text-center"><Checkbox checkboxClass="icheckbox_square-blue" increaseArea="-100%" checked={checkAll} onChange={this.handleAllCheckChanged} label=" " /></th>
                     <th>Wait Request ID</th>
                     <th className="pointer" onClick={() => this.sortTable('firstName')}>First Name {this.getSortIcon('firstName')}</th>
                     <th className="pointer" onClick={() => this.sortTable('lastName')}>Last Name {this.getSortIcon('lastName')}</th>
@@ -130,7 +158,7 @@ class WaitListTable extends Component {
                     <th className="pointer" onClick={() => this.sortTable('color')}>Color {this.getSortIcon('color')}</th>
                     <th>Message</th>
                     <th className="pointer" onClick={() => this.sortTable('created')}>Created {this.getSortIcon('created')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('notified')}>Notified {this.getSortIcon('notified')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('notified')}>Last Notified {this.getSortIcon('notified')}</th>
                 </tr>
                 <tr>
                     <th colSpan="100%">
@@ -149,6 +177,7 @@ class WaitListTable extends Component {
                          increaseArea="-100%"
                          checked={waitRequest.selected}
                          onChange={this.handleCheckChanged.bind(this, i)}
+                         label=" "
                          />
                     </td>
                     <td>{waitRequest.waitRequestID}</td>
@@ -158,8 +187,8 @@ class WaitListTable extends Component {
                     <td>{waitRequest.phone}</td>
                     <td>{waitRequest.color}</td>
                     <td>{waitRequest.message}</td>
-                    <td>{waitRequest.created}</td>
-                    <td>{waitRequest.notified}</td>
+                    <td>{waitRequest.created === undefined ? '' : moment(waitRequest.created).format('MM/DD/YYYY hh:mm:ss')}</td>
+                    <td>{waitRequest.notified === undefined ? '' : moment(waitRequest.notified).format('MM/DD/YYYY hh:mm:ss')}</td>
                 </tr>
             );
             tbody = <tbody>{rows}</tbody>
@@ -207,11 +236,23 @@ class WaitListTable extends Component {
         this.setState({ displayedData, tableData, filteredData, checkAll });
     }
 
-    handleAllCheckeChanged = (e, checked) => {
-        if (checked === true) {
-
+    handleAllCheckChanged = (e, checked) => {
+        const { tableData, filteredData, displayedData } = this.state;
+        for (let i = 0, max = displayedData.length; i < max; i++) {
+            displayedData[i].selected = checked;
         }
-        this.setState({ checkAll: checked });
+        const waitRequestIDs = displayedData.map(testimonial => testimonial.waitRequestID);
+        for (let i = 0, max = tableData.length; i < max; i++) {
+            if (waitRequestIDs.indexOf(tableData[i].waitRequestID) !== -1) {
+                tableData[i].selected = checked;
+            }
+        }
+        for (let i = 0, max = filteredData.length; i < max; i++) {
+            if (waitRequestIDs.indexOf(filteredData[i].waitRequestID) !== -1) {
+                filteredData[i].selected = checked;
+            }
+        }
+        this.setState({ checkAll: checked, tableData: tableData, filteredData: filteredData, displayedData: displayedData });
     }
 
     handleGridSearch = (input) => {
@@ -225,8 +266,24 @@ class WaitListTable extends Component {
         this.setState({ paginationInfo: paginationInfo });
     }
 
+    handleNotifyBtnClicked = () => {
+        const { tableData } = this.state;
+        const waitRequestsToNotify = [];
+        tableData.forEach(waitRequest => {
+            if (waitRequest.selected === true) {
+                const waitRequstToNotify = JSON.parse(JSON.stringify(waitRequest));
+                delete waitRequestsToNotify.selected;
+                waitRequestsToNotify.push(waitRequstToNotify);
+            }
+        });
+        this.setState({ waitRequestsToNotify });
+        if ($('#waitListEmailModal').is(':visible') === false) {
+            $('#waitListEmailModal').modal('show');
+        }
+    }
+
     processGridSearch = (inputStr) => {
-        let tempTableData;
+        let filteredData;
         const { tableData, paginationInfo } = this.state;
         if (inputStr !== '') {
             const searchKeywords = inputStr.toLowerCase().trim().split(' ');
@@ -235,11 +292,11 @@ class WaitListTable extends Component {
                 if (uniqueKeywords.indexOf(keyword) === -1)
                     uniqueKeywords.push(keyword);
             });
-            tempTableData = this.filterForKeywords(tableData, searchKeywords);
+            filteredData = this.filterForKeywords(tableData, searchKeywords);
         } else {
-            tempTableData = this.state.tableData;
+            filteredData = this.state.tableData;
         }
-        paginationInfo.totalItems = tempTableData.length;
+        paginationInfo.totalItems = filteredData.length;
         this.setState({ filteredData, paginationInfo });
     }
 
@@ -274,34 +331,38 @@ class WaitListTable extends Component {
 
     render() {
         const buttonDisabled = this.getNumberOfSelectedWaitRequests() === 0;
+        const { waitRequestsToNotify } = this.state;
         return (
-            <div className="animated fadeIn">
-                <div className="row">
-                    <div className="col-12">
-                        <div className="row">
-                            <div className="col-6">
-                                <button className="btn btn-primary" disabled={buttonDisabled}>Notify</button>
-                                <button className="btn btn-danger ml-2" disabled={buttonDisabled}>Delete</button>
-                            </div>
-                            <div className="col-6">
-                                <div className="float-fighter">
-                                    {this.getPageSizeOptions()}
+            <React.Fragment>
+                <div className="animated fadeIn">
+                    <div className="row">
+                        <div className="col-12">
+                            <div className="row">
+                                <div className="col-6">
+                                    <button className="btn btn-primary" disabled={buttonDisabled} onClick={this.handleNotifyBtnClicked}>Notify</button>
+                                    <button className="btn btn-danger ml-2" disabled={buttonDisabled} onClick={this.handleDeleteBtnClicked}>Delete</button>
+                                </div>
+                                <div className="col-6">
+                                    <div className="float-right">
+                                        {this.getPageSizeOptions()}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="row mt-3">
-                            <div className="col-12">
-                                {this.getTable()}
+                            <div className="row mt-3">
+                                <div className="col-12">
+                                    {this.getTable()}
+                                </div>
                             </div>
-                        </div>
-                        <div className="rowl">
-                            <div className="col-12">
-                                {this.getPagination()}
+                            <div className="row">
+                                <div className="col-12">
+                                    {this.getPagination()}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <WaitListEmailModal waitRequests={waitRequestsToNotify} />
+            </React.Fragment>
         );
     }
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import WaitListTable from './waitListTable';
-import WaitListService from '.../../services/';
+import WaitListService from '../../services/waitListService';
 import toastr from 'toastr';
 
 class WaitList extends Component {
@@ -62,3 +62,5 @@ class WaitList extends Component {
         )
     }
 }
+
+export default WaitList;

@@ -8,6 +8,10 @@ import 'font-awesome/css/font-awesome.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-image-crop/dist/ReactCrop.css';
 import 'react-trumbowyg/dist/trumbowyg.min.css';
+import 'react-quill/dist/quill.snow.css'; 
+import 'react-quill/dist/quill.bubble.css'; 
+import 'react-quill/dist/quill.core.css';
+import 'icheck/skins/all.css';
 import './index.css';
 import 'jquery';
 import 'jquery-ui';
@@ -15,7 +19,6 @@ import 'popper.js';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import 'toastr/build/toastr.min.js';
 import '@coreui/coreui';
-import 'icheck/skins/all.css';
 
 ReactDOM.render(<App />, document.getElementById('root'));
 serviceWorker.unregister();

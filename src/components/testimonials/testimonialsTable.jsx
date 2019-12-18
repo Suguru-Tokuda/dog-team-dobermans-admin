@@ -26,8 +26,9 @@ class TestimonialsTable extends Component {
             orderAsc: false
         },
         checkAll: false,
-        girdSearch: '',
+        gridSearch: '',
         pageSizes: [10, 25, 50],
+        updateFilteredData: false,
         updateDisplayedData: false
     };
 
@@ -39,29 +40,39 @@ class TestimonialsTable extends Component {
     }
 
     componentDidUpdate(props) {
-        const { tableData, paginationInfo, gridSearch, updateDisplayedData } = this.state;
-        const newTestimonials = JSON.parse(JSON.stringify(props.testimonials)).map(testimonial => { testimonial.selected = false; return testimonial; });
-        const currentTableData = JSON.parse(JSON.stringify(tableData)).map(testimonial => { testimonial.selected = false; return testimonial; });
-        if (JSON.stringify(newTestimonials) !== JSON.stringify(currentTableData)) {
+        const { tableData, paginationInfo, gridSearch, updateDisplayedData, updateFilteredData } = this.state;
+        if (updateFilteredData === true) {
             let filteredData;
             if (gridSearch !== '') {
                 const searchKeywords = gridSearch.toLowerCase().trim().split(' ');
-                filteredData = this.filterForKeywords(newTestimonials, searchKeywords);
+                filteredData = this.filterForKeywords(tableData, searchKeywords);
             } else {
-                filteredData = JSON.parse(JSON.stringify(newTestimonials));
+                filteredData = JSON.parse(JSON.stringify(tableData));
             }
             paginationInfo.totalItems = props.totalItems;
             this.setState({
-                tableData: newTestimonials,
                 filteredData: filteredData,
                 paginationInfo: paginationInfo,
-                updateDisplayedData: true
+                updateDisplayedData: true,
+                updateFilteredData: false
             });
         }
         if (updateDisplayedData === true) {
             this.setState({ updateDisplayedData: false});
             this.updateDisplayedData(paginationInfo.currentPage, paginationInfo.startIndex, paginationInfo.endIndex);
         }
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        const newTestimonials = JSON.parse(JSON.stringify(nextProps.testimonials)).map(testimonial => { testimonial.selected = false; return testimonial; });
+        const currentTableData = JSON.parse(JSON.stringify(prevState.tableData)).map(testimonial => { testimonial.selected = false; return testimonial; });
+        if (JSON.stringify(newTestimonials) !== JSON.stringify(currentTableData)) {
+            return {
+                tableData: newTestimonials,
+                updateFilteredData: true
+            };
+        }
+        return null;
     }
 
     updateDisplayedData = (currentPage, startIndex, endIndex) => {

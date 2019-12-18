@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import toastr from 'toastr';
 
-class MissionStatementsUpdateForm extends Component {
+class MissionStatements extends Component {
     state = {
         missionStatements: []
     };
@@ -23,10 +22,10 @@ class MissionStatementsUpdateForm extends Component {
                     </tr>
                 </thead>
             );
-            const rows = missionStatements.map(missionStatement => {
+            const rows = missionStatements.map((missionStatement, i) => {
                 const { title, description, picture } = missionStatement;
                 return (
-                    <tr>
+                    <tr key={`missionStatement-${i}`}>
                         <td>{title}</td>
                         <td>{description}</td>
                         <td><img src={picture.url} className="img-fluid" alt={picture.reference} /></td>
@@ -59,4 +58,4 @@ class MissionStatementsUpdateForm extends Component {
 
 }
 
-export default MissionStatementsUpdateForm;
+export default MissionStatements;

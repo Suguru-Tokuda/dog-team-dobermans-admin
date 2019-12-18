@@ -4,7 +4,7 @@ import axios from 'axios';
 
 export default class WaitListService {
     static getServiceBase() {
-        return `${SessionInfoService.getServiceBase()}waitList/`;
+        return `${SessionInfoService.getBaseUrlForAPI()}waitList`;
     }
 
     static getWaitList() {
@@ -18,7 +18,7 @@ export default class WaitListService {
             email: email,
             phone: phone,
             color: color,
-            message: mmessage
+            message: message
         };
         return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}&waitListID=${waitListID}`, data);
     }

@@ -24,6 +24,9 @@ class AdminSidebar extends Component {
                         <NavLink className="nav-link" activeClassName="active" to="/testimonials">Testimonials</NavLink>
                     </li>
                     <li className="nav-item">
+                        <NavLink className="nav-link" activeClassName="active" to="wait-list">Wait List</NavLink>
+                    </li>
+                    <li className="nav-item">
                         <NavLink className="nav-link" activeClassName="active" to="/about-us">About Us</NavLink>
                     </li>
                     <li className="nav-item">
