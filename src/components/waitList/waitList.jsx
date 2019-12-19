@@ -36,6 +36,7 @@ class WaitList extends Component {
                     <WaitListTable
                     waitRequests={waitRequests}
                     totalItems={waitRequests.length}
+                    onSendEmailBtnClicked={this.handleSendEmailBtnClicked.bind(this)}
                     />
                 );
             } else if (waitRequests.length === 0) {
@@ -43,6 +44,39 @@ class WaitList extends Component {
             }
         }
         return null;
+    }
+
+    handleDeleteBtnClicked = (waitRequestIDs) => {
+        this.props.onShowLoading(true, 1);
+        WaitListService.deleteWaitRequests(waitRequestIDs)
+            .then(async () => {
+                const successMessage = waitRequestIDs.length > 1 ? `Successfully deleted ${waitRequestIDs.length} requests` : 'Successfully deleted one request';
+                toastr.success(successMessage);
+                const res = await WaitListService.getWaitList();
+                this.setState({ waitRequests: res.data });
+            })
+            .catch(() => {
+                toastr.error('There was an error ')
+            })
+            .finally(() => {
+                this.props.onDoneLoading();
+            })
+    }
+
+    handleSendEmailBtnClicked = (waitRequestIDs, subject, body) => {
+        this.props.onShowLoading(true, 1);
+        WaitListService.sendEmail(waitRequestIDs, subject, body)
+            .then(async () => {
+                toastr.success('Email sent');
+                const res = await WaitListService.getWaitList();
+                this.setState({ waitRequests: res.data });
+            })
+            .catch(() => {
+                toastr.error('There was an error in sending email');
+            })
+            .finally(() => {
+                this.props.onDoneLoading();
+            });
     }
 
     render() {
@@ -59,7 +93,7 @@ class WaitList extends Component {
                     </div>
                 </div>
             </div>
-        )
+        );
     }
 }
 

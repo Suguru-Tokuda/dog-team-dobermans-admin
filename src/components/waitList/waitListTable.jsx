@@ -5,6 +5,7 @@ import Pagination from '../miscellaneous/pagination';
 import moment from 'moment';
 import $ from 'jquery';
 import WaitListEmailModal from './waitListEmailModal';
+import WaitListService from '../../services/waitListService';
 
 class WaitListTable extends Component {
     state = {
@@ -282,6 +283,13 @@ class WaitListTable extends Component {
         }
     }
 
+    handleCancelEmailBtnClicked = () => {
+        this.setState({ waitRequestsToNotify: [] });
+        if ($('#waitListEmailModal').is(':visible') === true) {
+            $('#waitListEmailModal').modal('hide');
+        }
+    }
+
     processGridSearch = (inputStr) => {
         let filteredData;
         const { tableData, paginationInfo } = this.state;
@@ -361,7 +369,11 @@ class WaitListTable extends Component {
                         </div>
                     </div>
                 </div>
-                <WaitListEmailModal waitRequests={waitRequestsToNotify} />
+                <WaitListEmailModal 
+                    waitRequests={waitRequestsToNotify} 
+                    onSendBtnClicked={this.props.handleSendEmail.bind(this)}
+                    onCancelBtnClicked={this.handleCancelEmailBtnClicked}
+                />
             </React.Fragment>
         );
     }

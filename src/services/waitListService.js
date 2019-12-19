@@ -11,7 +11,7 @@ export default class WaitListService {
         return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}`);
     }
 
-    static updateWaitRequest(waitListID, color, email, firstName, lastName, message, phone) {
+    static updateWaitRequest(waitRequestIDs, color, email, firstName, lastName, message, phone) {
         const data = {
             firstName: firstName,
             lastName: lastName,
@@ -20,15 +20,25 @@ export default class WaitListService {
             color: color,
             message: message
         };
-        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}&waitListID=${waitListID}`, data);
+        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}&waitRequestIDs=${waitRequestIDs}`, data);
     }
 
-    static sendEmail(waitListIDs, subject, body) {
+    static deleteWaitRequests(waitRequestIDs) {
+        return axios({
+            method: 'DELETE',
+            data: {
+                waitRequestIDs: waitRequestIDs
+            },
+            url: `${this.getServiceBase()}?key=${api.API_KEY}`
+        });
+    }
+
+    static notify(waitRequestIDs, subject, body) {
         const data = {
-            waitListIDs: waitListIDs,
+            waitRequestIDs: waitRequestIDs,
             subject: subject,
             body: body
         };
-        return axios.post(`${this.getServiceBase()}/email?key=${api.API_KEY}`, data);
+        return axios.post(`${this.getServiceBase()}/notify?key=${api.API_KEY}`, data);
     }
 }
