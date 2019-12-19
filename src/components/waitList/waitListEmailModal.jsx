@@ -64,7 +64,7 @@ class WaitListEmailModal extends Component {
         if (waitRequests.length > 0) {
             const rows = waitRequests.map((waitRequest, i) => {
                 return (
-                    <tr>
+                    <tr key={`waitRequestModal-${i}`}>
                         <td>{waitRequest.firstName}</td>
                         <td>{waitRequest.lastName}</td>
                         <td>{waitRequest.email}</td>
@@ -159,7 +159,7 @@ class WaitListEmailModal extends Component {
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button className="btn btn-primary">Send</button>
+                            <button className="btn btn-primary" onClick={this.handleSendBtnClicked}>Send</button>
                             <button className="btn btn-secondary" onClick={this.props.onCancelBtnClicked}>Cancel</button>
                         </div>
                     </div>

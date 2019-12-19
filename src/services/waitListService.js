@@ -41,4 +41,8 @@ export default class WaitListService {
         };
         return axios.post(`${this.getServiceBase()}/notify?key=${api.API_KEY}`, data);
     }
+    
+    static uploadPicture(imageFile) {
+        
+    }
 }

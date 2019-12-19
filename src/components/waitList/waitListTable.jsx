@@ -371,7 +371,7 @@ class WaitListTable extends Component {
                 </div>
                 <WaitListEmailModal 
                     waitRequests={waitRequestsToNotify} 
-                    onSendBtnClicked={this.props.handleSendEmail.bind(this)}
+                    onSendBtnClicked={this.props.onSendEmailBtnClicked.bind(this)}
                     onCancelBtnClicked={this.handleCancelEmailBtnClicked}
                 />
             </React.Fragment>

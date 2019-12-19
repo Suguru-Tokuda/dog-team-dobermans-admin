@@ -63,9 +63,10 @@ class WaitList extends Component {
             })
     }
 
-    handleSendEmailBtnClicked = (waitRequestIDs, subject, body) => {
+    handleSendEmailBtnClicked = async (waitRequestIDs, subject, body) => {
         this.props.onShowLoading(true, 1);
-        WaitListService.sendEmail(waitRequestIDs, subject, body)
+        // go through body and
+        WaitListService.notify(waitRequestIDs, subject, body)
             .then(async () => {
                 toastr.success('Email sent');
                 const res = await WaitListService.getWaitList();
