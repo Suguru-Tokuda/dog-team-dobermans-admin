@@ -524,7 +524,8 @@ module.exports = function(webpackEnv) {
       new webpack.ProvidePlugin({
         $: 'jquery',
         jQuery: 'jquery',
-        'window.jQuery': 'jquery'
+        'window.jQuery': 'jquery',
+        quill: 'quill'
       }),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.

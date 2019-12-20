@@ -167,7 +167,7 @@ class WaitListTable extends Component {
                 </tr>
                 <tr>
                     <th colSpan="100%">
-                        <input type="text" className="form-control" placeholder="Search for wait requests" defaultValue={gridSearch} onKeyUp={this.handleGridSearch} />
+                        <input type="text" className="form-control" placeholder="Search for wait requests" defaultValue={gridSearch} onChange={this.handleGridSearch} />
                     </th>
                 </tr>
             </thead>
@@ -262,8 +262,8 @@ class WaitListTable extends Component {
     }
 
     handleGridSearch = (input) => {
-        this.processGridSearch(input.target.value);
         this.setState({ girdSearch: input.target.value });
+        this.processGridSearch(input.target.value);
     }
 
     handlePageSizeChanged = (input) => {
@@ -307,6 +307,7 @@ class WaitListTable extends Component {
             });
             const tableDataCopy = JSON.parse(JSON.stringify(tableData)).map(waitRequest => { waitRequest.selected = false; return waitRequest; });
             filteredData = this.filterForKeywords(tableDataCopy, searchKeywords);
+            this.setState({ tableData: tableDataCopy });
         } else {
             filteredData = this.state.tableData;
         }

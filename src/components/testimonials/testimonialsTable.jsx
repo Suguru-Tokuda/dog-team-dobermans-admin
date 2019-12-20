@@ -166,7 +166,7 @@ class TestimonialsTable extends Component {
                 </tr>
                 <tr>
                     <th colSpan="100%">
-                        <input type="text" className="form-control" placeholder="Search for testimonials" defaultValue={gridSearch} onKeyUp={this.handleGridSearch} />
+                        <input type="text" className="form-control" placeholder="Search for testimonials" defaultValue={gridSearch} onChange={this.handleGridSearch} />
                     </th>
                 </tr>
             </thead>
@@ -334,6 +334,7 @@ class TestimonialsTable extends Component {
 
     processGridSearch = (inputStr) => {
         let tempTableData;
+        const { tableData, paginationInfo } = this.state;
         if (inputStr !== '') {
             const searchKeywords = inputStr.toLowerCase().trim().split(' ');
             const uniqueKeywords = [];
@@ -341,15 +342,16 @@ class TestimonialsTable extends Component {
                 if (uniqueKeywords.indexOf(keyword) === -1)
                     uniqueKeywords.push(keyword);
             });
+            const tableDataCopy = JSON.parse(JSON.stringify(tableData)).map(testimonial => { testimonial.selected = false; return testimonial; });
             tempTableData = this.filterForKeywords(this.state.tableData, searchKeywords);
+            this.setState({ tableData: tableDataCopy });
         } else {
-            tempTableData = this.state.tableData;
+            tempTableData = tableData;
         }
-        const tempPaginationInfo = this.state.paginationInfo;
-        tempPaginationInfo.totalItems = tempTableData.length;
+        paginationInfo.totalItems = tempTableData.length;
         this.setState({ 
             filteredData: tempTableData,
-            paginationInfo: tempPaginationInfo
+            paginationInfo: paginationInfo
         });
     }
 

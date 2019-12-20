@@ -20,13 +20,6 @@ class WaitList extends Component {
         this.props.onShowLoading(true, 1);
         WaitListService.getWaitList()
             .then(res => {
-                // const waitRequests = [];
-                // const original = JSON.parse(JSON.stringify(res.data[0]));
-                // for (let i = 0, max = 50; i < max; i++) {
-                //     const copy = JSON.parse(JSON.stringify(original));
-                //     copy.waitRequestID = `copy.waitRequestID-${i}`;
-                //     waitRequests.push(copy);
-                // }
                 this.setState({ waitRequests: res.data });
             })
             .catch(() => {

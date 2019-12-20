@@ -7,12 +7,17 @@ class WaitListEmailModal extends Component {
         subject: '',
         validations: {},
         body: '',
+        placeholders: ['[FIRST_NAME]', '[LAST_NAME]'],
+        selectedPlaceholder: '',
         formSubmitted: false,
         emailHasSent: false
     };
 
     constructor(props) {
         super(props);
+        this.quillRef = null;
+        this.reactQuillRef = null;
+        this.state.selectedPlaceholder = this.state.placeholders[0];
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -28,6 +33,23 @@ class WaitListEmailModal extends Component {
         return null;
     }
 
+    componentDidMount () {
+        this.attachQuillRefs();
+    }
+      
+    componentDidUpdate () {
+        this.attachQuillRefs();
+    }
+
+    attachQuillRefs() {
+        // Ensure React-Quill reference is available:
+        if (typeof this.reactQuillRef.getEditor !== 'function') return;
+        // Skip if Quill reference is defined:
+        if (this.quillRef != null) return;
+        const quillRef = this.reactQuillRef.getEditor();
+        if (quillRef != null) this.quillRef = quillRef;
+    }
+
     handleSubjectChanged = (e) => {
         const subject = e.target.value;
         const { validations } = this.state;
@@ -40,11 +62,22 @@ class WaitListEmailModal extends Component {
     }
 
     handlebodyChanged = (body) => {
-        const { validations } = this.state;
+        const { validations, placeholders } = this.state;
         if (body.length === 0) {
             validations.body = 'Enter body';
         } else {
             delete validations.body;
+            const reg = /\[(.*?)\]/g;
+            let result;
+            while ((result = reg.exec(body)) !== null) {
+                let counter = 0;
+                placeholders.forEach(placeholder => {
+                    if (result[0] === placeholder)
+                        counter++;
+                });
+                if (counter === 0)
+                    validations.body = "Contains invalid placeholders. Please check all square brackets ([])";
+            }
         }
         this.setState({ body, validations });
     }
@@ -106,9 +139,14 @@ class WaitListEmailModal extends Component {
         ];
     }
 
+    getPlaceholderOptions() {
+        const { placeholders } = this.state;
+        return placeholders.map(placeholder => <option key={placeholder} value={placeholder}>{placeholder}</option>);
+    }
+
     handleSendBtnClicked = () => {
         this.setState({ formSubmitted: true });
-        const { subject, body, validations } = this.state;
+        const { subject, body, validations, placeholders } = this.state;
         let isValid = true;
         if (subject.length === 0) {
             isValid = false;
@@ -117,6 +155,20 @@ class WaitListEmailModal extends Component {
         if (body.length === 0) {
             isValid = false;
             validations.body = 'Enter body';
+        } else {
+            const reg = /\[(.*?)\]/g;
+            let result;
+            while ((result = reg.exec(body)) !== null) {
+                let counter = 0;
+                placeholders.forEach(placeholder => {
+                    if (result[0] === placeholder)
+                        counter++;
+                });
+                if (counter === 0) {
+                    validations.body = "Contains invalid placeholders. Please check all square brackets ([])";
+                    isValid = false;
+                }
+            }
         }
         this.setState({ validations });
         if (isValid === true) {
@@ -126,8 +178,19 @@ class WaitListEmailModal extends Component {
         }
     }
 
+    handleSetPlaceholder = (e) => {
+        this.setState({ selectedPlaceholder: e.target.value });
+    }
+
+    insertPlaceholder = () => {
+        const { selectedPlaceholder } = this.state;
+        const range = this.quillRef.getSelection();
+        const position = range ? range.index : 0;
+        this.quillRef.insertText(position, selectedPlaceholder);
+    }
+
     render() {
-        const { subject, body, validations, formSubmitted } = this.state;
+        const { subject, body, validations, selectedPlaceholder, formSubmitted } = this.state;
         return (
             <div className="modal fade" id="waitListEmailModal" role="dialog" aria-hidden="true">
                 <div className="modal-dialog modal-lg" role="document">
@@ -142,6 +205,19 @@ class WaitListEmailModal extends Component {
                                     {this.getTable()}
                                 </div>
                             </div>
+                            <div className="row">
+                                <label className="col-2">Placeholder</label>
+                                <div className="col-5">
+                                    <div className="input-group">
+                                        <select className="form-control" value={selectedPlaceholder} onChange={this.handleSetPlaceholder}>
+                                            {this.getPlaceholderOptions()}
+                                        </select>
+                                        <div className="input-group-prepend">
+                                            <button className="btn btn-success" onClick={this.insertPlaceholder}>Insert</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div className="row form-group">
                                 <label className="col-2">Subject</label>
                                 <div className="col-10">
@@ -153,7 +229,14 @@ class WaitListEmailModal extends Component {
                             </div>
                             <div className="row from-group">
                                 <div className="col-12">
-                                    <ReactQuill value={body} onChange={this.handlebodyChanged} theme="snow" modules={this.getModules()} formats={this.getFormats()} />
+                                    <ReactQuill  
+                                        ref={(el) => { this.reactQuillRef = el }}
+                                        id="emailEditor" 
+                                        value={body} 
+                                        onChange={this.handlebodyChanged} 
+                                        theme="snow" 
+                                        modules={this.getModules()} 
+                                        formats={this.getFormats()} />
                                     {formSubmitted === true && typeof validations.body !== 'undefined' && (
                                         <small className="text-danger">{validations.body}</small>
                                     )}
