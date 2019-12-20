@@ -5,7 +5,6 @@ import Pagination from '../miscellaneous/pagination';
 import moment from 'moment';
 import $ from 'jquery';
 import WaitListEmailModal from './waitListEmailModal';
-import WaitListService from '../../services/waitListService';
 
 class WaitListTable extends Component {
     state = {
@@ -44,8 +43,9 @@ class WaitListTable extends Component {
         if (updateFilteredData === true) {
             let filteredData;    
             if (gridSearch !== '') {
+                const tableDataCopy = JSON.parse(JSON.stringify(tableData)).map(waitRequest => { waitRequest.selected = false; return waitRequest });
                 const searchKeywords = gridSearch.toLowerCase().trim().split(' ');
-                filteredData = this.filterForKeywords(tableData, searchKeywords);
+                filteredData = this.filterForKeywords(tableDataCopy, searchKeywords);
             } else {
                 filteredData = JSON.parse(JSON.stringify(tableData));
             }
@@ -150,7 +150,11 @@ class WaitListTable extends Component {
         const thead = (
             <thead>
                 <tr>
-                    <th className="text-center"><Checkbox checkboxClass="icheckbox_square-blue" increaseArea="-100%" checked={checkAll} onChange={this.handleAllCheckChanged} label=" " /></th>
+                    <th className="text-center">
+                        {displayedData.length > 0 && (
+                            <Checkbox checkboxClass="icheckbox_square-blue" increaseArea="-100%" checked={checkAll} onChange={this.handleAllCheckChanged} label=" " />
+                        )}
+                    </th>
                     <th>Wait Request ID</th>
                     <th className="pointer" onClick={() => this.sortTable('firstName')}>First Name {this.getSortIcon('firstName')}</th>
                     <th className="pointer" onClick={() => this.sortTable('lastName')}>Last Name {this.getSortIcon('lastName')}</th>
@@ -218,22 +222,23 @@ class WaitListTable extends Component {
         const { displayedData, tableData, filteredData } = this.state;
         displayedData[index].selected = checked;
         const waitRequestID = displayedData[index].waitRequestID;
-        let checkCounter = 0;
         for (let i = 0, max = tableData.length; i < max; i++) {
             if (tableData[i].waitRequestID === waitRequestID) {
                 tableData[i].selected = checked;
             }
-            if (tableData[i].selected = true) {
-                checkCounter++;
-            }
         }
-        let checkAll = checkCounter === tableData.length;
         for (let i = 0, max = filteredData.length; i < max; i++) {
             if (filteredData[i].waitRequestID === waitRequestID) {
                 filteredData[i].selected = checked;
                 break;
             }
         }
+        let counter = 0;
+        displayedData.forEach(waitRequest => {
+            if (waitRequest.selected === true)
+            counter++;
+        });
+        const checkAll = counter === displayedData.length;
         this.setState({ displayedData, tableData, filteredData, checkAll });
     }
 
@@ -300,7 +305,8 @@ class WaitListTable extends Component {
                 if (uniqueKeywords.indexOf(keyword) === -1)
                     uniqueKeywords.push(keyword);
             });
-            filteredData = this.filterForKeywords(tableData, searchKeywords);
+            const tableDataCopy = JSON.parse(JSON.stringify(tableData)).map(waitRequest => { waitRequest.selected = false; return waitRequest; });
+            filteredData = this.filterForKeywords(tableDataCopy, searchKeywords);
         } else {
             filteredData = this.state.tableData;
         }
@@ -326,10 +332,8 @@ class WaitListTable extends Component {
                         foundCount++;
                     if (waitRequest.phone.indexOf(searchKeyword) !== -1)
                         foundCount++;
-                    if (waitRequest.create.indexOf(searchKeyword) !== -1)
-                        foundCount++;
                 });
-                return foundCount === searchKeywords.length;
+                return foundCount > 0;
             });
         } else {
             retVal = tableData;

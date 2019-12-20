@@ -2,11 +2,14 @@ import React, { Component } from 'react';
 import WaitListTable from './waitListTable';
 import WaitListService from '../../services/waitListService';
 import toastr from 'toastr';
+import imageCompression from 'browser-image-compression';
+import $ from 'jquery';
 
 class WaitList extends Component {
     state = {
         waitRequests: [],
-        loaded: false
+        loaded: false,
+        emailHasSent: false
     };
 
     constructor(props) {
@@ -17,6 +20,13 @@ class WaitList extends Component {
         this.props.onShowLoading(true, 1);
         WaitListService.getWaitList()
             .then(res => {
+                // const waitRequests = [];
+                // const original = JSON.parse(JSON.stringify(res.data[0]));
+                // for (let i = 0, max = 50; i < max; i++) {
+                //     const copy = JSON.parse(JSON.stringify(original));
+                //     copy.waitRequestID = `copy.waitRequestID-${i}`;
+                //     waitRequests.push(copy);
+                // }
                 this.setState({ waitRequests: res.data });
             })
             .catch(() => {
@@ -65,10 +75,48 @@ class WaitList extends Component {
 
     handleSendEmailBtnClicked = async (waitRequestIDs, subject, body) => {
         this.props.onShowLoading(true, 1);
-        // go through body and
+        const regex = /\<img (.*?)>/g;
+        let result;
+        const files = [];
+        while ((result = regex.exec(body)) !== null) {
+            const regexForSrc = /src="(.*?)"/;
+            const dataURI = regexForSrc.exec(result[1])[1];
+            if (dataURI.indexOf('data:image/') !== -1) {
+                await fetch(dataURI)
+                    .then(async (res) => {
+                        await res.blob()
+                            .then(async (bloblFile) => {
+                                const newFile = new File([bloblFile], subject, { type: 'image/png' });
+                                try {
+                                    const options = {
+                                        maxSizeMB: 1,
+                                        maxWidthOrHeight: 1280,
+                                        useWebWorker: true
+                                    };
+                                    const compressedFile = await imageCompression(newFile, options);
+                                    const image = await WaitListService.uploadPicture(compressedFile);
+                                    files.push(image);
+                                } catch (err) {
+                                    toastr.error(err);
+                                }
+                            });
+                    });
+            }
+        }
+        let counter = 0;
+        body = body.replace(/\<img (.*?)>/g, (imageTag => {
+            const regexForSrc = /src="(.*?)"/;
+            const src = regexForSrc.exec(imageTag)[1];
+            if (src.indexOf('data:image/') !== -1) {
+                imageTag = imageTag.replace(regexForSrc, `src="${files[counter].url}" alt="${files[counter].reference}" /`)
+            }
+            counter++;
+            return imageTag;
+        }));
         WaitListService.notify(waitRequestIDs, subject, body)
             .then(async () => {
                 toastr.success('Email sent');
+                $('#waitListEmailModal').modal('hide');
                 const res = await WaitListService.getWaitList();
                 this.setState({ waitRequests: res.data });
             })

@@ -7,7 +7,8 @@ class WaitListEmailModal extends Component {
         subject: '',
         validations: {},
         body: '',
-        formSubmitted: false
+        formSubmitted: false,
+        emailHasSent: false
     };
 
     constructor(props) {
@@ -106,6 +107,7 @@ class WaitListEmailModal extends Component {
     }
 
     handleSendBtnClicked = () => {
+        this.setState({ formSubmitted: true });
         const { subject, body, validations } = this.state;
         let isValid = true;
         if (subject.length === 0) {
@@ -125,7 +127,7 @@ class WaitListEmailModal extends Component {
     }
 
     render() {
-        const { subject, body, validations } = this.state;
+        const { subject, body, validations, formSubmitted } = this.state;
         return (
             <div className="modal fade" id="waitListEmailModal" role="dialog" aria-hidden="true">
                 <div className="modal-dialog modal-lg" role="document">
@@ -144,7 +146,7 @@ class WaitListEmailModal extends Component {
                                 <label className="col-2">Subject</label>
                                 <div className="col-10">
                                     <input className="form-control" type="text" value={subject} onChange={this.handleSubjectChanged} />
-                                    {typeof validations.subject !== 'undefined' && (
+                                    {formSubmitted === true && typeof validations.subject !== 'undefined' && (
                                         <small className="text-danger">{validations.subject}</small>
                                     )}
                                 </div>
@@ -152,7 +154,7 @@ class WaitListEmailModal extends Component {
                             <div className="row from-group">
                                 <div className="col-12">
                                     <ReactQuill value={body} onChange={this.handlebodyChanged} theme="snow" modules={this.getModules()} formats={this.getFormats()} />
-                                    {typeof validations.body !== 'undefined' && (
+                                    {formSubmitted === true && typeof validations.body !== 'undefined' && (
                                         <small className="text-danger">{validations.body}</small>
                                     )}
                                 </div>

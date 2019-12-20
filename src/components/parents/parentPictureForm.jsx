@@ -124,6 +124,10 @@ class ParentPictureForm extends Component {
         });
     }
 
+    handleResetTempPictureFile = () => {
+        this.setState({ tempPictureFile: null });
+    }
+
     render() {
         const { tempPictureFile } = this.state;
         return (
@@ -146,7 +150,11 @@ class ParentPictureForm extends Component {
                         <Link className="btn btn-secondary ml-1" to="/parenets">Cancel</Link>
                     </div>
                 </div>
-                <PictureCropModal pictureFile={tempPictureFile} onFinishImageCropping={this.handleFinishImageCropping.bind(this)} />
+                <PictureCropModal 
+                    pictureFile={tempPictureFile} 
+                    onFinishImageCropping={this.handleFinishImageCropping.bind(this)} 
+                    onResetTempPictureFile={this.handleResetTempPictureFile}
+                />
             </React.Fragment>
         );
     }
