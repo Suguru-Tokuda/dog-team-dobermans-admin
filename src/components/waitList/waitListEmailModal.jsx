@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactQuill from 'react-quill';
+import $ from 'jquery';
 
 class WaitListEmailModal extends Component {
     state = {
@@ -9,8 +10,7 @@ class WaitListEmailModal extends Component {
         body: '',
         placeholders: ['[FIRST_NAME]', '[LAST_NAME]'],
         selectedPlaceholder: '',
-        formSubmitted: false,
-        emailHasSent: false
+        formSubmitted: false
     };
 
     constructor(props) {
@@ -35,6 +35,18 @@ class WaitListEmailModal extends Component {
 
     componentDidMount () {
         this.attachQuillRefs();
+        $('#waitListEmailModal').on('hidden.bs.modal', () => {
+            const { validations, formSubmitted } = this.state;
+            if (Object.keys(validations).length === 0 && formSubmitted === true) {
+                this.setState({
+                    waitRequests: [],
+                    formSubmitted: false,
+                    subject: '',
+                    body: '',
+                    validations: {}
+                });
+            }
+        });
     }
       
     componentDidUpdate () {
@@ -61,7 +73,7 @@ class WaitListEmailModal extends Component {
         this.setState({ subject, validations });
     }
 
-    handlebodyChanged = (body) => {
+    handleBodyChange = (body) => {
         const { validations, placeholders } = this.state;
         if (body.length === 0) {
             validations.body = 'Enter body';
@@ -233,7 +245,7 @@ class WaitListEmailModal extends Component {
                                         ref={(el) => { this.reactQuillRef = el }}
                                         id="emailEditor" 
                                         value={body} 
-                                        onChange={this.handlebodyChanged} 
+                                        onChange={this.handleBodyChange} 
                                         theme="snow" 
                                         modules={this.getModules()} 
                                         formats={this.getFormats()} />

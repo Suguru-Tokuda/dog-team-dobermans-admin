@@ -4,24 +4,40 @@ import * as api from '../api.json';
 import axios from 'axios';
 import { storage } from './firebaseService';
 
-export default class MainService {
+export default class HomepageContentService {
     static getServiceBase() {
-        return `${SessionInfoService.getBaseUrlForAPI()}main`;
+        return `${SessionInfoService.getBaseUrlForAPI()}homepageContents`;
     }
 
     static getHomePageInfo() {
-        return axios.get(`${this.getServiceBase()}main?key${api.API_KEY}`);
+        return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}`);
     }
 
-    static uploadVideo(videoFile, progress) {
+    static updateBackgroundVideo(url, reference) {
+        const data = {
+            backgroundVideo: {
+                url: url,
+                reference: reference
+            }
+        };
+        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
+    }
+
+    static updateNews(newsBody) {
+        const data = {
+            news: newsBody
+        };
+        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
+    }
+
+    static uploadVideo(videoFile) {
         return new Promise((resolve) => {
             const videoID = UtilService.generateID(10);
             const reference = `/mainVideo/${videoID}`;
-            console.log(videoFile);
             const task = storage.ref(reference).put(videoFile);
             task.on('state_changed', 
                 (snapshot) => {
-                    progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    // progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                 },
                 (err) => {
                     switch (err.code) {
@@ -45,5 +61,10 @@ export default class MainService {
                         });
                 });
         });
+    }
+
+    static deleteVideo(reference) {
+        const desertRef = storage.ref(reference);
+        return desertRef.delete();
     }
 }
