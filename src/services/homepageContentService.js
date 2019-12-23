@@ -63,6 +63,46 @@ export default class HomepageContentService {
         });
     }
 
+    static uploadPicture(imageFile) {
+        return new Promise((resolve) => {
+            const pictureID = UtilService.generateID(10);
+            const reference = `hompegeContents/news/${pictureID}`;
+            const task = storage.ref(reference).put(imageFile);
+            task.on('state_changed', 
+            (snapshot) => {
+                switch (snapshot.state) {
+                    case 'paused':
+                        break;
+                    case 'running':
+                        break;
+                    default:
+                        break;
+                }
+            }
+            ,(err) => {
+                switch (err.code) {
+                    case 'storage/unauthorized':
+                        break;
+                    case 'storage/canceled':
+                        break;
+                    case 'storage/unknown':
+                        break;
+                    default:
+                        break;
+                }
+            },
+            () => {
+                task.snapshot.ref.getDownloadURL()
+                .then(function (downloadURL) { 
+                    resolve({
+                        reference: reference,
+                        url: downloadURL
+                    });
+                });
+            });
+        });
+    }
+
     static deleteVideo(reference) {
         const desertRef = storage.ref(reference);
         return desertRef.delete();

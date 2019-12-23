@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import ReactQuill from 'react-quill';
 import HomepageContentsService from '../../services/homepageContentService';
+import imageCompression from 'browser-image-compression';
 import toastr from 'toastr';
+import $ from 'jquery';
 
 class NewsEditorModal extends Component {
     state = {
         newsBody: '',
+        editing: false,
         formSubmitted: false,
     };
 
@@ -13,9 +16,17 @@ class NewsEditorModal extends Component {
         super(props);
     }
 
+    componentDidMount() {
+        $('#newsEditorModal').on('hidden.bs.modal', () => {
+            this.setState({ editing: false });
+        });
+    }
+
     static getDerivedStateFromProps(nextProps, prevState) {
         if (nextProps.newsBody !== prevState.newsBody) {
-            return { nextBody: nextProps.newsBody };
+            if (prevState.editing === false) {
+                return { newsBody: nextProps.newsBody };
+            }
         }
         return null;
     }
@@ -42,13 +53,53 @@ class NewsEditorModal extends Component {
     }
 
     handleBodyChange = (newsBody) => {
-        this.setState({ newsBody });
+        this.setState({ newsBody: newsBody, editing: true });
     }
 
-    handleUpdateBtnClicked = () => {
+    handleUpdateBtnClicked = async () => {
         const { newsBody } = this.state;
+        let newsBodyToSend = newsBody;
         this.props.onShowLoading(false, 1);
-        HomepageContentsService.updateNews(newsBody)
+        const regex = /\<img (.*?)>/g;
+        let result;
+        const files = [];
+        while ((result = regex.exec(newsBodyToSend)) !== null) {
+            const regexForSrc = /src="(.*?)"/;
+            const dataURI = regexForSrc.exec(result[1])[1];
+            if (dataURI.indexOf('data:image/') !== -1) {
+                await fetch(dataURI)
+                    .then(async (res) => {
+                        await res.blob()
+                            .then(async (bloblFile) => {
+                                const newFile = new File([bloblFile], 'news', { type: 'image/png' });
+                                try {
+                                    const options = {
+                                        maxSizeMB: 1,
+                                        maxWidthOrHeight: 1280,
+                                        useWebWorker: true
+                                    };
+                                    const compressedFile = await imageCompression(newFile, options);
+                                    const image = await HomepageContentsService.uploadPicture(compressedFile);
+                                    files.push(image);
+                                } catch (err) {
+                                    toastr.error(err);
+                                }
+                            });
+                    });
+            }
+        }
+        let counter = 0;
+        newsBodyToSend = newsBodyToSend.replace(/\<img (.*?)>/g, (imageTag => {
+            const regexForSrc = /src="(.*?)"/;
+            const src = regexForSrc.exec(imageTag)[1];
+            if (src.indexOf('data:image/') !== -1) {
+                imageTag = imageTag.replace(regexForSrc, `src="${files[counter].url}" alt="${files[counter].reference}" /`)
+            }
+            counter++;
+            return imageTag;
+        }));
+
+        HomepageContentsService.updateNews(newsBodyToSend)
             .then(() => {
                 this.props.onUpdateData();
                 toastr.success('Successfully updated the news data');

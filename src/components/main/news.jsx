@@ -23,6 +23,10 @@ class News extends Component {
         $('#newsEditorModal').modal('show');
     }
 
+    handleCancelEditBtnClicked() {
+        $('#newsEditorModal').modal('hide');
+    }
+
     render() {
         const { currentNews } = this.state;
         return (
@@ -38,7 +42,7 @@ class News extends Component {
                         <button className="btn btn-primary" onClick={this.handleEditBntClicked}>Edit</button>
                     </div>
                 </div>
-                <NewsEditorModal {...this.props} onUpdateData={this.props.onUpdateData} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                <NewsEditorModal {...this.props} newsBody={currentNews} onUpdateData={this.props.onUpdateData} onCancelBtnClicked={this.handleCancelEditBtnClicked} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
             </React.Fragment>
         );
     }
