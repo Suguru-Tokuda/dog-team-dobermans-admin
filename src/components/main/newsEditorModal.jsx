@@ -36,7 +36,7 @@ class NewsEditorModal extends Component {
             toolbar: [
               [{ 'header': [1, 2, false] }],
               ['bold', 'italic', 'underline','strike', 'blockquote'],
-              [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+              [{'list': 'ordered'}, {'list': 'bullet'}, { 'align': ['', 'center', 'right', 'justify']}, {'indent': '-1'}, {'indent': '+1'}],
               ['link', 'image'],
               ['clean']
             ],
@@ -47,7 +47,7 @@ class NewsEditorModal extends Component {
         return [
             'header',
             'bold', 'italic', 'underline', 'strike', 'blockquote',
-            'list', 'bullet', 'indent',
+            'list', 'bullet', 'align', 'indent',
             'link', 'image'
         ];
     }
