@@ -11,10 +11,6 @@ class Main extends Component {
         news: ''
     };
 
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         this.handleUpdateData();
     }

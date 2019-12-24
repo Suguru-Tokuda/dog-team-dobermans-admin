@@ -94,7 +94,7 @@ class WaitListTable extends Component {
         const checkAll = counter === displayedData.length;
         this.setState({
             paginationInfo: paginationInfo,
-            displayedData, displayedData,
+            displayedData: displayedData,
             checkAll: checkAll
         });
     }

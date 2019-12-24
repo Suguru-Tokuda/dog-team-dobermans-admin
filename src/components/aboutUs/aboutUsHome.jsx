@@ -10,10 +10,6 @@ class AboutUsHome extends Component {
         aboutUsDetail: {}
     };
 
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         this.props.onShowLoading(true, 1);
         AboutUsService.getAboutUs()

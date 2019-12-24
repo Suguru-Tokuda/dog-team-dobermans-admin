@@ -10,6 +10,7 @@ export default class BlogService {
     }
 
     static getAllBlogs() {
+        console.log(`${this.getServiceBase()}`);
         return axios.get(`${this.getServiceBase()}`);
     }
 
@@ -17,5 +18,25 @@ export default class BlogService {
         return axios.get(`${this.getServiceBase()}&blogID=${blogID}`);
     }
 
-    static createBlog(author, )
+    static createBlog(author, subject, message) {
+        const data = {
+            author: author,
+            subject: subject,
+            message: message
+        };
+        return axios.put(`${this.getServiceBase()}`, data);
+    }
+
+    static updateBlog(blogID, author, subject, message) {
+        const data = {
+            author: author,
+            subject: subject,
+            message: message
+        };
+        return axios.put(`${this.getServiceBase()}&blogID=${blogID}`, data);
+    }
+
+    static deleteBlog(blogID) {
+        return axios.delete(`${this.getServiceBase()}&blogID=${blogID}`);
+    }
 }

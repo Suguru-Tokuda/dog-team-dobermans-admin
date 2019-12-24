@@ -8,10 +8,6 @@ class ContactUsDetail extends Component {
         contactInfo: {}
     };
 
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         this.props.onShowLoading(true, 1);
         ContactService.getContactusInfo()
