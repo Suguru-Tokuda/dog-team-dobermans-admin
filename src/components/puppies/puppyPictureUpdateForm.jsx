@@ -153,7 +153,8 @@ class PuppyPictureUpdateForm extends Component {
                     aspect={1/1}
                     pictureFile={tempPictureFile} 
                     onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
-                    onResetTempPictureFile={this.handleResetTempPictureFile} />
+                    onResetTempPictureFile={this.handleResetTempPictureFile}
+                />
             </React.Fragment>
         );
     }

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import BlogsTable from './blogsTable';
-import BlogEditorModal from './blogEditorModal';
 import BlogService from '../../services/blogService';
 import $ from 'jquery';
 import toastr from 'toastr';
@@ -8,8 +7,8 @@ import toastr from 'toastr';
 class BlogList extends Component {
     state = {
         selectedBlog: null,
-        action: '',
-        blogs: []
+        blogs: [],
+        dataLoaded: false
     };
 
     componentDidMount() {
@@ -22,10 +21,11 @@ class BlogList extends Component {
             .then(res => {
                 this.setState({ blogs: res.data });
             })
-            .catch(err => {
+            .catch(() => {
                 toastr.error('There was an error in loading blogs data');
             })
             .finally(() => {
+                this.setState({ dataLoaded: true });
                 this.props.onDoneLoading();
             });
     }
@@ -37,10 +37,10 @@ class BlogList extends Component {
                     <div className="col-12">
                         <h3>Blogs</h3>
                     </div>
-                    <div className="row form-group mt-2">
-                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-2">
-                            <button className="btn btn-primary" onClick={this.handleCreateNewBlogBtnClicked}>Create New Blog</button>
-                        </div>
+                </div>
+                <div className="row form-group mt-2">
+                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-2">
+                        <button className="btn btn-primary" onClick={this.handleCreateNewBlogBtnClicked}>Create New Blog</button>
                     </div>
                 </div>
             </React.Fragment>
@@ -48,7 +48,7 @@ class BlogList extends Component {
     }
 
     getBlogsTable() {
-        const { blogs } = this.state;
+        const { blogs, dataLoaded } = this.state;
         if (blogs.length > 0) {
             return (
                 <BlogsTable
@@ -59,45 +59,40 @@ class BlogList extends Component {
                  onDeleteBtnClicked={this.handleDeleteBtnClicled.bind(this)}
                  />
             );
+        } else if (blogs.length === 0 && dataLoaded === true ) {
+            return <h3>No blogs available</h3>;
         }
     }
 
     handleCreateNewBlogBtnClicked = () => {
-
+        this.props.history.push('/blog/create');
     }
 
     handleViewBlogBtnClicked = (blogID) => {
-        const { blogs } = this.state;
-        let selectedBlog;
-        for (let i = 0, max = blogs.length; i < max; i++) {
-            if (blogs[i].blogID === blogID)
-            selectedBlog = blogs[i];
-        }
-        this.setState({ selectedBlog: selectedBlog, action: 'view' });
+        this.props.history.push(`/blog/view/${blogID}`)
     }
 
     handleUpdateBtnClicled = (blogID) => {
-        const { blogs } = this.state;
-        let selectedBlog;
-        for (let i = 0, max = blogs.length; i < max; i++) {
-            if (blogs[i].blogID === blogID)
-            selectedBlog = blogs[i];
-        }
-        this.setState({ selectedBlog: selectedBlog, action: 'update' });
+        this.props.history.push(`/blog/update/${blogID}`)
     }
 
     handleDeleteBtnClicled = (blogID) => {
-        const { blogs } = this.state;
-        let selectedBlog;
-        for (let i = 0, max = blogs.length; i < max; i++) {
-            if (blogs[i].blogID === blogID)
-            selectedBlog = blogs[i];
-        }
-        this.setState({ selectedBlog: selectedBlog, action: 'update' });
+        this.props.history.push(`/blog/delete/${blogID}`)
+    }
+
+    handleUpdateData = () => {
+        this.getBlogs();
+    }
+
+    handleCancelBtnClicked = () => {
+        this.setState({
+            selectedBlog: null,
+            action: ''
+        });
+        $('#blogEditorModal').modal('hide');
     }
 
     render() {
-        const { selectedBlog, action } = this.state;
         return (
             <React.Fragment>
                 <div className="row">
@@ -110,12 +105,6 @@ class BlogList extends Component {
                         </div>
                     </div>
                 </div>
-                <BlogEditorModal
-                 selectedBlog={selectedBlog}
-                 action={action}
-                 onShowLoading={this.props.onShowLoading.bind(this)}
-                 onDoneLoading={this.props.onDoneLoading.bind(this)}
-                />
             </React.Fragment>
         )
     }

@@ -18,20 +18,22 @@ export default class BlogService {
         return axios.get(`${this.getServiceBase()}&blogID=${blogID}`);
     }
 
-    static createBlog(author, subject, message) {
+    static createBlog(author, subject, message, thumbnail) {
         const data = {
             author: author,
             subject: subject,
-            message: message
+            message: message,
+            thumbnail: thumbnail
         };
         return axios.put(`${this.getServiceBase()}`, data);
     }
 
-    static updateBlog(blogID, author, subject, message) {
+    static updateBlog(blogID, author, subject, message, thumbnail) {
         const data = {
             author: author,
             subject: subject,
-            message: message
+            message: message,
+            thumbnail: thumbnail
         };
         return axios.put(`${this.getServiceBase()}&blogID=${blogID}`, data);
     }
@@ -39,4 +41,50 @@ export default class BlogService {
     static deleteBlog(blogID) {
         return axios.delete(`${this.getServiceBase()}&blogID=${blogID}`);
     }
+
+    static uploadPicture(imageFile) {
+        return new Promise((resolve) => {
+            const pictureID = UtilService.generateID(10);
+            const reference = `blogs/${pictureID}`;
+            const task = storage.ref(reference).put(imageFile);
+            task.on('state_changed', 
+            (snapshot) => {
+                switch (snapshot.state) {
+                    case 'paused':
+                        break;
+                    case 'running':
+                        break;
+                    default:
+                        break;
+                }
+            }
+            ,(err) => {
+                switch (err.code) {
+                    case 'storage/unauthorized':
+                        break;
+                    case 'storage/canceled':
+                        break;
+                    case 'storage/unknown':
+                        break;
+                    default:
+                        break;
+                }
+            },
+            () => {
+                task.snapshot.ref.getDownloadURL()
+                .then(function (downloadURL) { 
+                    resolve({
+                        reference: reference,
+                        url: downloadURL
+                    });
+                });
+            });
+        });
+    }
+
+    static deleteImage(reference) {
+        const desertRef = storage.ref(reference);
+        return desertRef.delete();
+    }
+    
 }

@@ -128,16 +128,17 @@ class BlogsTable extends Component {
         const thead = (
             <thead>
                 <tr>
-                    <th className="pointer" onClick={() => this.sortTable('blogID')}> {this.getSortIcon('blogID')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('author')}> {this.getSortIcon('author')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('subject')}> {this.getSortIcon('subject')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('message')}> {this.getSortIcon('message')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('created')}> {this.getSortIcon('created')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('blogID')}>BlogID {this.getSortIcon('blogID')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('author')}>Author {this.getSortIcon('author')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('subject')}>Subject {this.getSortIcon('subject')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('message')}>Message {this.getSortIcon('message')}</th>
+                    <th>Thumbnail</th>
+                    <th className="pointer" onClick={() => this.sortTable('created')}>Created {this.getSortIcon('created')}</th>
                     <th>Actions</th>
                 </tr>
                 <tr>
                     <th colSpan="100%">
-                        <input type="text" className="form-control" placeholder="Search for puppies" value ={this.state.gridSearch} onKeyUp={this.handleGirdSearch} />
+                        <input type="text" className="form-control" placeholder="Search for puppies" value={this.state.gridSearch} onChange={this.handleGirdSearch} />
                     </th>
                 </tr>
             </thead>
@@ -151,11 +152,14 @@ class BlogsTable extends Component {
                         <td>{blog.author}</td>
                         <td>{blog.subject}</td>
                         <td>{blog.message}</td>
+                        <td>
+                            <img src={blog.thumbnail.url} alt={blog.thumbnail.reference} style={{width: '50px' }} />
+                        </td>
                         <td>{moment(blog.created).format('MM/DD/YYYY hh:mm:ss')}</td>
                         <td>
                             <button className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(blog.blogID)}>View</button>
-                            <button className="btn btn-sm btn-success" onClick={() => this.props.onUpdateBtnClicked(blog.blogID)}>Update</button>
-                            <button className="btn btn-sm btn-danger" onClick={() => this.props.onDeleteBtnClicked(blog.blogID)}>Delete</button>
+                            <button className="btn btn-sm btn-success ml-2" onClick={() => this.props.onUpdateBtnClicked(blog.blogID)}>Update</button>
+                            <button className="btn btn-sm btn-danger ml-2" onClick={() => this.props.onDeleteBtnClicked(blog.blogID)}>Delete</button>
                         </td>
                     </tr>
                 )

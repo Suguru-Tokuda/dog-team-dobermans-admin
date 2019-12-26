@@ -133,23 +133,30 @@ class PictureCropModal extends Component {
                     res.blob()
                         .then(async (blobFile) => {
                             newFile = new File([blobFile], this.state.pictureFileName, { type: 'image/png' });
-                            try {
-                                const options = {
-                                    maxSizeMB: 1,
-                                    maxWidthOrHeight: 1280,
-                                    useWebWorker: true
-                                };
-                                const compressedFile = await imageCompression(newFile, options);
-                                this.props.onFinishImageCropping(compressedFile);
+                            this.props.onFinishImageCropping(newFile);
                                 const { crop } = this.state;
                                 this.setState({ 
                                     crop: crop,
                                     croppedImageUrl: ''
                                 });
                                 $('#pictureCropModal').modal('hide');
-                            } catch (err) {
-                                toastr.err(err);
-                            }
+                            // try {
+                            //     const options = {
+                            //         maxSizeMB: 1,
+                            //         maxWidthOrHeight: 2560,
+                            //         useWebWorker: true
+                            //     };
+                            //     const compressedFile = await imageCompression(newFile, options);
+                            //     this.props.onFinishImageCropping(compressedFile);
+                            //     const { crop } = this.state;
+                            //     this.setState({ 
+                            //         crop: crop,
+                            //         croppedImageUrl: ''
+                            //     });
+                            //     $('#pictureCropModal').modal('hide');
+                            // } catch (err) {
+                            //     toastr.err(err);
+                            // }
                         });
                 });
         } else {

@@ -57,6 +57,7 @@ class NewsEditorModal extends Component {
     }
 
     handleUpdateBtnClicked = async () => {
+        this.setState({ formSubmitted: true });
         const { newsBody } = this.state;
         let newsBodyToSend = newsBody;
         this.props.onShowLoading(false, 1);
@@ -66,7 +67,7 @@ class NewsEditorModal extends Component {
         while ((result = regex.exec(newsBodyToSend)) !== null) {
             const regexForSrc = /src="(.*?)"/;
             const dataURI = regexForSrc.exec(result[1])[1];
-            if (dataURI.indexOf('data:image/') !== -1) {
+            if (dataURI.indexOf('data:image/') !== -1 && dataURI.indexOf('https://firebasestorage.googleapis.com/') === -1) {
                 await fetch(dataURI)
                     .then(async (res) => {
                         await res.blob()
@@ -92,7 +93,7 @@ class NewsEditorModal extends Component {
         newsBodyToSend = newsBodyToSend.replace(/\<img (.*?)>/g, (imageTag => {
             const regexForSrc = /src="(.*?)"/;
             const src = regexForSrc.exec(imageTag)[1];
-            if (src.indexOf('data:image/') !== -1) {
+            if (src.indexOf('data:image/') !== -1 && src.indexOf('https://firebasestorage.googleapis.com/')) {
                 imageTag = imageTag.replace(regexForSrc, `src="${files[counter].url}" alt="${files[counter].reference}" class="img-fluid" /`)
             }
             counter++;
@@ -113,7 +114,7 @@ class NewsEditorModal extends Component {
     }
 
     render() {
-        const { newsBody } = this.state;
+        const { newsBody, formSubmitted } = this.state;
         return (
             <div className="modal fade" id="newsEditorModal" role="dialog" aria-hidden="true">
                 <div className="modal-dialog modal-lg" role="document">
@@ -132,6 +133,9 @@ class NewsEditorModal extends Component {
                                         modules={this.getModules()}
                                         formats={this.getFormats()}
                                     />
+                                    {(formSubmitted === true && newsBody === '') && (
+                                        <small className="text-danger">Enter message body</small>
+                                    )}
                                 </div>
                             </div>
                         </div>

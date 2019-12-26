@@ -114,6 +114,7 @@ class AboutUsPictureForm extends Component {
                     </div>
                 </div>
                 <PictureCropModal
+                    aspect={16/9}
                     pictureFile={tempPictureFile}
                     onFinishImageCropping={this.handleFinishImageCroppping.bind(this)}
                     onResetTempPictureFile={this.handleResetTempPictureFile}
