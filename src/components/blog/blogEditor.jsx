@@ -135,27 +135,34 @@ class BlogEditor extends Component {
 
     handleImageChange = async (event) => {
         if (event.target.files && event.target.files[0]) {
-            const reader = new FileReader();
-            reader.addEventListener('load', () => {
-                this.setState({ tempPictureFile: reader.result });
-            });
-            reader.readAsDataURL(event.target.files[0]);
+            const { tempPictureURL, validations } = this.state;
+            if (tempPictureURL !== null) {
+                URL.revokeObjectURL(tempPictureURL);
+            }
+            delete validations.thumbnail;
+            const objectURL = URL.createObjectURL(event.target.files[0]);
+            this.setState({ thumbnailPicture: event.target.files[0], tempPictureURL: objectURL, validations: validations });
+            // const reader = new FileReader();
+            // reader.addEventListener('load', () => {
+            //     this.setState({ tempPictureFile: reader.result });
+            // });
+            // reader.readAsDataURL(event.target.files[0]);
         }
     }
 
-    handleFinishImageCropping = (newFile) => {
-        const { tempPictureURL, validations } = this.state;
-        if (tempPictureURL !== null) {
-            URL.revokeObjectURL(tempPictureURL);
-        }
-        const objectURL = URL.createObjectURL(newFile);
-        delete validations.thumbnail;
-        this.setState({ thumbnailPicture: newFile, tempPictureURL: objectURL, validations: validations });
-    }
+    // handleFinishImageCropping = (newFile) => {
+    //     const { tempPictureURL, validations } = this.state;
+    //     if (tempPictureURL !== null) {
+    //         URL.revokeObjectURL(tempPictureURL);
+    //     }
+    //     const objectURL = URL.createObjectURL(newFile);
+    //     delete validations.thumbnail;
+    //     this.setState({ thumbnailPicture: newFile, tempPictureURL: objectURL, validations: validations });
+    // }
 
-    handleResetTempPictureFile = () => {
-        this.setState({ tempPictureFile: null });
-    }
+    // handleResetTempPictureFile = () => {
+    //     this.setState({ tempPictureFile: null });
+    // }
 
     handleSubmitBtnClicked = async () => {
         this.setState({ formSubmitted: true });
@@ -194,6 +201,11 @@ class BlogEditor extends Component {
             const regexForAlt = /alt="(.*?)"/;
             let result;
             const files = [];
+            const compressionOptions = {
+                maxSizeMB: 1,
+                maxWidthOrHeight: 1280,
+                useWebWorker: true
+            };
             while ((result = regex.exec(messageToSend)) !== null) {
                 const dataURI = regexForSrc.exec(result[1])[1];
                 if (dataURI.indexOf('data:image/') !== -1 && dataURI.indexOf('https://firebasestorage.googleapis.com/') === -1) {
@@ -203,12 +215,7 @@ class BlogEditor extends Component {
                                 .then(async (bloblFile) => {
                                     const newFile = new File([bloblFile], 'news', { type: 'image/png' });
                                     try {
-                                        const options = {
-                                            maxSizeMB: 1,
-                                            maxWidthOrHeight: 1280,
-                                            useWebWorker: true
-                                        };
-                                        const compressedFile = await imageCompression(newFile, options);
+                                        const compressedFile = await imageCompression(newFile, compressionOptions);
                                         const image = await BlogService.uploadPicture(compressedFile);
                                         files.push(image);
                                     } catch (err) {
@@ -229,13 +236,14 @@ class BlogEditor extends Component {
             }));
             let thumbnailPictureToSend;
             if (typeof thumbnailPicture.url === 'undefined') {
-                thumbnailPictureToSend = await BlogService.uploadPicture(thumbnailPicture);
+                const compressedImage = await imageCompression(thumbnailPicture, compressionOptions);
+                thumbnailPictureToSend = await BlogService.uploadPicture(compressedImage);
             } else {
                 thumbnailPictureToSend = thumbnailPicture;
-                if (action === 'update') {
-                    if (thumbnailPicture.reference !== this.state.originalBlog.thumbnail.reference) {
-                        await BlogService.deleteImage(this.state.originalBlog.thumbnail.reference);
-                    }
+            }
+            if (action === 'update') {
+                if (typeof thumbnailPicture.reference === 'undefined') {
+                    await BlogService.deleteImage(this.state.originalBlog.thumbnail.reference);
                 }
             }
             if (action === 'update') {
@@ -243,8 +251,10 @@ class BlogEditor extends Component {
                 while ((result = regex.exec(previousMessage)) !== null) { 
                     const imageURL = regexForSrc.exec((result[1]))[1];
                     if (imageURL.indexOf('firebasestorage.googleapis.com') !== -1 && messageToSend.indexOf(imageURL) === -1) {
-                        const reference = regexForAlt.exec((result[1]))[1];
-                        await BlogService.deleteImage(reference);
+                        const reference = regexForAlt.exec((result[1]));
+                        if (reference !== null) {
+                            await BlogService.deleteImage(reference[1]);
+                        }
                     }
                 }
             }
@@ -393,12 +403,12 @@ class BlogEditor extends Component {
                         <Link className="btn btn-secondary ml-2" to="/blog">Cancel</Link>
                     </div>
                 </div>
-                <PictureCropModal
+                {/* <PictureCropModal
                     aspect={16/9}
                     pictureFile={tempPictureFile}
                     onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
                     onResetTempPictureFile={this.handleResetTempPictureFile}
-                />
+                /> */}
             </React.Fragment>
         );
     }

@@ -211,6 +211,8 @@ class BlogsTable extends Component {
             retVal = tableData.filter(blog => {
                 let foundCount = 0;
                 searchKeywords.forEach(searchKeyword => {
+                    if (blog.subject.toLowerCase() === searchKeyword)
+                        foundCount++;
                     if (blog.subject.toLowerCase().indexOf(searchKeyword) !== -1)
                         foundCount++;
                     if (blog.author.toLowerCase() === searchKeyword)
