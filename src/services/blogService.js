@@ -18,20 +18,20 @@ export default class BlogService {
         return axios.get(`${this.getServiceBase()}&blogID=${blogID}`);
     }
 
-    static createBlog(author, subject, message, thumbnail) {
+    static createBlog(author, title, message, thumbnail) {
         const data = {
             author: author,
-            subject: subject,
+            title: title,
             message: message,
             thumbnail: thumbnail
         };
         return axios.put(`${this.getServiceBase()}`, data);
     }
 
-    static updateBlog(blogID, author, subject, message, thumbnail) {
+    static updateBlog(blogID, author, title, message, thumbnail) {
         const data = {
             author: author,
-            subject: subject,
+            title: title,
             message: message,
             thumbnail: thumbnail
         };

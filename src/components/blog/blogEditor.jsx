@@ -9,7 +9,7 @@ import PictureCropModal from '../miscellaneous/pictureCropModal';
 class BlogEditor extends Component {
     state = {
         blogID: undefined,
-        subject: '',
+        title: '',
         author: '',
         message: '',
         formSubmitted: false,
@@ -42,7 +42,7 @@ class BlogEditor extends Component {
         BlogService.getBlog(blogID)
             .then(res => {
                 this.setState({
-                    subject: res.data.subject,
+                    title: res.data.title,
                     author: res.data.author,
                     message: res.data.message,
                     thumbnailPicture: res.data.thumbnail,
@@ -112,15 +112,15 @@ class BlogEditor extends Component {
         this.setState({ author, validations });
     }
 
-    handleSubjectChange = (e) => {
-        const subject = e.target.value;
+    handletitleChange = (e) => {
+        const title = e.target.value;
         const { validations } = this.state;
-        if (subject !== '') { 
-            delete validations.subject;
+        if (title !== '') { 
+            delete validations.title;
         } else {
-            validations.subject = 'Enter subject';
+            validations.title = 'Enter title';
         }
-        this.setState({ subject, validations });
+        this.setState({ title, validations });
     }
 
     handleMessageChnaged = (message) => {
@@ -166,7 +166,7 @@ class BlogEditor extends Component {
 
     handleSubmitBtnClicked = async () => {
         this.setState({ formSubmitted: true });
-        const { originalBlog, author, subject, message, thumbnailPicture, action, validations } = this.state;
+        const { originalBlog, author, title, message, thumbnailPicture, action, validations } = this.state;
         let isValid = true;
         if (author === '') {
             isValid = false;
@@ -174,11 +174,11 @@ class BlogEditor extends Component {
         } else {
             delete validations.author;
         }
-        if (subject === '') {
+        if (title === '') {
             isValid = false;
-            validations.subject = 'Enter subject';
+            validations.title = 'Enter title';
         } else {
-            delete validations.subject;
+            delete validations.title;
         }
         if (message === '') {
             isValid = false;
@@ -259,7 +259,7 @@ class BlogEditor extends Component {
                 }
             }
             if (action === 'create') {
-                BlogService.createBlog(author, subject, messageToSend, thumbnailPictureToSend)
+                BlogService.createBlog(author, title, messageToSend, thumbnailPictureToSend)
                     .then(() => {
                         toastr.success('Successfully created a new blog.');
                         this.props.history.push('/blog');
@@ -275,7 +275,7 @@ class BlogEditor extends Component {
                         this.props.onDoneLoading();
                     });
             } else if (action === 'update') {
-                BlogService.updateBlog(originalBlog.blogID, author, subject, messageToSend, thumbnailPictureToSend)
+                BlogService.updateBlog(originalBlog.blogID, author, title, messageToSend, thumbnailPictureToSend)
                     .then(() => {
                         toastr.success('Successfully updated a new blog.');
                         this.props.history.push('/blog');
@@ -325,7 +325,7 @@ class BlogEditor extends Component {
     }
 
     render() {
-        const { subject, author, message, action, formSubmitted, validations, thumbnailPicture, tempPictureFile } = this.state;
+        const { title, author, message, action, formSubmitted, validations, thumbnailPicture, tempPictureFile } = this.state;
         return (
             <React.Fragment>
                 <div className="card">
@@ -343,11 +343,11 @@ class BlogEditor extends Component {
                             </div>
                         </div>
                         <div className="row form-group">
-                            <label className="col-2">Subject</label>
+                            <label className="col-2">title</label>
                             <div className="col-5">
-                                <input className="form-control" type="text" value={subject} onChange={this.handleSubjectChange} disabled={action === 'view' || action === 'delete'} />
-                                {formSubmitted === true && typeof validations.subject !== 'undefined' && (
-                                    <small className="text-danger">{validations.subject}</small>
+                                <input className="form-control" type="text" value={title} onChange={this.handletitleChange} disabled={action === 'view' || action === 'delete'} />
+                                {formSubmitted === true && typeof validations.title !== 'undefined' && (
+                                    <small className="text-danger">{validations.title}</small>
                                 )}
                             </div>
                         </div>

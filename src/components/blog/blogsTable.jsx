@@ -130,7 +130,7 @@ class BlogsTable extends Component {
                 <tr>
                     <th className="pointer" onClick={() => this.sortTable('blogID')}>BlogID {this.getSortIcon('blogID')}</th>
                     <th className="pointer" onClick={() => this.sortTable('author')}>Author {this.getSortIcon('author')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('subject')}>Subject {this.getSortIcon('subject')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('title')}>Title {this.getSortIcon('title')}</th>
                     <th className="pointer" onClick={() => this.sortTable('message')}>Message {this.getSortIcon('message')}</th>
                     <th>Thumbnail</th>
                     <th className="pointer" onClick={() => this.sortTable('created')}>Created {this.getSortIcon('created')}</th>
@@ -150,7 +150,7 @@ class BlogsTable extends Component {
                     <tr key={`blog-${blog.blogID}`}>
                         <td>{blog.blogID}</td>
                         <td>{blog.author}</td>
-                        <td>{blog.subject}</td>
+                        <td>{blog.title}</td>
                         <td>{blog.message}</td>
                         <td>
                             <img src={blog.thumbnail.url} alt={blog.thumbnail.reference} style={{width: '50px' }} />
@@ -211,9 +211,9 @@ class BlogsTable extends Component {
             retVal = tableData.filter(blog => {
                 let foundCount = 0;
                 searchKeywords.forEach(searchKeyword => {
-                    if (blog.subject.toLowerCase() === searchKeyword)
+                    if (blog.title.toLowerCase() === searchKeyword)
                         foundCount++;
-                    if (blog.subject.toLowerCase().indexOf(searchKeyword) !== -1)
+                    if (blog.title.toLowerCase().indexOf(searchKeyword) !== -1)
                         foundCount++;
                     if (blog.author.toLowerCase() === searchKeyword)
                         foundCount++;
