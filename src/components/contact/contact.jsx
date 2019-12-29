@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 import ContactUsDetail from './contactDetail';
 import ContactUsEditor from './contactEditor';
 import ContactService from '../../services/contactService';
@@ -31,12 +31,17 @@ class Contact extends Component {
 
     render() {
         const { url } = this.state;
-        return (
-            <React.Fragment>
-                <Route path={`${url}/`} exact render={(props) => <ContactUsDetail {...props} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-                <Route path={`${url}/editor`} render={(props) => <ContactUsEditor {...props} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-            </React.Fragment>
-        );
+        const { authenticated } = this.props;
+        if (authenticated === true) {
+            return (
+                <React.Fragment>
+                    <Route path={`${url}/`} exact render={(props) => <ContactUsDetail {...props} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                    <Route path={`${url}/editor`} render={(props) => <ContactUsEditor {...props} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                </React.Fragment>
+            );
+        } else {
+            return <Redirect to="/login" />;
+        }
     }
 }
 

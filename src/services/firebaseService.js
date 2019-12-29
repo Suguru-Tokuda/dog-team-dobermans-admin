@@ -1,6 +1,6 @@
 import firebase from 'firebase/app';
+import 'firebase/auth';
 import 'firebase/storage';
-import 'firebase/functions';
 
 const firebaseConfig = {
     apiKey: "AIzaSyAECZwk3f30Nd3kcViscEEADiWW01VI9xs",
@@ -9,14 +9,14 @@ const firebaseConfig = {
     projectId: "dogteamdobermans",
     storageBucket: "dogteamdobermans.appspot.com",
     messagingSenderId: "765501116399",
-    appId: "1:765501116399:web:1501cb42301f9a7a51f01a"
-};
+    appId: "1:765501116399:web:051a040ec68acc1b51f01a"
+  };
 
 firebase.initializeApp(firebaseConfig);
 
 const storage = firebase.storage();
-const functions = firebase.functions();
+const auth = firebase.auth();
 
 export {
-    storage, functions, firebase as default
+    storage, auth, firebase as default
 };

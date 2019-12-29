@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 import PuppyDetail from './puppyDetail';
 import PuppyCreate from './puppyCreate';
 import PuppyUpdate from './puppyUpdate';
@@ -17,14 +17,19 @@ class Puppy extends Component {
 
     render() {
         const { url } = this.state;
-        return (
-            <React.Fragment>
-                <Route path={`${url}/view/:puppyID`} render={(props) => <PuppyDetail {...props} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-                <Route path={`${url}/create`} render={(props) => <PuppyCreate {...props} url={`${url}/create`} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-                <Route path={`${url}/update/:puppyID`} render={(props) => <PuppyUpdate {...props} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-                <Route path={`${url}/sales/:puppyID`} render={(props) => <PuppySalesForm {...props} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-            </React.Fragment>
-        );
+        const { authenticated } = this.state;
+        if (authenticated === true) {
+            return (
+                <React.Fragment>
+                    <Route path={`${url}/view/:puppyID`} render={(props) => <PuppyDetail {...props} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                    <Route path={`${url}/create`} render={(props) => <PuppyCreate {...props} url={`${url}/create`} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                    <Route path={`${url}/update/:puppyID`} render={(props) => <PuppyUpdate {...props} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                    <Route path={`${url}/sales/:puppyID`} render={(props) => <PuppySalesForm {...props} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                </React.Fragment>
+            );
+        } else {
+            return <Redirect to="/login" />;
+        }
     }
 }
 

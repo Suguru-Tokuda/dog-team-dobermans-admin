@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
-import ReactQuill from 'react-quill';
+import ReactQuill, { Quill } from 'react-quill';
+import ImageResize from 'quill-image-resize-module';
+import { ImageDrop } from 'quill-image-drop-module';
 import AboutDobermanService from '../../services/aboutDobermanService';
 import imageCompression from 'browser-image-compression';
 import toastr from 'toastr';
 import $ from 'jquery';
+Quill.register('modules/imageResize', ImageResize);
+Quill.register('modules/imageDrop', ImageDrop);
 
 class AboutDobermansEditorModal extends Component {
     state = {
@@ -37,13 +41,16 @@ class AboutDobermansEditorModal extends Component {
 
     getModules() {
         return {
-            toolbar: [
+            toolbar: {
+                container: [
               [{ 'header': [1, 2, false] }],
               ['bold', 'italic', 'underline','strike', 'blockquote'],
               [{'list': 'ordered'}, {'list': 'bullet'}, { 'align': ['', 'center', 'right', 'justify']}, {'indent': '-1'}, {'indent': '+1'}],
               ['link', 'image'],
               ['clean']
-            ],
+            ]},
+            imageResize: true,
+            imageDrop: true
         };
     }
 
@@ -67,7 +74,6 @@ class AboutDobermansEditorModal extends Component {
         this.props.onShowLoading(false, 1);
         const regex = /\<img (.*?)>/g;
         const regexForSrc = /src="(.*?)"/;
-        const regexForAlt = /alt="(.*?)"/;
         let result;
         const files = [];
         while ((result = regex.exec(bodyToSend)) !== null) {
@@ -98,17 +104,19 @@ class AboutDobermansEditorModal extends Component {
         bodyToSend = bodyToSend.replace(/\<img (.*?)>/g, (imageTag => {
             const src = regexForSrc.exec(imageTag)[1];
             if (src.indexOf('data:image/') !== -1 && src.indexOf('https://firebasestorage.googleapis.com/')) {
-                imageTag = imageTag.replace(regexForSrc, `src="${files[counter].url}" alt="${files[counter].reference}" class="img-fluid" /`)
+                imageTag = imageTag.replace(regexForSrc, `src="${files[counter].url}" alt="${files[counter].reference}" class="img-fluid"`)
             }
             counter++;
             return imageTag;
         }));
         while ((result = regex.exec(originalBody)) !== null) {
             const imageURL = regexForSrc.exec((result[1]))[1];
-            if (imageURL.indexOf('firebasestorage.googleapis.com') !== -1 && bodyToSend.indexOf(imageURL) === -1) {
-                const reference = regexForAlt.exec((result[1]));
-                if (reference !== null) {
-                    await AboutDobermanService.deletePicture(reference);
+            const refRegex = /aboutDobermans\%2F(.*?)\?alt/g;
+            const imageRef = refRegex.exec(imageURL);
+            if (imageRef !== null) {
+                const reference = imageRef[1];
+                if (imageURL.indexOf('firebasestorage.googleapis.com') !== -1 && bodyToSend.indexOf(reference) === -1) {
+                    await AboutDobermanService.deletePicture(`aboutDobermans/${reference}`);
                 }
             }
         }
@@ -116,13 +124,19 @@ class AboutDobermansEditorModal extends Component {
             .then(() => {
                 this.props.onUpdateData();
                 toastr.success('Successfully updated the About Dobermans');
+                $('#aboutDobermansEditorModal').modal('hide');
             })
             .catch(err => {
                 toastr.error('There was an error in updating the About Dobermans');
             })
             .finally(() => {
                 this.props.onDoneLoading();
+
             });
+    }
+
+    handleCancelClicked = () => {
+        $('#aboutDobermansEditorModal').modal('hide');
     }
 
     render() {
@@ -132,7 +146,7 @@ class AboutDobermansEditorModal extends Component {
                 <div className="modal-dialog modal-lg" role="document">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h3>News Editor</h3>
+                            <h3>About Dobermans Editor</h3>
                         </div>
                         <div className="modal-body">
                             <div className="row form-group">
@@ -153,7 +167,7 @@ class AboutDobermansEditorModal extends Component {
                         </div>
                         <div className="modal-footer">
                             <button className="btn btn-primary" onClick={this.handleUpdateBtnClicked}>Update</button>
-                            <button className="btn btn-secondary" onClick={this.props.onCancelBtnClicked}>Cancel</button>
+                            <button className="btn btn-secondary" onClick={this.handleCancelClicked}>Cancel</button>
                         </div>
                     </div>
                 </div>

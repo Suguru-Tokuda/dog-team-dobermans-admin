@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import VideoBackground from './videoBackground';
 import News from './news';
 import HomepageContentsService from '../../services/homepageContentService';
@@ -40,12 +41,17 @@ class Main extends Component {
 
     render() {
         const { news, video } = this.state;
-        return (
-            <React.Fragment>
-                <VideoBackground {...this.props} video={video} onUpdateData={this.handleUpdateData} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
-                <News {...this.props} news={news} onUpdateData={this.handleUpdateData} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
-            </React.Fragment>
-        )
+        const { authenticated } = this.props;
+            if (authenticated === true) {
+                return (
+                    <React.Fragment>
+                        <VideoBackground {...this.props} video={video} onUpdateData={this.handleUpdateData} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                        <News {...this.props} news={news} onUpdateData={this.handleUpdateData} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                    </React.Fragment>
+                );
+            } else {
+                return <Redirect to="/login" />;
+            }
     }
 }
 

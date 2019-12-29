@@ -9,19 +9,29 @@ class Testimonials extends Component {
         loaded: false
     };
 
+    constructor(props) {
+        super(props);
+        const { authenticated } = props;
+        if (authenticated === false) {
+            props.history.push('/login');
+        }
+    }
+
     componentDidMount() {
-        this.props.onShowLoading(true, 1);
-        TestimonialService.getAllTestimonials()
-            .then(res => {
-                this.setState({ testimonials: res.data });
-            })
-            .catch(() => {
-                toastr.error('There was an error in loading testimonials data');
-            })
-            .finally(() => {
-                this.props.onDoneLoading();
-                this.setState({ loaded: true });
-            });
+        if (this.props.authenticated === true) {
+            this.props.onShowLoading(true, 1);
+            TestimonialService.getAllTestimonials()
+                .then(res => {
+                    this.setState({ testimonials: res.data });
+                })
+                .catch(() => {
+                    toastr.error('There was an error in loading testimonials data');
+                })
+                .finally(() => {
+                    this.props.onDoneLoading();
+                    this.setState({ loaded: true });
+                });
+        }
     }
 
     getTable() {

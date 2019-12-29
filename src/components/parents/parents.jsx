@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import ParentsTable from './parentsTable';
 import ParentsService from '../../services/parentsService';
 import toastr from 'toastr';
@@ -14,18 +14,28 @@ class Parents extends Component {
         parentToDelete: {}
     }
 
+    constructor(props) {
+        super(props);
+        const { authenticated } = props;
+        if (authenticated === false) {
+            props.history.push('/login');
+        }
+    }
+
     componentDidMount() {
-        this.props.onShowLoading(true, 1);
-        ParentsService.getAllParents()
-            .then(res => {
-                this.setState({ parents: res.data });
-            })
-            .catch(err => {
-                toastr.error('There was an error in loading parents data');
-            })
-            .finally(() => {
-                this.props.onDoneLoading();
-            });
+        if (this.props.authenticated === true) {
+            this.props.onShowLoading(true, 1);
+            ParentsService.getAllParents()
+                .then(res => {
+                    this.setState({ parents: res.data });
+                })
+                .catch(err => {
+                    toastr.error('There was an error in loading parents data');
+                })
+                .finally(() => {
+                    this.props.onDoneLoading();
+                });
+        }
     }
 
     getHeader() {
@@ -164,27 +174,32 @@ class Parents extends Component {
 
     render() {
         const { parentIDToDelete, parentToDelete, showDeleteModal } = this.state;
-        return (
-            <React.Fragment>
-                <div className="row">
-                    <div className="col-12">
-                        <div className="card">
-                            <div className="card-body">
-                                {this.getHeader()}
-                                {this.getParentsTable()}
+        const { authenticated } = this.props;
+        if (authenticated === true) {
+            return (
+                <React.Fragment>
+                    <div className="row">
+                        <div className="col-12">
+                            <div className="card">
+                                <div className="card-body">
+                                    {this.getHeader()}
+                                    {this.getParentsTable()}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <ParentDeleteConfModal
-                    parentID={parentIDToDelete}
-                    parentDetail={parentToDelete}
-                    showModal={showDeleteModal}
-                    onCancelBtnClicked={this.handleDeleteCancelBtnClicked}
-                    onDoDeleteBtnClicked={this.handleDoDeleteBtnClicked}
-                />
-            </React.Fragment>
-        )
+                    <ParentDeleteConfModal
+                        parentID={parentIDToDelete}
+                        parentDetail={parentToDelete}
+                        showModal={showDeleteModal}
+                        onCancelBtnClicked={this.handleDeleteCancelBtnClicked}
+                        onDoDeleteBtnClicked={this.handleDoDeleteBtnClicked}
+                    />
+                </React.Fragment>
+            );
+        } else {
+            return <Redirect to="/login" />;
+        }
     }
 }
 

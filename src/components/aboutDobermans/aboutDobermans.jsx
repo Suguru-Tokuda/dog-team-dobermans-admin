@@ -10,22 +10,36 @@ class AboutDobermans extends Component {
         isEditing: false
     };
 
+    constructor(props) {
+        super(props);
+        const { authenticated } = props;
+        if (authenticated === false) {
+            props.history.push('/login');
+        }
+    }
+
     componentDidMount() {
+        if (this.props.authenticated === true)
+            this.handleUpdateData();
+    }
+
+    handleEditBtnClicked = () => {
+        $('#aboutDobermansEditorModal').modal('show');
+    }
+
+    handleUpdateData = () => {
         this.props.onShowLoading(true, 1);
         AboutDobermanService.getAboutDobermans()
             .then(res => {
                 this.setState({ aboutDobermans: res.data })
             })
-            .catch(() => {
+            .catch((err) => {
+                console.log(err);
                 toastr.error('There was an error in loading about dobermans data');
             })
             .finally(() => {
                 this.props.onDoneLoading();
             });
-    }
-
-    handleEditBtnClicked = () => {
-        $('#aboutDobermansEditorModal').modal('show');
     }
 
     render() {
@@ -45,7 +59,7 @@ class AboutDobermans extends Component {
                 </div>
                 <AboutDobermansEditorModal {...this.props} body={aboutDobermans} onUpdateData={this.handleUpdateData} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
             </React.Fragment>
-        )
+        );
     }
 
 }

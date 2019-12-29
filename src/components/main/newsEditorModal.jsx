@@ -1,13 +1,18 @@
 import React, { Component } from 'react';
-import ReactQuill from 'react-quill';
-import HomepageContentsService from '../../services/homepageContentService';
+import ReactQuill, { Quill } from 'react-quill';
+import ImageResize from 'quill-image-resize-module';
+import { ImageDrop } from 'quill-image-drop-module';
+import HomepageContentService from '../../services/homepageContentService';
 import imageCompression from 'browser-image-compression';
 import toastr from 'toastr';
 import $ from 'jquery';
+Quill.register('modules/imageResize', ImageResize);
+Quill.register('modules/imageDrop', ImageDrop);
 
 class NewsEditorModal extends Component {
     state = {
         newsBody: '',
+        originalBody: '',
         editing: false,
         formSubmitted: false,
     };
@@ -25,7 +30,10 @@ class NewsEditorModal extends Component {
     static getDerivedStateFromProps(nextProps, prevState) {
         if (nextProps.newsBody !== prevState.newsBody) {
             if (prevState.editing === false) {
-                return { newsBody: nextProps.newsBody };
+                return { 
+                    newsBody: nextProps.newsBody,
+                    originalBody: JSON.parse(JSON.stringify(nextProps.newsBody))
+                };
             }
         }
         return null;
@@ -33,13 +41,16 @@ class NewsEditorModal extends Component {
 
     getModules() {
         return {
-            toolbar: [
+            toolbar: {
+                container: [
               [{ 'header': [1, 2, false] }],
               ['bold', 'italic', 'underline','strike', 'blockquote'],
               [{'list': 'ordered'}, {'list': 'bullet'}, { 'align': ['', 'center', 'right', 'justify']}, {'indent': '-1'}, {'indent': '+1'}],
               ['link', 'image'],
               ['clean']
-            ],
+            ]},
+            imageResize: true,
+            imageDrop: true
         };
     }
 
@@ -58,14 +69,14 @@ class NewsEditorModal extends Component {
 
     handleUpdateBtnClicked = async () => {
         this.setState({ formSubmitted: true });
-        const { newsBody } = this.state;
+        const { newsBody, originalBody } = this.state;
         let newsBodyToSend = newsBody;
         this.props.onShowLoading(false, 1);
         const regex = /\<img (.*?)>/g;
+        const regexForSrc = /src="(.*?)"/;
         let result;
         const files = [];
         while ((result = regex.exec(newsBodyToSend)) !== null) {
-            const regexForSrc = /src="(.*?)"/;
             const dataURI = regexForSrc.exec(result[1])[1];
             if (dataURI.indexOf('data:image/') !== -1 && dataURI.indexOf('https://firebasestorage.googleapis.com/') === -1) {
                 await fetch(dataURI)
@@ -80,7 +91,7 @@ class NewsEditorModal extends Component {
                                         useWebWorker: true
                                     };
                                     const compressedFile = await imageCompression(newFile, options);
-                                    const image = await HomepageContentsService.uploadPicture(compressedFile);
+                                    const image = await HomepageContentService.uploadPicture(compressedFile);
                                     files.push(image);
                                 } catch (err) {
                                     toastr.error(err);
@@ -91,7 +102,6 @@ class NewsEditorModal extends Component {
         }
         let counter = 0;
         newsBodyToSend = newsBodyToSend.replace(/\<img (.*?)>/g, (imageTag => {
-            const regexForSrc = /src="(.*?)"/;
             const src = regexForSrc.exec(imageTag)[1];
             if (src.indexOf('data:image/') !== -1 && src.indexOf('https://firebasestorage.googleapis.com/')) {
                 imageTag = imageTag.replace(regexForSrc, `src="${files[counter].url}" alt="${files[counter].reference}" class="img-fluid" /`)
@@ -99,8 +109,18 @@ class NewsEditorModal extends Component {
             counter++;
             return imageTag;
         }));
-
-        HomepageContentsService.updateNews(newsBodyToSend)
+        while ((result = regex.exec(originalBody)) !== null) {
+            const imageURL = regexForSrc.exec((result[1]))[1];
+            const refRegex = /hompageContents%2Fnews%2F(.*?)\?alt/g;
+            const imageRef = refRegex.exec(imageURL);
+            if (imageRef !== null) {
+                const reference = imageRef[1];
+                if (imageURL.indexOf('firebasestorage.googleapis.com') !== -1 && newsBodyToSend.indexOf(reference) === -1) {
+                    await HomepageContentService.deleteFile(`hompageContents/news/${reference}`);
+                }
+            }
+        }
+        HomepageContentService.updateNews(newsBodyToSend)
             .then(() => {
                 this.props.onUpdateData();
                 toastr.success('Successfully updated the news data');

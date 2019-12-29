@@ -82,7 +82,7 @@ class VideoBackground extends Component {
         this.props.onShowLoading(true, 1);
         // if there is already a video currently uploaded, delete it first
         if (typeof currentVideo.reference !== 'undefined') {
-            await HomepageContentService.deleteVideo(currentVideo.reference);
+            await HomepageContentService.deleteFile(currentVideo.reference);
         }
         HomepageContentService.uploadVideo(tempVideoFile)
             .then(async res => {

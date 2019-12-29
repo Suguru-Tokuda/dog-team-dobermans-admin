@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import PuppiesTable from './puppiesTable';
 import PuppyDeleteConfModal from './puppyDeleteConfModal';
 import PuppiesService from '../../services/puppiesService';
@@ -14,8 +14,17 @@ class Puppies extends Component {
         viewOption: ''
     };
 
+    constructor(props) {
+        super(props);
+        const { authenticated } = props;
+        if (authenticated === false) {
+            props.history.push('/login');
+        }
+    }
+
     componentDidMount() {
-        this.getPuppies();
+        if (this.props.authenticated === true)
+            this.getPuppies();
     }
 
     getPuppies = () => {
@@ -152,27 +161,32 @@ class Puppies extends Component {
 
     render() {
         const { puppyIDToDelete, puppyToDelete, showDeleteModal } = this.state;
-        return (
-            <React.Fragment>
-                <div className="row">
-                    <div className="col-12">
-                        <div className="card">
-                            <div className="card-body">
-                                {this.getHeader()}
-                                {this.getPuppiesTable()}
+        const { authenticated } = this.props;
+        if (authenticated === true) {
+            return (
+                <React.Fragment>
+                    <div className="row">
+                        <div className="col-12">
+                            <div className="card">
+                                <div className="card-body">
+                                    {this.getHeader()}
+                                    {this.getPuppiesTable()}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <PuppyDeleteConfModal 
-                    puppyID={puppyIDToDelete} 
-                    puppyDetail={puppyToDelete} 
-                    showModal={showDeleteModal}
-                    onCancelBtnClicked={this.handleDeleteCancelBtnClicked.bind(this)}
-                    onDoDeleteBtnClicked={this.handleDoDeleteBtnClicked.bind(this)}
-                     />
-            </React.Fragment>
-        )
+                    <PuppyDeleteConfModal 
+                        puppyID={puppyIDToDelete} 
+                        puppyDetail={puppyToDelete} 
+                        showModal={showDeleteModal}
+                        onCancelBtnClicked={this.handleDeleteCancelBtnClicked.bind(this)}
+                        onDoDeleteBtnClicked={this.handleDoDeleteBtnClicked.bind(this)}
+                         />
+                </React.Fragment>
+            );
+        } else {
+            return <Redirect to="/login" />;
+        }
     }
 }
 

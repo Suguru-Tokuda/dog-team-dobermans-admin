@@ -334,6 +334,11 @@ module.exports = function(webpackEnv) {
           ],
           include: paths.appSrc,
         },
+        // {
+        //   test: /\.js$/,
+        //   exclude: /node_modules(?!\/quill-image-drop-module|quill-image-resize-module)/,
+        //   loader: 'babel-loader',
+        // },
         {
           // "oneOf" will traverse all following loaders until one will
           // match the requirements. When no loader matches it will fall
@@ -526,6 +531,10 @@ module.exports = function(webpackEnv) {
         jQuery: 'jquery',
         'window.jQuery': 'jquery',
         quill: 'quill'
+      }),
+      new webpack.ProvidePlugin({
+        'window.Quill': 'quill',
+        'Quill': 'quill/dist/quill.js',
       }),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.

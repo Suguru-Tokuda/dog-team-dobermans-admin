@@ -6,16 +6,16 @@ import UtilService from './utilService';
 
 export default class AboutDobermanService {
     static getServiceBase() {
-        return `${SessionInfoService.getBaseUrlForAPI()}aboutDobermans&key=${api.API_KEY}`;
+        return `${SessionInfoService.getBaseUrlForAPI()}aboutDobermans?key=${api.API_KEY}`;
     }
 
     static getAboutDobermans() {
         return axios.get(`${this.getServiceBase()}`);
     }
 
-    static postAboutDobermans(message) {
+    static postAboutDobermans(aboutDobermans) {
         const data = {
-            message: message
+            aboutDobermans: aboutDobermans
         };
         return axios.put(`${this.getServiceBase()}`, data);
     }

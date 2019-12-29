@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import ImageResize from 'quill-image-resize-module';
+import { ImageDrop } from 'quill-image-drop-module';
 import BlogService from '../../services/blogService';
-import ReactQuill from 'react-quill';
+import ReactQuill, { Quill } from 'react-quill';
 import imageCompression from 'browser-image-compression';
 import toastr from 'toastr';
-import PictureCropModal from '../miscellaneous/pictureCropModal';
+Quill.register('modules/imageResize', ImageResize);
+Quill.register('modules/imageDrop', ImageDrop);
 
 class BlogEditor extends Component {
     state = {
@@ -20,16 +23,16 @@ class BlogEditor extends Component {
         tempPictureURL: null,
         originalBlog: null
     };
-
+    
     constructor(props) {
         super(props);
         const action = props.location.pathname.split('/')[2];
         const blogID = props.match.params.blogID;
         if (typeof blogID !== 'undefined' && blogID.length > 0)
-            this.state.blogID = blogID;
+        this.state.blogID = blogID;
         this.state.action = action;
     }
-
+    
     componentDidMount() {
         const { blogID } = this.state;
         if (typeof blogID !== 'undefined' && blogID.length > 0) {
@@ -61,13 +64,16 @@ class BlogEditor extends Component {
 
     getModules() {
         return {
-            toolbar: [
+            toolbar: {
+                container: [
               [{ 'header': [1, 2, false] }],
               ['bold', 'italic', 'underline','strike', 'blockquote'],
               [{'list': 'ordered'}, {'list': 'bullet'}, { 'align': ['', 'center', 'right', 'justify']}, {'indent': '-1'}, {'indent': '+1'}],
               ['link', 'image'],
               ['clean']
-            ],
+            ]},
+            imageResize: true,
+            imageDrop: true
         };
     }
 
@@ -166,7 +172,7 @@ class BlogEditor extends Component {
 
     handleSubmitBtnClicked = async () => {
         this.setState({ formSubmitted: true });
-        const { originalBlog, author, title, message, thumbnailPicture, action, validations } = this.state;
+        const { originalBlog, blogID, author, title, message, thumbnailPicture, action, validations } = this.state;
         let isValid = true;
         if (author === '') {
             isValid = false;
@@ -198,7 +204,6 @@ class BlogEditor extends Component {
             this.props.onShowLoading(false, 1);
             const regex = /\<img (.*?)>/g;
             const regexForSrc = /src="(.*?)"/;
-            const regexForAlt = /alt="(.*?)"/;
             let result;
             const files = [];
             const compressionOptions = {
@@ -229,7 +234,7 @@ class BlogEditor extends Component {
             messageToSend = messageToSend.replace(/\<img (.*?)>/g, (imageTag => {
                 const src = regexForSrc.exec(imageTag)[1];
                 if (src.indexOf('data:image/') !== -1) {
-                    imageTag = imageTag.replace(regexForSrc, `src="${files[counter].url}" alt="${files[counter].reference}" class="img-fluid" /`)
+                    imageTag = imageTag.replace(regexForSrc, `src="${files[counter].url}" alt="${files[counter].reference}" class="img-fluid"`)
                 }
                 counter++;
                 return imageTag;
@@ -250,10 +255,12 @@ class BlogEditor extends Component {
                 const previousMessage = originalBlog.message;
                 while ((result = regex.exec(previousMessage)) !== null) { 
                     const imageURL = regexForSrc.exec((result[1]))[1];
-                    if (imageURL.indexOf('firebasestorage.googleapis.com') !== -1 && messageToSend.indexOf(imageURL) === -1) {
-                        const reference = regexForAlt.exec((result[1]));
-                        if (reference !== null) {
-                            await BlogService.deleteImage(reference[1]);
+                    const refRegex = /blogs\%2F(.*?)\?alt/g;
+                    const imageRef = refRegex.exec(imageURL);
+                    if (imageRef !== null) {
+                        const reference = imageRef[1];
+                        if (imageURL.indexOf('firebasestorage.googleapis.com') !== -1 && messageToSend.indexOf(reference) === -1) {
+                            await BlogService.deleteImage(`blogs/${reference}`);
                         }
                     }
                 }
@@ -275,7 +282,7 @@ class BlogEditor extends Component {
                         this.props.onDoneLoading();
                     });
             } else if (action === 'update') {
-                BlogService.updateBlog(originalBlog.blogID, author, title, messageToSend, thumbnailPictureToSend)
+                BlogService.updateBlog(blogID, author, title, messageToSend, thumbnailPictureToSend)
                     .then(() => {
                         toastr.success('Successfully updated a new blog.');
                         this.props.history.push('/blog');
@@ -343,7 +350,7 @@ class BlogEditor extends Component {
                             </div>
                         </div>
                         <div className="row form-group">
-                            <label className="col-2">title</label>
+                            <label className="col-2">Title</label>
                             <div className="col-5">
                                 <input className="form-control" type="text" value={title} onChange={this.handletitleChange} disabled={action === 'view' || action === 'delete'} />
                                 {formSubmitted === true && typeof validations.title !== 'undefined' && (

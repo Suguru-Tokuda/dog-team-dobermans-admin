@@ -14,21 +14,27 @@ class WaitList extends Component {
 
     constructor(props) {
         super(props);
+        const { authenticated } = props;
+        if (authenticated === false) {
+            props.history.push('/login');
+        }
     }
 
     componentDidMount() {
-        this.props.onShowLoading(true, 1);
-        WaitListService.getWaitList()
-            .then(res => {
-                this.setState({ waitRequests: res.data });
-            })
-            .catch(() => {
-                toastr.error('There was an error in loading wait list data');
-            })
-            .finally(() => {
-                this.props.onDoneLoading();
-                this.setState({ loaded: true });
-            });
+        if (this.props.authenticated === true) {
+            this.props.onShowLoading(true, 1);
+            WaitListService.getWaitList()
+                .then(res => {
+                    this.setState({ waitRequests: res.data });
+                })
+                .catch(() => {
+                    toastr.error('There was an error in loading wait list data');
+                })
+                .finally(() => {
+                    this.props.onDoneLoading();
+                    this.setState({ loaded: true });
+                });
+        }
     }
 
     getTable() {

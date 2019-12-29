@@ -66,7 +66,7 @@ export default class HomepageContentService {
     static uploadPicture(imageFile) {
         return new Promise((resolve) => {
             const pictureID = UtilService.generateID(10);
-            const reference = `hompegeContents/news/${pictureID}`;
+            const reference = `hompageContents/news/${pictureID}`;
             const task = storage.ref(reference).put(imageFile);
             task.on('state_changed', 
             (snapshot) => {
@@ -103,7 +103,7 @@ export default class HomepageContentService {
         });
     }
 
-    static deleteVideo(reference) {
+    static deleteFile(reference) {
         const desertRef = storage.ref(reference);
         return desertRef.delete();
     }

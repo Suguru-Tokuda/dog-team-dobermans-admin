@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import BuyersTable from './buyersTable';
 import BuyersService from '../../services/buyersService';
 import BuyerRegistrationModal from './buyerRegistrationModal';
@@ -14,9 +15,18 @@ class Buyers extends Component {
         buyerIDToDelete: undefined,
         buyerToDelete: {}
     };
+
+    constructor(props) {
+        super(props);
+        const { authenticated } = props;
+        if (authenticated === false) {
+            props.history.push('/login');
+        }
+    }
     
     componentDidMount() {
-        this.getBuyers();
+        if (this.props.authenticated === true)
+            this.getBuyers();
     }
 
     getBuyers= () => {
@@ -130,33 +140,38 @@ class Buyers extends Component {
 
     render() {
         const { buyerIDToUpdate, buyerToUpdate, buyerIDToDelete, buyerToDelete } = this.state;
-        return (
-            <React.Fragment>
-                <div className="row">
-                    <div className="col-12">
-                        <div className="card">
-                            <div className="card-body">
-                                {this.getHeader()}
-                                {this.getBuyersTable()}
+        const { authenticated } = this.props;
+        if (authenticated === true) {
+            return (
+                <React.Fragment>
+                    <div className="row">
+                        <div className="col-12">
+                            <div className="card">
+                                <div className="card-body">
+                                    {this.getHeader()}
+                                    {this.getBuyersTable()}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <BuyerRegistrationModal
-                 buyerID={buyerIDToUpdate}
-                 buyerToUpdate={buyerToUpdate}
-                 onBuyerSelected={this.handleBuyerCreated.bind(this)}
-                 onBuyerUpdated={this.handleBuyerUpdated}
-                 onShowLoading={this.props.onShowLoading.bind(this)} 
-                 onDoneLoading={this.props.onDoneLoading.bind(this)} />
-                <BuyerDeleteConfModal
-                 buyerID={buyerIDToDelete}
-                 buyerToDelete={buyerToDelete}
-                 onDeleteCancelBtnClicked={this.hanldeDeleteCancelBtnClicked}
-                 onDoDeleteBtnClicked={this.handleDoDeleteBtnClicked}
-                />
-            </React.Fragment>
-        )
+                    <BuyerRegistrationModal
+                     buyerID={buyerIDToUpdate}
+                     buyerToUpdate={buyerToUpdate}
+                     onBuyerSelected={this.handleBuyerCreated.bind(this)}
+                     onBuyerUpdated={this.handleBuyerUpdated}
+                     onShowLoading={this.props.onShowLoading.bind(this)} 
+                     onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                    <BuyerDeleteConfModal
+                     buyerID={buyerIDToDelete}
+                     buyerToDelete={buyerToDelete}
+                     onDeleteCancelBtnClicked={this.hanldeDeleteCancelBtnClicked}
+                     onDoDeleteBtnClicked={this.handleDoDeleteBtnClicked}
+                    />
+                </React.Fragment>
+            );
+        } else {
+            return <Redirect to="/login" />;
+        }
     }
     
 }
