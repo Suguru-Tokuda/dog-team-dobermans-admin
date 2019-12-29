@@ -11,7 +11,7 @@ const firebaseConfig = {
     storageBucket: api.firebaseConfigParams.storageBucket,
     messagingSenderId: api.firebaseConfigParams.messagingSenderId,
     appId: api.firebaseConfigParams.appId
-  };
+};
 
 firebase.initializeApp(firebaseConfig);
 

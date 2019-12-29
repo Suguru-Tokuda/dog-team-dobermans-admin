@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "dogteamdobermans"
+  },
+  "targets": {
+    "dogteamdobermans": {
+      "hosting": {
+        "admin": [
+          "dogteamdobermans-admin"
+        ]
+      }
+    }
+  }
+}
