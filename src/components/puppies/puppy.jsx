@@ -17,7 +17,7 @@ class Puppy extends Component {
 
     render() {
         const { url } = this.state;
-        const { authenticated } = this.state;
+        const { authenticated } = this.props;
         if (authenticated === true) {
             return (
                 <React.Fragment>
