@@ -91,7 +91,7 @@ class NewsEditorModal extends Component {
                                         useWebWorker: true
                                     };
                                     const compressedFile = await imageCompression(newFile, options);
-                                    const image = await HomepageContentService.uploadPicture(compressedFile);
+                                    const image = await HomepageContentService.uploadPicture(compressedFile, 'news');
                                     files.push(image);
                                 } catch (err) {
                                     toastr.error(err);

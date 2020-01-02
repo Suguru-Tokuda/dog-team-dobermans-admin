@@ -148,27 +148,8 @@ class BlogEditor extends Component {
             delete validations.thumbnail;
             const objectURL = URL.createObjectURL(event.target.files[0]);
             this.setState({ thumbnailPicture: event.target.files[0], tempPictureURL: objectURL, validations: validations });
-            // const reader = new FileReader();
-            // reader.addEventListener('load', () => {
-            //     this.setState({ tempPictureFile: reader.result });
-            // });
-            // reader.readAsDataURL(event.target.files[0]);
         }
     }
-
-    // handleFinishImageCropping = (newFile) => {
-    //     const { tempPictureURL, validations } = this.state;
-    //     if (tempPictureURL !== null) {
-    //         URL.revokeObjectURL(tempPictureURL);
-    //     }
-    //     const objectURL = URL.createObjectURL(newFile);
-    //     delete validations.thumbnail;
-    //     this.setState({ thumbnailPicture: newFile, tempPictureURL: objectURL, validations: validations });
-    // }
-
-    // handleResetTempPictureFile = () => {
-    //     this.setState({ tempPictureFile: null });
-    // }
 
     handleSubmitBtnClicked = async () => {
         this.setState({ formSubmitted: true });
@@ -410,12 +391,6 @@ class BlogEditor extends Component {
                         <Link className="btn btn-secondary ml-2" to="/blog">Cancel</Link>
                     </div>
                 </div>
-                {/* <PictureCropModal
-                    aspect={16/9}
-                    pictureFile={tempPictureFile}
-                    onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
-                    onResetTempPictureFile={this.handleResetTempPictureFile}
-                /> */}
             </React.Fragment>
         );
     }

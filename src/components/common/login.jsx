@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { auth } from '../../services/firebaseService';
+import toastr from 'toastr';
 
 class Login extends Component {
     state = {
@@ -28,11 +29,17 @@ class Login extends Component {
                 })
                 .catch(err => {
                     console.log(err);
+                    toastr.error(`Email and password don't match. Try again.`);
                 })
                 .finally(() => {
                     this.props.onDoneLoading();
                 });
         }
+    }
+
+    handleSubmitByEnter = (e) => {
+        if (e.key === 'Enter')
+            this.handleLoginBtnClicked();
     }
 
     render() {
@@ -52,9 +59,12 @@ class Login extends Component {
                                                 <i className="fa fa-user"></i>
                                             </span>
                                         </div>
-                                        <input className="form-control" type="text" placeholder="Email" vlaue={email} onChange={this.handleSetEmail} />
+                                        <input className="form-control" type="text" placeholder="Email" vlaue={email} onChange={this.handleSetEmail} onKeyUp={this.handleSubmitByEnter} />
                                         {(formSubmitted === true && email === '') && (
-                                            <small className="text-danger">Enter email</small>
+                                            <React.Fragment>
+                                                <br />
+                                                <small className="text-danger">Enter email</small>
+                                            </React.Fragment>
                                         )}
                                     </div>
                                     <div className="input-group mb-4">
@@ -63,9 +73,12 @@ class Login extends Component {
                                                 <i className="fa fa-lock"></i>
                                             </span>
                                         </div>
-                                        <input className="form-control" type="password" value={password} placeholder="Password" onChange={this.handleSetPassword} />
+                                        <input className="form-control" type="password" value={password} placeholder="Password" onChange={this.handleSetPassword} onKeyUp={this.handleSubmitByEnter} />
                                         {(formSubmitted === true && password === '') && (
-                                            <small className="text-danger">Enter password</small>
+                                            <React.Fragment>
+                                                <br />
+                                                <small className="text-danger">Enter password</small>
+                                            </React.Fragment>
                                         )}
                                     </div>
                                     <div className="row">

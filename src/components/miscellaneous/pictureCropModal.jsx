@@ -10,7 +10,7 @@ class PictureCropModal extends Component {
         pictureFileName: '',
         croppedImageUrl: '',
         crop: {
-            unit: "%",
+            unit: "px",
             width: 30,
             aspect: 1
         }

@@ -30,6 +30,17 @@ export default class HomepageContentService {
         return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
     }
 
+    static updateBanner(title, description, picture) {
+        const data = {
+            banner: {
+                title: title,
+                description: description,
+                picture: picture
+            }
+        };
+        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
+    }
+
     static uploadVideo(videoFile) {
         return new Promise((resolve) => {
             const videoID = UtilService.generateID(10);
@@ -63,10 +74,10 @@ export default class HomepageContentService {
         });
     }
 
-    static uploadPicture(imageFile) {
+    static uploadPicture(imageFile, directory) {
         return new Promise((resolve) => {
             const pictureID = UtilService.generateID(10);
-            const reference = `hompageContents/news/${pictureID}`;
+            const reference = `hompageContents/${directory}/${pictureID}`;
             const task = storage.ref(reference).put(imageFile);
             task.on('state_changed', 
             (snapshot) => {

@@ -7,6 +7,7 @@ import Header from './components/common/header';
 import Sidebar from './components/common/sidebar';
 import Login from './components/common/login';
 import Main from './components/main/main';
+import BannerEditor from './components/main/bannerEditor';
 import Puppies from './components/puppies/puppies';
 import Puppy from './components/puppies/puppy';
 import Parent from './components/parents/parent';
@@ -91,6 +92,7 @@ class App extends Component {
               <div className="container-fluid">
                 <Switch>
                   <Route path="/" exact render={(props) => <Main {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                  <Route path="/banner" render={(props) => <BannerEditor {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />} />
                   <Route path="/login" exact render={(props) => <Login {...props} authenticated={authenticated} onLogin={this.onLogin.bind(this)} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                   <Route path="/puppy" render={(props) => <Puppy url="/puppy" {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                   <Route path="/puppies" exact render={(props) => <Puppies {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
