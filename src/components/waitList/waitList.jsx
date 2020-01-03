@@ -107,7 +107,7 @@ class WaitList extends Component {
             const regexForSrc = /src="(.*?)"/;
             const src = regexForSrc.exec(imageTag)[1];
             if (src.indexOf('data:image/') !== -1) {
-                imageTag = imageTag.replace(regexForSrc, `src="${files[counter].url}" alt="${files[counter].reference}" /`)
+                imageTag = imageTag.replace(regexForSrc, `src="${files[counter].url}" alt="${files[counter].reference}"`)
             }
             counter++;
             return imageTag;
