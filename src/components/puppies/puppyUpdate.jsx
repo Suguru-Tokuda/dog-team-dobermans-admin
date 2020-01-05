@@ -28,9 +28,9 @@ class PuppyUpdate extends Component {
                     const dads = [];
                     const moms = [];
                     res.data.forEach(parent => {
-                        if (parent.sex === 'male')
+                        if (parent.gender === 'male')
                             dads.push(parent);
-                        else if (parent.sex === 'female')
+                        else if (parent.gender === 'female')
                             moms.push(parent);
                         });
                     dads.sort((a, b) => {

@@ -105,8 +105,8 @@ class PuppyConfirmation extends Component {
                         <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{params.name}</div>
                     </div>
                     <div className="row form-group">
-                        <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Sex</strong></label>
-                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{params.sex}</div>
+                        <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Gender</strong></label>
+                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{params.gender}</div>
                     </div>
                     <div className="row form-group">
                         <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Type</strong></label>

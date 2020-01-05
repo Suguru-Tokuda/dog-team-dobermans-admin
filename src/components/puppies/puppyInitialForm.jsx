@@ -10,7 +10,7 @@ class PuppyInitialForm extends Component {
         selections: {
             name: '',
             type: '',
-            sex: '',
+            gender: '',
             color: '',
             price: '',
             weight: '',
@@ -22,7 +22,7 @@ class PuppyInitialForm extends Component {
         validations: {
             name: '',
             type: '',
-            sex: '',
+            gender: '',
             color: '',
             price: '',
             weight: '',
@@ -41,7 +41,7 @@ class PuppyInitialForm extends Component {
         super(props);
         if (typeof props.match.params.puppyID !== 'undefined')
             this.state.puppyID = props.match.params.puppyID;
-        this.state.selections.sex = 'male';
+        this.state.selections.gender = 'male';
         this.state.selections.type = 'american';
         this.state.selections.color = 'Black & Tan';
         this.state.dads = props.dads;
@@ -49,7 +49,7 @@ class PuppyInitialForm extends Component {
         if (props.initialParams && Object.keys(props.initialParams).length > 0) {
             this.state.selections.name = props.initialParams.name;
             this.state.selections.type = props.initialParams.type;
-            this.state.selections.sex = props.initialParams.sex;
+            this.state.selections.gender = props.initialParams.gender;
             this.state.selections.color = props.initialParams.color;
             this.state.selections.price = props.initialParams.price;
             this.state.selections.weight = props.initialParams.weight;
@@ -70,7 +70,7 @@ class PuppyInitialForm extends Component {
                     const { selections } = this.state;
                     selections.name = puppyDetail.name;
                     selections.type = puppyDetail.type;
-                    selections.sex = puppyDetail.sex;
+                    selections.gender = puppyDetail.gender;
                     selections.color = puppyDetail.color;
                     selections.price = puppyDetail.price;
                     selections.weight = puppyDetail.weight;
@@ -164,14 +164,14 @@ class PuppyInitialForm extends Component {
     }
 
     handleSetSex = (event) => {
-        const sex = event.target.value;
+        const gender = event.target.value;
         const { selections, validations } = this.state;
-        if (sex !== '') {
-            validations.sex = '';
+        if (gender !== '') {
+            validations.gender = '';
         } else {
-            validations.sex = 'Enter sex';
+            validations.gender = 'Enter gender';
         }
-        selections.sex = sex;
+        selections.gender = gender;
         this.setState({ selections, validations });
     }
 
@@ -318,7 +318,7 @@ class PuppyInitialForm extends Component {
         if (valid === true) {
               puppyDetail.name = selections.name;
               puppyDetail.type = selections.type;
-              puppyDetail.sex = selections.sex;
+              puppyDetail.gender = selections.gender;
               puppyDetail.color = selections.color;
               puppyDetail.price = selections.price;
               puppyDetail.weight = selections.weight;
@@ -367,13 +367,13 @@ class PuppyInitialForm extends Component {
                             </div>
                         </div>
                         <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Sex</label>
+                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Gender</label>
                             <div className="col-5">
-                                <select className={`form-control ${this.getErrorClass('sex')}`} value={selections.sex} onChange={this.handleSetSex}>
+                                <select className={`form-control ${this.getErrorClass('gender')}`} value={selections.gender} onChange={this.handleSetSex}>
                                     <option value="male">M</option>
                                     <option value="female">F</option>
                                 </select>
-                                {this.getErrorMessage('sex')}
+                                {this.getErrorMessage('gender')}
                             </div>
                         </div>
                         <div className="row form-group">

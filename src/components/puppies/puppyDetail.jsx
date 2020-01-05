@@ -39,9 +39,9 @@ class PuppyDetail extends Component {
                 const dads = [];
                 const moms = [];
                 parents.data.forEach(parent => {
-                    if (parent.sex === 'male') {
+                    if (parent.gender === 'male') {
                         dads.push(parent);
-                    } else if (parent.sex === 'female') {
+                    } else if (parent.gender === 'female') {
                         moms.push(parent);
                     }
                 });
@@ -128,10 +128,10 @@ class PuppyDetail extends Component {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th width="10%">Sex</th>
+                                        <th width="10%">Gender</th>
                                         <td width="90%">
-                                            {puppyData.sex && (
-                                                puppyData.sex
+                                            {puppyData.gender && (
+                                                puppyData.gender
                                             )}
                                         </td>
                                     </tr>

@@ -53,9 +53,9 @@ class ParentDeleteConfModal extends Component {
                                 )}
                             </div>
                             <div className="row form-group">
-                                <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Sex</strong></label>
-                                {parentDetail.sex && (
-                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{parentDetail.sex}</div>
+                                <label className="col-xs-12 col-sm-12 col-md-2 col-lg-2"><strong>Gender</strong></label>
+                                {parentDetail.gender && (
+                                    <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{parentDetail.gender}</div>
                                 )}
                             </div>
                             <div className="row form-group">

@@ -129,7 +129,7 @@ class PuppiesTable extends Component {
                 <tr>
                     <th className="pointer" onClick={() => this.sortTable('name')}>Name {this.getSortIcon('name')}</th>
                     <th className="pointer" onClick={() => this.sortTable('dateOfBirth')}>DOB {this.getSortIcon('dateOfBirth')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('sex')}>Sex {this.getSortIcon('sex')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('gender')}>Gender {this.getSortIcon('gender')}</th>
                     <th className="pointer" onClick={() => this.sortTable('weight')}>Weight {this.getSortIcon('weight')}</th>
                     <th className="pointer" onClick={() => this.sortTable('price')}>Price {this.getSortIcon('price')}</th>
                     <th>Picture</th>
@@ -158,7 +158,7 @@ class PuppiesTable extends Component {
                     <tr key={`puppy-${puppy.puppyID}`}>
                         <td>{puppy.name}</td>
                         <td>{moment(puppy.dateOfBirth).format('MM/DD/YYYY')}</td>
-                        <td>{puppy.sex}</td>
+                        <td>{puppy.gender}</td>
                         <td>{puppy.weight}</td>
                         <td>{`$${puppy.price}`}</td>
                         <td>{picture}</td>
@@ -226,7 +226,7 @@ class PuppiesTable extends Component {
                 searchKeywords.forEach(searchKeyword => {
                     if (puppy.name.toLowerCase().indexOf(searchKeyword) !== -1)
                         foundCount++;
-                    if (puppy.sex.toLowerCase() === searchKeyword)
+                    if (puppy.gender.toLowerCase() === searchKeyword)
                         foundCount++;
                     if (puppy.weight === parseFloat(searchKeyword))
                         foundCount++;

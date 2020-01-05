@@ -58,10 +58,10 @@ class PuppyDeleteConfModal extends Component {
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th width="10%">Sex</th>
+                                            <th width="10%">Gender</th>
                                             <td width="90%">
-                                                {puppyDetail.sex && (
-                                                    puppyDetail.sex
+                                                {puppyDetail.gender && (
+                                                    puppyDetail.gender
                                                 )}
                                             </td>
                                         </tr>

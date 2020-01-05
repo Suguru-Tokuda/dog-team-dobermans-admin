@@ -24,18 +24,22 @@ class Parents extends Component {
 
     componentDidMount() {
         if (this.props.authenticated === true) {
-            this.props.onShowLoading(true, 1);
-            ParentsService.getAllParents()
-                .then(res => {
-                    this.setState({ parents: res.data });
-                })
-                .catch(err => {
-                    toastr.error('There was an error in loading parents data');
-                })
-                .finally(() => {
-                    this.props.onDoneLoading();
-                });
+            this.loadParents();
         }
+    }
+
+    loadParents() {
+        this.props.onShowLoading(true, 1);
+        ParentsService.getAllParents()
+            .then(res => {
+                this.setState({ parents: res.data });
+            })
+            .catch(err => {
+                toastr.error('There was an error in loading parents data');
+            })
+            .finally(() => {
+                this.props.onDoneLoading();
+            });
     }
 
     getHeader() {
@@ -138,9 +142,10 @@ class Parents extends Component {
                     puppyToDelete: {},
                     showDeleteModal: false
                 });
-                this.getParents();
+                this.loadParents();
             })
             .catch(err => {
+                console.log(err);
                 toastr.error('There was an error in deleting a parent');
             })
             .finally(() => {

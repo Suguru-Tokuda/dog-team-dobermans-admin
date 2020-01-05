@@ -34,6 +34,7 @@ class ParentDetail extends Component {
             this.props.onShowLoading(true, 1);
             ParentsService.getParent(parentID)
                 .then(res => {
+                    console.log(res);
                     this.setState({ parentDetail: res.data });
                 })
                 .catch(() => {
@@ -99,10 +100,10 @@ class ParentDetail extends Component {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th width="10%">Sex</th>
+                                        <th width="10%">Gender</th>
                                         <td width="90%">
-                                            {parentDetail.sex && (
-                                                parentDetail.sex
+                                            {parentDetail.gender && (
+                                                parentDetail.gender
                                             )}
                                         </td>
                                     </tr>

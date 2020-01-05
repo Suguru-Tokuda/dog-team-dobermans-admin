@@ -10,7 +10,7 @@ class ParentInitialForm extends Component {
         selections: {
             name: '',
             type: '',
-            sex: '',
+            gender: '',
             color: '',
             weight: '',
             description: '',
@@ -19,7 +19,7 @@ class ParentInitialForm extends Component {
         validations: {
             name: '',
             type: '',
-            sex: '',
+            gender: '',
             color: '',
             weight: '',
             description: '',
@@ -35,8 +35,8 @@ class ParentInitialForm extends Component {
             this.state.selections = props.initialParams;
         }
         if (typeof props.match.params.parentID !== 'undefined')
-            this.state.parentID = props.match.params.parentID;
-        this.state.selections.sex = 'male';
+        this.state.parentID = props.match.params.parentID;
+        this.state.selections.gender = 'male';
         this.state.selections.type = 'american';
         this.state.selections.color = 'Black and Tan';
     }
@@ -50,7 +50,7 @@ class ParentInitialForm extends Component {
                     const parentDetail = res.data;
                     selections.name = parentDetail.name;
                     selections.type = parentDetail.type;
-                    selections.sex = parentDetail.sex;
+                    selections.gender = parentDetail.gender;
                     selections.color = parentDetail.color;
                     selections.weight = parentDetail.weight;
                     selections.description = parentDetail.description;
@@ -87,7 +87,7 @@ class ParentInitialForm extends Component {
     }
 
     handleSetName = (event) => {
-        const name= event.target.value.trim();
+        const name= event.target.value;
         const selections = this.state.selections;
         const validations = this.state.validations;
         if (name !== '') {
@@ -113,15 +113,15 @@ class ParentInitialForm extends Component {
     }
 
     handleSetSex = (event) => {
-        const sex = event.target.value;
+        const gender = event.target.value;
         const selections = this.state.selections;
         const validations = this.state.validations;
-        if (sex !== '') {
-            validations.sex = '';
+        if (gender !== '') {
+            validations.gender = '';
         } else {
-            validations.sex = 'Enter sex';
+            validations.gender = 'Enter gender';
         }
-        selections.sex = sex;
+        selections.gender = gender;
         this.setState({ selections, validations });
     }
 
@@ -219,15 +219,15 @@ class ParentInitialForm extends Component {
         }
         this.setState({ validations });
         if (valid === true) {
-            parentDetail.name = selections.name;
-            parentDetail.type = selections.type;
-            parentDetail.sex = selections.sex;
-            parentDetail.color = selections.color;
-            parentDetail.weight = selections.weight;
-            parentDetail.description = selections.description;
-            parentDetail.dateOfBirth = selections.dateOfBirth;
+            const name = selections.name.trim();
+            const dateOfBirth = selections.dateOfBirth;
+            const type = selections.type;
+            const gender = selections.gender;
+            const color = selections.color;
+            const weight = selections.weight;
+            const description = selections.description.trim();
             this.props.onShowLoading(true, 1);
-            ParentsService.updateParent(parentID, parentDetail)
+            ParentsService.updateParent(parentID, name, dateOfBirth, type, gender, color, weight, description)
                 .then(() => {
                     toastr.success('Profile updated');
                     this.props.onCancelBtnClicked();
@@ -267,13 +267,13 @@ class ParentInitialForm extends Component {
                             </div>
                         </div>
                         <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Sex</label>
+                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Gender</label>
                             <div className="col-5">
-                                <select className={`form-control ${this.getErrorClass('sex')}`} value={selections.sex} onChange={this.handleSetSex}>
+                                <select className={`form-control ${this.getErrorClass('gender')}`} value={selections.gender} onChange={this.handleSetSex}>
                                     <option value="male">M</option>
                                     <option value="female">F</option>
                                 </select>
-                                {this.getErrorMessage('sex')}
+                                {this.getErrorMessage('gender')}
                             </div>
                         </div>
                         <div className="row form-group">

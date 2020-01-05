@@ -146,7 +146,7 @@ class ParentsTable extends Component {
             <thead>
                 <tr>
                     <th className="pointer" onClick={() => this.sortTable('name')}>Name {this.getSortIcon('name')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('sex')}>Sex {this.getSortIcon('sex')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('gender')}>Gender {this.getSortIcon('gender')}</th>
                     <th className="pointer" onClick={() => this.sortTable('type')}>Type {this.getSortIcon('type')}</th>
                     <th className="pointer" onClick={() => this.sortTable('weight')}>Weight {this.getSortIcon('weight')}</th>
                     <th className="pointer" onClick={() => this.sortTable('color')}>Color {this.getSortIcon('color')}</th>
@@ -173,7 +173,7 @@ class ParentsTable extends Component {
                 return (
                   <tr key={`parent-${parent.parentID}`}>
                       <td>{parent.name}</td>
-                      <td>{parent.sex}</td>
+                      <td>{parent.gender}</td>
                       <td>{parent.type}</td>
                       <td>{parent.weight}</td>
                       <td>{parent.color}</td>
@@ -241,7 +241,7 @@ class ParentsTable extends Component {
                 searchKeywords.forEach(searchKeyword => {
                     if (parent.name.toLowerCase().indexOf(searchKeyword) !== -1)
                         foundCount++;
-                    if (parent.sex.toLowerCase() === searchKeyword)
+                    if (parent.gender.toLowerCase() === searchKeyword)
                         foundCount++;
                     if (parent.weight === parseFloat(searchKeyword))
                         foundCount++;

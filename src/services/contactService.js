@@ -11,7 +11,7 @@ export default class ContactService {
         return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}`);
     }
 
-    static updateContactdInfo(firstName, lastName, street, city, state, email, phone, contactUsID) {
+    static updateContactdInfo(firstName, lastName, street, city, state, email, phone, contactID) {
         const data = {
             firstName: firstName,
             lastName: lastName,
@@ -21,7 +21,7 @@ export default class ContactService {
             email: email,
             phone: phone
         }
-        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}&contactUsID=${contactUsID}`, data);
+        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}&contactID=${contactID}`, data);
     }
     
 }

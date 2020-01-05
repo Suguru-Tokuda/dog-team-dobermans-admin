@@ -17,11 +17,31 @@ export default class ParentsService {
         return axios.get(`${this.getServiceBase()}parent?parentID=${parentID}&key=${api.API_KEY}`);
     }
 
-    static createParent(parentID, data) {
-        return axios.post(`${this.getServiceBase()}parent?parentID=${parentID}&key=${api.API_KEY}`, data);
+    static createParent(name, dateOfBirth, type, gender, color, weight, description, pictures) {
+        const data = {
+            name: name,
+            dateOfBirth: dateOfBirth,
+            type: type,
+            gender: gender,
+            color: color,
+            weight: weight,
+            description: description,
+            pictures: pictures,
+            live: false
+        };
+        return axios.post(`${this.getServiceBase()}parent?&key=${api.API_KEY}`, data);
     }
 
-    static updateParent(parentID, data) {
+    static updateParent(parentID, name, dateOfBirth, type, gender, color, weight, description) {
+        const data = {
+            name: name,
+            dateOfBirth: dateOfBirth,
+            type: type,
+            gender: gender,
+            color: color,
+            weight: weight,
+            description: description
+        };
         return axios.put(`${this.getServiceBase()}parent?parentID=${parentID}&key=${api.API_KEY}`, data);
     }
 

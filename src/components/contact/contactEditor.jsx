@@ -192,10 +192,10 @@ class ContactUsEditor extends Component {
                     } else {
                         toastr.success('Successfully created contact info');
                     }
-                    this.props.onUpdateContactUsInfo();
-                    this.props.history.push('/contact/view');
+                    this.props.history.push('/contact');
                 })
-                .catch(() => {
+                .catch((err) => {
+                    console.log(err);
                     toastr.error('There was an error in posting contact us data');
                 })
                 .finally(() => {

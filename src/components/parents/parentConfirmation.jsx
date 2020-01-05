@@ -65,8 +65,8 @@ class ParentConfirmation extends Component {
                         <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{params.name}</div>
                     </div>
                     <div className="row form-group">
-                        <label className="col-xs-12 col-sm-12 col-md-1 col-ld-1"><strong>Sex</strong></label>
-                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{params.sex}</div>
+                        <label className="col-xs-12 col-sm-12 col-md-1 col-ld-1"><strong>Gender</strong></label>
+                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{params.gender}</div>
                     </div>
                     <div className="row form-group">
                         <label className="col-xs-12 col-sm-12 col-md-1 col-ld-1"><strong>Type</strong></label>
@@ -100,9 +100,14 @@ class ParentConfirmation extends Component {
                 pictureLinks.push(url);
             }
         }
-        data.pictures = pictureLinks;
-        data.live = false;
-        ParentsService.createParent(data)
+        const name = data.name;
+        const dateOfBirth = data.dateOfBirth;
+        const type = data.type;
+        const gender = data.gender;
+        const color = data.color;
+        const weight = data.weight;
+        const description = data.description;
+        ParentsService.createParent(name, dateOfBirth, type, gender, color, weight, description, pictureLinks)
             .then(() => {
                 toastr.success('New parent create');
             })
