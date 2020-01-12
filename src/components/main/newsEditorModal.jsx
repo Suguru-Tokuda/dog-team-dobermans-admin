@@ -17,10 +17,6 @@ class NewsEditorModal extends Component {
         formSubmitted: false,
     };
 
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         $('#newsEditorModal').on('hidden.bs.modal', () => {
             this.setState({ editing: false });

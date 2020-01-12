@@ -178,7 +178,7 @@ class ParentsTable extends Component {
                       <td>{parent.weight}</td>
                       <td>{parent.color}</td>
                       <td>{moment(parent.dateOfBirth).format('MM/DD/YYYY')}</td>
-                      <td>{parent.live === true ? 'Live' : 'No'}</td>
+                      <td>{parent.live === true ? 'True' : 'False'}</td>
                       <td>{picture}</td>
                       <td>
                         <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(parent.parentID)}><i className="fa fa-search"></i> View</button>

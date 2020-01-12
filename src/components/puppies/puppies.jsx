@@ -66,7 +66,7 @@ class Puppies extends Component {
                  totalItems={this.state.puppies.length}
                  onViewBtnClicked={this.handleViewPuppyBtnClicked.bind(this)}
                  onUpdateBtnClicked={this.handleUpdatePuppyBtnClicked.bind(this)}
-                 onRecordSalesBtnClicked={this.handleRecordSalesBtnClicked.bind(this)}
+                 onTransactionBtnClicked={this.handleRecordSalesBtnClicked.bind(this)}
                  onDeleteBtnClicked={this.handleDeleteBtnClicked.bind(this)}
                  onLiveBtnClicked={this.handleLiveBtnClicked.bind(this)}
                  />

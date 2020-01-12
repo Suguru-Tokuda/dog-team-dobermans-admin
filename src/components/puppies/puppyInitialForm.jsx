@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ConstantsService from '../../services/constantsService';
 import DatePicker from 'react-datepicker';
 import PuppiesService from '../../services/puppiesService';
 import toastr from 'toastr';
@@ -32,7 +33,8 @@ class PuppyInitialForm extends Component {
             dateOfBirth: ''
         },
         formSubmitted: false,
-        colors: ["Black & Tan", "Red", "Blue", "Fawn", "Black (Melanistic)"],
+        colors: ConstantsService.getDobermanColors(),
+        dobermanTypes: ConstantsService.getDobermanTypes(),
         dads: [],
         moms: []
     };
@@ -42,7 +44,7 @@ class PuppyInitialForm extends Component {
         if (typeof props.match.params.puppyID !== 'undefined')
             this.state.puppyID = props.match.params.puppyID;
         this.state.selections.gender = 'male';
-        this.state.selections.type = 'american';
+        this.state.selections.type = 'American';
         this.state.selections.color = 'Black & Tan';
         this.state.dads = props.dads;
         this.state.moms = props.moms;
@@ -119,6 +121,12 @@ class PuppyInitialForm extends Component {
     getErrorMessage(key) {
         const { validations, formSubmitted } = this.state;
         return (formSubmitted === true && validations[key] !== '') ? <small className="text-danger">{validations[key]}</small> : null;
+    }
+
+    getDobermanTypeOptions = () => {
+        return this.state.dobermanTypes.map(type => {
+            return <option key={type.value} value={type.value}>{type.label}</option>;
+        });
     }
 
     getColorOptions = () => {
@@ -291,7 +299,7 @@ class PuppyInitialForm extends Component {
             const newPuppy = this.state.selections;
             newPuppy.sold = false;
             newPuppy.buyerID = null;
-            newPuppy.payedAmount = 0;
+            newPuppy.paidAmount = 0;
             newPuppy.live = false;
             newPuppy.soldDate = null;
             newPuppy.paidAmount = 0;
@@ -380,8 +388,7 @@ class PuppyInitialForm extends Component {
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Type</label>
                             <div className="col-5">
                                 <select className={`form-control ${this.getErrorClass('type')}`} value={selections.type} onChange={this.handleSetType}>
-                                    <option value="american">American</option>
-                                    <option value="european">European</option>
+                                    {this.getDobermanTypeOptions()}
                                 </select>
                                 {this.getErrorMessage('type')}
                             </div>

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import ReactCrop from 'react-image-crop';
-import imageCompression from 'browser-image-compression';
 import $ from 'jquery';
 import toastr from 'toastr';
 

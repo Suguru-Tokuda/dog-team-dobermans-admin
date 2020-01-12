@@ -5,10 +5,6 @@ import BlogEditor from './blogEditor';
 
 class Blog extends Component {
 
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         const { authenticated } = this.props;
         if (authenticated === true) {

@@ -29,10 +29,6 @@ class ContactUsEditor extends Component {
         formSubmitted: false
     };
 
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         this.props.onShowLoading(true, 1);
         ContactService.getContactusInfo()

@@ -14,11 +14,7 @@ class OurTeamEditor extends Component {
         pictureIndex: -1,
         formSubmitted: false
     };
-
-    constructor(props) {
-        super(props);
-    }
-
+    
     componentDidMount() {
         this.props.onShowLoading(true, 1);
         AboutUsService.getAboutUs()

@@ -5,6 +5,7 @@ import * as serviceWorker from './serviceWorker';
 import './css/coreui-dark.css';
 import 'toastr/build/toastr.min.css';
 import 'font-awesome/css/font-awesome.css';
+import '@fortawesome/fontawesome-free/css/all.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-image-crop/dist/ReactCrop.css';
 import 'react-trumbowyg/dist/trumbowyg.min.css';

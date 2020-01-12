@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ConstantsService from '../../services/constantsService';
 import DatePicker from 'react-datepicker';
 import ParentsService from '../../services/parentsService';
 import toastr from 'toastr';
@@ -26,7 +27,8 @@ class ParentInitialForm extends Component {
             dateOfBirth: ''
         },
         formSubmitted: false,
-        colors: ["Black and Tan", "Red", "Blue", "Fawn", "Black (Melanistic)"]
+        colors: ConstantsService.getDobermanColors(),
+        dobermanTypes: ConstantsService.getDobermanTypes()
     };
 
     constructor(props) {
@@ -37,7 +39,7 @@ class ParentInitialForm extends Component {
         if (typeof props.match.params.parentID !== 'undefined')
         this.state.parentID = props.match.params.parentID;
         this.state.selections.gender = 'male';
-        this.state.selections.type = 'american';
+        this.state.selections.type = 'American';
         this.state.selections.color = 'Black and Tan';
     }
 
@@ -78,6 +80,12 @@ class ParentInitialForm extends Component {
     getErrorMessage(key) {
         const validations = this.state.validations;
         return (this.state.formSubmitted === true && validations[key] !== '' ? <small className="text-danger">{validations[key]}</small> : null);
+    }
+
+    getDobermanTypeOptions = () => {
+        return this.state.dobermanTypes.map(type => {
+            return <option key={type.value} value={type.value}>{type.label}</option>;
+        });
     }
 
     getColorOptions = () => {
@@ -207,7 +215,7 @@ class ParentInitialForm extends Component {
         event.preventDefault();
         this.setState({ formSubmitted: true });
         let valid = true;
-        const { parentID, parentDetail, selections, validations } = this.state;
+        const { parentID, selections, validations } = this.state;
         for (const key in selections) {
             const selection = selections[key];
             if (selection === '' || selection === 0 || selection === null) {
@@ -270,8 +278,8 @@ class ParentInitialForm extends Component {
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Gender</label>
                             <div className="col-5">
                                 <select className={`form-control ${this.getErrorClass('gender')}`} value={selections.gender} onChange={this.handleSetSex}>
-                                    <option value="male">M</option>
-                                    <option value="female">F</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
                                 </select>
                                 {this.getErrorMessage('gender')}
                             </div>
@@ -280,8 +288,7 @@ class ParentInitialForm extends Component {
                             <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Type</label>
                             <div className="col-5">
                                 <select className={`form-control ${this.getErrorClass('type')}`} value={selections.type} onChange={this.handleSetType}>
-                                    <option value="american">American</option>
-                                    <option value="european">European</option>
+                                    {this.getDobermanTypeOptions()}
                                 </select>
                                 {this.getErrorMessage('type')}
                             </div>

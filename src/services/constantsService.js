@@ -239,4 +239,16 @@ export default class ConstantsService {
             }
         ]
     }
+
+    static getDobermanTypes() {
+        return [
+            { label: "American", value: "American" },
+            { label: "European", value: "European" },
+            { label: "American/European", value: "American/European" }
+        ];
+    }
+
+    static getDobermanColors() {
+        return ["Black and Tan", "Red", "Blue", "Fawn", "Black (Melanistic)"];
+    }
 }

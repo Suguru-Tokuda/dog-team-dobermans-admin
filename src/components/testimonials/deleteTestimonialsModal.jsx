@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
-import TestimonialService from '../../services/testimonialService';
 
 class DeleteTestimonialsModa extends Component {
     state = {
         testimonials: []
     };
-
-    constructor(props) {
-        super(props);
-    }
 
     static getDerivedStateFromProps(nextProps, prevState) {
         if (JSON.stringify(nextProps.testimonials) !== JSON.stringify(prevState.testimonials)) {
