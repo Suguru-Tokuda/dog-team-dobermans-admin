@@ -17,6 +17,10 @@ export default class PuppiesService {
         return axios.get(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyID=${puppyID}`);
     }
 
+    static getPuppiesForBuyerID(buyerID) {
+        return axios.get(`${this.getServiceBase()}puppies?key=${api.API_KEY}&buyerID=${buyerID}`);
+    }
+
     static createPuppy(data) {
         return axios.post(`${this.getServiceBase()}puppy?key=${api.API_KEY}`, data);
     }

@@ -130,7 +130,6 @@ class BuyersTable extends Component {
                     <th className="pointer" onClick={() => this.sortTable('phone')}>Phone {this.getSortIcon('phone')}</th>
                     <th className="pointer" onClick={() => this.sortTable('city')}>City {this.getSortIcon('city')}</th>
                     <th className="pointer" onClick={() => this.sortTable('state')}>State {this.getSortIcon('state')}</th>
-                    <th className="pinter" onClick={() => this.sortTable('hasBought')}>Has bought {this.getSortIcon('hasBought')}</th>
                     <th>Action</th>
                 </tr>
                 <tr>
