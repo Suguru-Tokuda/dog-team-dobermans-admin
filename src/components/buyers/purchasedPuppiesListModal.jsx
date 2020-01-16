@@ -6,7 +6,7 @@ import toastr from 'toastr';
 
 class PurchasedPuppiesModal extends Component {
     state = {
-        buyerID: '',
+        buyerID: undefined,
         buyerDetail: {},
         puppies: [],
         updateData: false
@@ -14,7 +14,7 @@ class PurchasedPuppiesModal extends Component {
 
     componentDidUpdate() {
         const { updateData, buyerID } = this.state;
-        if (updateData === true) {
+        if (updateData === true && buyerID !== undefined) {
             this.props.onShowLoading(true, 1);
             PuppiesService.getPuppiesForBuyerID(buyerID)
                 .then(res => {

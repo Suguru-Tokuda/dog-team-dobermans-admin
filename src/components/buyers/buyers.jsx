@@ -4,6 +4,7 @@ import BuyersTable from './buyersTable';
 import BuyersService from '../../services/buyersService';
 import BuyerRegistrationModal from './buyerRegistrationModal';
 import BuyerDeleteConfModal from './buyerDeleteConfModal';
+import PurchasedPuppiesListModal from './purchasedPuppiesListModal';
 import toastr from 'toastr';
 import $ from 'jquery';
 
@@ -13,7 +14,9 @@ class Buyers extends Component {
         buyerToUpdate: {},
         buyers: [],
         buyerIDToDelete: undefined,
-        buyerToDelete: {}
+        buyerToDelete: {},
+        selectedBuyerForPurchasedPuppies: {},
+        selectedBuyerIDForPurchasedPuppies: undefined
     };
 
     constructor(props) {
@@ -33,11 +36,7 @@ class Buyers extends Component {
         this.props.onShowLoading(true, 1);
         BuyersService.getBuyers()
             .then(res => {
-                const buyers = res.data.map(buyer => {
-                    buyer.hasBought = buyer.puppyIDs.length > 0 ? true : false;
-                    return buyer;
-                });
-                this.setState({ buyers });
+                this.setState({ buyers: res.data });
             })
             .catch(() => {
                 toastr.error('There was an error in loading buyers data');
@@ -73,6 +72,7 @@ class Buyers extends Component {
                  totalItems={buyers.length}
                  onUpdateBtnClicked={this.handleUpdateBtnClicked.bind(this)}
                  onDeleteBtnClicked={this.handleDeleteBtnClicked.bind(this)}
+                 onSeePurchasedPuppiesBtnClicked={this.handleSeePurchasedPuppiesBtnClicled.bind(this)}
                 />
             );
         }
@@ -130,6 +130,16 @@ class Buyers extends Component {
             });
     }
 
+    handleSeePurchasedPuppiesBtnClicled = (buyerID, buyerDetail) => {
+        console.log(buyerID);
+        console.log(JSON.parse(buyerDetail));
+        // this.setState({
+        //     selectedBuyerIDForPurchasedPuppies: buyerID,
+        //     selectedBuyerForPurchasedPuppies: buyerDetail
+        // });
+        // $('#purchasedPuppiesModal').modal('show');
+    }
+
     handleBuyerCreated = () => {
         this.getBuyers();
     }
@@ -139,7 +149,7 @@ class Buyers extends Component {
     }
 
     render() {
-        const { buyerIDToUpdate, buyerToUpdate, buyerIDToDelete, buyerToDelete } = this.state;
+        const { buyerIDToUpdate, buyerToUpdate, buyerIDToDelete, buyerToDelete, selectedBuyerIDForPurchasedPuppies, selectedBuyerForPurchasedPuppies } = this.state;
         const { authenticated } = this.props;
         if (authenticated === true) {
             return (
@@ -166,6 +176,12 @@ class Buyers extends Component {
                      buyerToDelete={buyerToDelete}
                      onDeleteCancelBtnClicked={this.hanldeDeleteCancelBtnClicked}
                      onDoDeleteBtnClicked={this.handleDoDeleteBtnClicked}
+                    />
+                    <PurchasedPuppiesListModal
+                        buyerID={selectedBuyerIDForPurchasedPuppies}
+                        buyerDetail={selectedBuyerForPurchasedPuppies}
+                        onShowLoading={this.props.onShowLoading.bind(this)}
+                        onDoneLoading={this.props.onDoneLoading.bind(this)}
                     />
                 </React.Fragment>
             );
