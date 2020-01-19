@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import PuppiesService from '../../services/puppiesService';
 import $ from 'jquery';
 import moment from 'moment';
@@ -15,6 +16,7 @@ class PurchasedPuppiesModal extends Component {
     componentDidUpdate() {
         const { updateData, buyerID } = this.state;
         if (updateData === true && buyerID !== undefined) {
+            this.setState({ updateData: false });
             this.props.onShowLoading(true, 1);
             PuppiesService.getPuppiesForBuyerID(buyerID)
                 .then(res => {
@@ -51,6 +53,7 @@ class PurchasedPuppiesModal extends Component {
                     <th>Date of Birth</th>
                     <th>Price</th>
                     <th>Purchase Date</th>
+                    <th>Link</th>
                 </tr>
             </thead>
         );
@@ -64,6 +67,9 @@ class PurchasedPuppiesModal extends Component {
                         <td>{moment(puppy.dateOfBirth).format('MM/DD/YYYY')}</td>
                         <td>{`$${puppy.price}`}</td>
                         <td>{moment(puppy.soldDate).format('MM/DD/YYYY')}</td>
+                        <td>
+                            <a target="_blank" href={`/puppy/view/${puppy.puppyID}`} className="btn btn-sm btn-success">View</a>
+                        </td>
                     </tr>
                 )
             });
