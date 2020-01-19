@@ -67,6 +67,7 @@ class Puppies extends Component {
                  onViewBtnClicked={this.handleViewPuppyBtnClicked.bind(this)}
                  onUpdateBtnClicked={this.handleUpdatePuppyBtnClicked.bind(this)}
                  onTransactionBtnClicked={this.handleRecordSalesBtnClicked.bind(this)}
+                 onCancelTransactionBtnClicked={this.handleCancelTransactionBtnClicked.bind(this)}
                  onDeleteBtnClicked={this.handleDeleteBtnClicked.bind(this)}
                  onLiveBtnClicked={this.handleLiveBtnClicked.bind(this)}
                  />
@@ -84,6 +85,21 @@ class Puppies extends Component {
     
     handleRecordSalesBtnClicked = (puppyID) => {
         this.props.history.push(`/puppy/sales/${puppyID}`);
+    }
+
+    handleCancelTransactionBtnClicked = (puppyID) => {
+        this.props.onShowLoading(true, 1);
+        PuppiesService.cancelTransaction(puppyID)
+            .then(() => {
+                toastr.success('Successfully cancelled the transaction');
+                this.getPuppies();
+            })
+            .catch(err => {
+                toastr.error('There was an error in cancelling the transaction');
+            })
+            .finally(() => {
+                this.props.onDoneLoading(true, 1);
+            });
     }
 
     handleLiveBtnClicked = (puppyID) => {

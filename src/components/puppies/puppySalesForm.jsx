@@ -77,8 +77,8 @@ class PuppySalesForm extends Component {
             puppyDetail.paidAmount = paymentAmount;
             puppyDetail.buyerID = buyerID;
             this.props.onShowLoading(true, 1);
-            PuppiesService.updatePuppy(puppyDetail.puppyID, puppyDetail)
-                .then(res => {
+            PuppiesService.processTransaction(puppyDetail.puppyID, buyerID, paymentAmount)
+                .then(() => {
                     toastr.success('Successfully updated the puppy data');
                     this.props.history.push('/puppies');
                 })
