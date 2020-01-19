@@ -29,6 +29,19 @@ export default class PuppiesService {
         return axios.put(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyID=${puppyID}`, data);
     }
 
+    static processTransaction(puppyID, buyerID, paidAmount) {
+        const data = {
+            puppyID: puppyID,
+            buyerID: buyerID,
+            paidAmount: paidAmount
+        };
+        return axios.post(`${this.getServiceBase()}puppies/processTransaction?key=${api.API_KEY}`, data);
+    }
+
+    static cancelTransaction(puppyID) {
+        return axios.post(`${this.getServiceBase()}puppies/cancelTransaction?key=${api.API_KEY}&puppyID=${puppyID}`);
+    }
+
     static deletePuppy(puppyID) {
         return axios.delete(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyID=${puppyID}`);
     }
