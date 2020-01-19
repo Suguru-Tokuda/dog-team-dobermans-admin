@@ -131,13 +131,11 @@ class Buyers extends Component {
     }
 
     handleSeePurchasedPuppiesBtnClicled = (buyerID, buyerDetail) => {
-        console.log(buyerID);
-        console.log(JSON.parse(buyerDetail));
-        // this.setState({
-        //     selectedBuyerIDForPurchasedPuppies: buyerID,
-        //     selectedBuyerForPurchasedPuppies: buyerDetail
-        // });
-        // $('#purchasedPuppiesModal').modal('show');
+        this.setState({
+            selectedBuyerIDForPurchasedPuppies: buyerID,
+            selectedBuyerForPurchasedPuppies: JSON.parse(buyerDetail)
+        });
+        $('#purchasedPuppiesModal').modal('show');
     }
 
     handleBuyerCreated = () => {
@@ -178,6 +176,7 @@ class Buyers extends Component {
                      onDoDeleteBtnClicked={this.handleDoDeleteBtnClicked}
                     />
                     <PurchasedPuppiesListModal
+                        {...this.props}
                         buyerID={selectedBuyerIDForPurchasedPuppies}
                         buyerDetail={selectedBuyerForPurchasedPuppies}
                         onShowLoading={this.props.onShowLoading.bind(this)}
