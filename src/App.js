@@ -26,21 +26,27 @@ class App extends Component {
   state = {
     isLoading: false,
     alertsService: null,
-    authenticated: false
+    authenticated: false,
+    authenticationChecked: false
   };
 
   constructor(props) {
     super(props);
     this.state.alertsService = new AlertsService();
+
   }
 
   componentDidMount() {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        this.setState({ authenticated: true });
+        this.setState({ 
+          authenticated: true,
+          user: user
+         });
       } else {
         this.setState({ authenticated: false });
       }
+      this.setState({ authenticationChecked: true });
     });
   }
   
@@ -81,7 +87,7 @@ class App extends Component {
   }
 
   render() {
-    const { authenticated } = this.state;
+    const { authenticated, authenticationChecked } = this.state;
     return (
       <BrowserRouter>
         <div className={`app ${this.getUIBlockerClass()}`}>
@@ -90,23 +96,25 @@ class App extends Component {
             <Sidebar authenticated={authenticated} />
             <main className="main">
               <div className="container-fluid">
-                <Switch>
-                  <Route path="/" exact render={(props) => <Main {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                  <Route path="/banner" render={(props) => <BannerEditor {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />} />
-                  <Route path="/login" exact render={(props) => <Login {...props} authenticated={authenticated} onLogin={this.onLogin.bind(this)} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                  <Route path="/puppy" render={(props) => <Puppy url="/puppy" {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                  <Route path="/puppies" exact render={(props) => <Puppies {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                  <Route path="/parent" render={(props) => <Parent url="/parent" {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                  <Route path="/parents" exact render={(props) => <Parents {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                  <Route path="/buyers" exact render={(props) => <Buyers {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                  <Route path="/testimonials" exact render={(props) => <Testimonials {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                  <Route path="/wait-list" exact render={(props) => <WaitList {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                  <Route path="/about-dobermans" exact render={(props) => <AboutDobermans {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                  <Route path="/about-us" render={(props) => <AboutUs {...props} authenticated={authenticated} url="/about-us" onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                  <Route path="/blog" render={(props) => <Blog {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                  <Route path="/contact" render={(props) => <Contact url="/contact" {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                  <Route render={(props) => <NotFound {...props} />} />
-                </Switch>
+                {authenticationChecked === true && (
+                  <Switch>
+                      <Route path="/" exact render={(props) => <Main {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                      <Route path="/login" exact render={(props) => <Login {...props} authenticated={authenticated} onLogin={this.onLogin.bind(this)} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                      <Route path="/banner" render={(props) => <BannerEditor {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                      <Route path="/puppy" render={(props) => <Puppy url="/puppy" {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                      <Route path="/puppies" exact render={(props) => <Puppies {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                      <Route path="/parent" render={(props) => <Parent url="/parent" {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                      <Route path="/parents" exact render={(props) => <Parents {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                      <Route path="/buyers" exact render={(props) => <Buyers {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                      <Route path="/testimonials" exact render={(props) => <Testimonials {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                      <Route path="/wait-list" exact render={(props) => <WaitList {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                      <Route path="/about-dobermans" exact render={(props) => <AboutDobermans {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                      <Route path="/about-us" render={(props) => <AboutUs {...props} authenticated={authenticated} url="/about-us" onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                      <Route path="/blog" render={(props) => <Blog {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                      <Route path="/contact" render={(props) => <Contact url="/contact" {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                      <Route render={(props) => <NotFound {...props} />} />
+                  </Switch>
+                )}
                 {this.getSpinner()}
               </div>
             </main>
