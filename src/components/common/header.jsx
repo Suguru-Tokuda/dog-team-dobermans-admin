@@ -8,7 +8,6 @@ class AdminHeader extends Component {
         this.props.onShowLoading(true, 1);
         auth.signOut()
             .then(res => {
-                console.log(res);
                 this.props.onSignOut(false);
             })
             .catch(err => {

@@ -18,6 +18,13 @@ firebase.initializeApp(firebaseConfig);
 const storage = firebase.storage();
 const auth = firebase.auth();
 
+auth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
+    .then(() => {
+    })
+    .catch(err => {
+        console.log(err);
+    });
+
 export {
     storage, auth, firebase as default
 };
