@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { auth } from '../../services/firebaseService';
 import toastr from 'toastr';
+import * as siteLogo from '../../assets/img/site_logo.PNG';
 
 class Login extends Component {
     state = {
@@ -52,8 +53,8 @@ class Login extends Component {
                             <div className="card-group">
                                 <div className="card p-4">
                                     <div className="card-body">
-                                        <h1>Dog Team Dobermans Admin Login</h1>
-                                        <p className="text-muted">Sign In to your account</p>
+                                        <img src={siteLogo} alt={siteLogo} width="200" style={{filter: 'invert(90%)'}}></img>
+                                        <p className="text-muted mt-3">Sign In to your account</p>
                                         <div className="input-group mb-3">
                                             <div className="input-group-prepend">
                                                 <span className="input-group-text">
