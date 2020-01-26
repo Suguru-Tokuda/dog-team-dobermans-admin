@@ -62,7 +62,7 @@ class ParentPictureForm extends Component {
             pictureAddCard = (
                 <div className="col-3">
                     <label htmlFor="picture-upload" className="custom-file-upload">
-                        <i className="fa fa-cloud-upload"></i> Upload
+                        <i className="fa fa-picture-o"></i> Select
                     </label>
                     <input id="picture-upload" type="file" accept="image/*" onChange={this.handleImageChange} />
                 </div>

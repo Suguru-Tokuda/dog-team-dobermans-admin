@@ -227,20 +227,15 @@ class ParentInitialForm extends Component {
         }
         this.setState({ validations });
         if (valid === true) {
-            const name = selections.name.trim();
-            const dateOfBirth = selections.dateOfBirth;
-            const type = selections.type;
-            const gender = selections.gender;
-            const color = selections.color;
-            const weight = selections.weight;
-            const description = selections.description.trim();
+            selections.name = selections.name.trim();
+            selections.description = selections.description.trim();
             this.props.onShowLoading(true, 1);
-            ParentsService.updateParent(parentID, name, dateOfBirth, type, gender, color, weight, description)
+            ParentsService.updateParent(parentID, selections)
                 .then(() => {
                     toastr.success('Profile updated');
-                    this.props.onCancelBtnClicked();
+                    this.props.history.push(`/parent/update/${parentID}`);
                 })
-                .catch(() => {
+                .catch((err) => {
                     toastr.error('There was an error in updating parent data');
                 })
                 .finally(() => {

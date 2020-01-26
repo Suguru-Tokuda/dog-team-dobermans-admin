@@ -51,7 +51,7 @@ class ParentPictureUpdateForm extends Component {
             pictureAddCard = (
                 <div className="col-12">
                     <label htmlFor="picture-upload" className="custom-file-upload">
-                        <i className="fa fa-cloud-upload"></i> Upload
+                        <i className="fa fa-picture-o"></i> Upload
                     </label>
                     <input id="picture-upload" type="file" accept="image/*" onChange={this.handleImageChange} />
                 </div>
@@ -106,18 +106,20 @@ class ParentPictureUpdateForm extends Component {
             });
     }
 
-    handleDeletePicture = async (index) => {
+    handleDeletePicture = (index) => {
         const { parentID, parentDetail } = this.state;
-        const pictureToDelete = parentDetail.pictures[index];
+        const pictureToDelete = JSON.parse(JSON.stringify(parentDetail.pictures[index]));
         parentDetail.pictures.splice(index, 1);
         ParentsService.deletePicture(pictureToDelete.reference)
             .then(() => {
-                ParentsService.updateParents(parentID, parentDetail)
+                parentDetail.pictures.splice(index, 1);
+                ParentsService.updateParent(parentID, parentDetail)
                     .then(() => {
                         toastr.success('Successfully deleted the picture');
                         this.setState({ parentDetail });
                     })
-                    .catch(() => {
+                    .catch((err) => {
+                        console.log(err);
                         toastr.error('There was an error in deleting a picture');
                     });
             })

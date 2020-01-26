@@ -32,6 +32,7 @@ class Parents extends Component {
         this.props.onShowLoading(true, 1);
         ParentsService.getAllParents()
             .then(res => {
+                console.log(res.data);
                 this.setState({ parents: res.data });
             })
             .catch(err => {
@@ -92,14 +93,19 @@ class Parents extends Component {
             }
         });
         parentToUpdate.live = !parentToUpdate.live;
+        delete parentToUpdate.parentID;
         this.props.onShowLoading(true, 1);
         ParentsService.updateParent(parentID, parentToUpdate)
             .then(() => {
+                parentToUpdate.parentID = parentID;
                 parents[index] = parentToUpdate;
                 this.setState({ parents });
             })
             .catch(() => {
                 toastr.error('There was an error in update a parent');
+            })
+            .finally(() => {
+                this.props.onDoneLoading();
             });
     }
 
@@ -152,30 +158,6 @@ class Parents extends Component {
                 this.props.onDoneLoading();
             });
     }   
-
-    handleLiveBtnClicked = (parentID) => {
-        const parents = JSON.parse(JSON.stringify(this.state.parents));
-        let parentToUpdate, index;
-        parents.forEach((puppy, i) => {
-            if (puppy.parentID === parentID) {
-                parentToUpdate = puppy;
-                index = i;
-            }
-        });
-        parentToUpdate.live = !parentToUpdate.live;
-        this.props.onShowLoading(true, 1);
-        ParentsService.updateParent(parentID, parentToUpdate)
-            .then(() => {
-                parents[index] = parentToUpdate;
-                this.setState({ parents });
-            })
-            .catch(() => {
-                toastr.error('There was an error in');
-            })
-            .finally(() => {
-                this.props.onDoneLoading();
-            });
-    }
 
     render() {
         const { parentIDToDelete, parentToDelete, showDeleteModal } = this.state;
