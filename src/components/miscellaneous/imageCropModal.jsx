@@ -4,7 +4,7 @@ import imageCompression from 'browser-image-compression';
 import $ from 'jquery';
 import toastr from 'toastr';
 
-let image, cropper = null;
+let image, cropper, croppedURL = null;
 
 class ImageCropModal extends Component {
     state = {
@@ -53,22 +53,22 @@ class ImageCropModal extends Component {
                     aspectRatio: this.state.aspectRatio,
                     cropend() {
                         if (cropper) {
-                            const { croppedURL } = state;
                             cropper.getCroppedCanvas().toBlob((blob) => {
                                 if (croppedURL !== null) {
                                     URL.revokeObjectURL(croppedURL);
                                 }
+                                croppedURL = URL.createObjectURL(blob);
                                 state.setState({ croppedURL: URL.createObjectURL(blob) });
                             });
                         }
                     },
                     zoom() {
                         if (cropper) {
-                            const { croppedURL } = state;
                             cropper.getCroppedCanvas().toBlob((blob) => {
                                 if (croppedURL !== null) {
                                     URL.revokeObjectURL(croppedURL);
                                 }
+                                croppedURL = URL.createObjectURL(blob);
                                 state.setState({ croppedURL: URL.createObjectURL(blob) });
                             });
                         }
