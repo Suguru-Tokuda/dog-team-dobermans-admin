@@ -7,6 +7,7 @@ import 'toastr/build/toastr.min.css';
 import 'font-awesome/css/font-awesome.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import 'react-datepicker/dist/react-datepicker.css';
+import 'cropperjs/dist/cropper.css';
 import 'react-image-crop/dist/ReactCrop.css';
 import 'react-trumbowyg/dist/trumbowyg.min.css';
 import 'react-quill/dist/quill.snow.css'; 

@@ -80,6 +80,10 @@ input[type="file"] {
   grid-gap: 20px;
 }
 
+.img-container img {
+  max-width: 100%;
+}
+
 /*
 *
 * ==========================================
