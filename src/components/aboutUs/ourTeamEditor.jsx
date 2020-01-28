@@ -4,7 +4,7 @@ import AboutUsService from '../../services/aboutUsService';
 import toastr from 'toastr';
 import $ from 'jquery';
 import SortableOurTeamRows from './sortableOurTeamRows';
-import PictureCropModal from '../miscellaneous/pictureCropModal';
+import ImageCropModal from '../miscellaneous/imageCropModal';
 
 class OurTeamEditor extends Component {
     state = {
@@ -116,14 +116,10 @@ class OurTeamEditor extends Component {
 
     handleImageChanged = (index, event) => {
         if (event.target.files && event.target.files[0]) {
-            const reader = new FileReader();
-            reader.addEventListener('load', () => {
-                this.setState({
-                    tempPictureFile: reader.result
-                });
+            this.setState({ 
+                tempPictureFile: event.target.files[0],
+                pictureIndex: index
             });
-            this.setState({ pictureIndex: index });
-            reader.readAsDataURL(event.target.files[0]);
         }
         $('#picture-upload').val(null);
     }
@@ -285,11 +281,14 @@ class OurTeamEditor extends Component {
                         <button type="submit" className="btn btn-primary ml-2" onClick={this.handleSubmitBtnClicked}>{this.getSubmitBtnLabel()}</button>
                     </div>
                 </div>
-                <PictureCropModal
-                    aspect={1/1}
-                    pictureFile={tempPictureFile}
+                <ImageCropModal
+                    imageFile={tempPictureFile}
                     onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
-                    onResetTempPictureFile={this.handleResetTempPictureFile} />
+                    handleResetTempPictureFile={this.handleResetTempPictureFile}
+                    onShowLoading={this.props.onShowLoading.bind(this)} 
+                    onDoneLoading={this.props.onDoneLoading.bind(this)}
+                    aspectRatio={1}
+                />
             </React.Fragment>
         );
     }

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import SortablePictureList from '../miscellaneous/sortablePictureList';
 import AboutUsService from '../../services/aboutUsService';
 import toastr from 'toastr';
-import PictureCropModal from '../miscellaneous/pictureCropModal';
+import ImageCropModal from '../miscellaneous/imageCropModal';
 import ParentsService from '../../services/parentsService';
 
 class AboutUsPictureForm extends Component {
@@ -37,7 +37,7 @@ class AboutUsPictureForm extends Component {
             pictureAddCard = (
                 <div className="col-3">
                     <label htmlFor="picture-upload" className="custom-file-upload">
-                        <i className="fa fa-cloud-upload"></i> Upload
+                        <i className="fa fa-picture-o"></i> Upload
                     </label>
                     <input id="picture-upload" type="file" accept="image/*" onChange={this.handleImageChange} />
                 </div>
@@ -113,11 +113,13 @@ class AboutUsPictureForm extends Component {
                         <Link className="btn btn-sm btn-secondary" to={`/aboutUs/update/`}>Back</Link>
                     </div>
                 </div>
-                <PictureCropModal
+                <ImageCropModal
+                    imageFile={tempPictureFile}
+                    onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
+                    handleResetTempPictureFile={this.handleResetTempPictureFile}
+                    onShowLoading={this.props.onShowLoading.bind(this)} 
+                    onDoneLoading={this.props.onDoneLoading.bind(this)}
                     aspect={16/9}
-                    pictureFile={tempPictureFile}
-                    onFinishImageCropping={this.handleFinishImageCroppping.bind(this)}
-                    onResetTempPictureFile={this.handleResetTempPictureFile}
                 />
             </React.Fragment>
         )

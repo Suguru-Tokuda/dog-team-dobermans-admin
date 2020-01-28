@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import ParentsService from '../../services/parentsService';
 import SortablePictureList from '../miscellaneous/sortablePictureList';
 import toastr from 'toastr';
-import PictureCropModal from '../miscellaneous/pictureCropModal';
+import ImageCropModal from '../miscellaneous/imageCropModal';
 
 class ParentPictureUpdateForm extends Component {
     state = {
@@ -76,14 +76,7 @@ class ParentPictureUpdateForm extends Component {
 
     handleImageChange = async (event) => {
         if (event.target.files && event.target.files[0]) {
-            const reader = new FileReader();
-            reader.addEventListener('load', () => {
-                this.setState({
-                    tempPictureFile: reader.result
-                });
-            });
-            this.setState({ tempPictureFileName: event.target.files[0].name });
-            reader.readAsDataURL(event.target.files[0]);
+            this.setState({ tempPictureFile: event.target.files[0] });
         }
     }
 
@@ -147,11 +140,13 @@ class ParentPictureUpdateForm extends Component {
                         <Link className="btn btn-sm btn-secondary" to={`/parent/update/${parentID}`}>Back</Link>
                     </div>
                 </div>
-                <PictureCropModal 
-                    aspect={1/1}
-                    pictureFile={tempPictureFile} 
+                <ImageCropModal
+                    imageFile={tempPictureFile}
                     onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
-                    onResetTempPictureFile={this.handleResetTempPictureFile}
+                    handleResetTempPictureFile={this.handleResetTempPictureFile}
+                    onShowLoading={this.props.onShowLoading.bind(this)} 
+                    onDoneLoading={this.props.onDoneLoading.bind(this)}
+                    aspectRatio={1}
                 />
             </React.Fragment>
         )

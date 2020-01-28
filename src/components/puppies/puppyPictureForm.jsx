@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import PictureCropModal from '../miscellaneous/pictureCropModal';
+import ImageCropModal from '../miscellaneous/imageCropModal';
 import $ from 'jquery';
 
 class PuppyPictureForm extends Component {
@@ -62,7 +62,7 @@ class PuppyPictureForm extends Component {
             pictureAddCard = (
                 <div className="col-3">
                     <label htmlFor="picture-upload" className="custom-file-upload">
-                        <i className="fa fa-cloud-upload"></i> Upload
+                        <i className="fa fa-picture-o"></i> Upload
                     </label>
                     <input id="picture-upload" type="file" accept="image/*" onChange={this.handleImageChange} />
                 </div>
@@ -78,16 +78,7 @@ class PuppyPictureForm extends Component {
 
     handleImageChange = (event) => {
         if (event.target.files && event.target.files[0]) {
-            const reader = new FileReader();
-            reader.addEventListener("load", () => {
-                this.setState({ 
-                    tempPictureFile: reader.result
-                });
-            });
-            this.setState({
-                tempPicureFileName: event.target.files[0].name
-            });
-            reader.readAsDataURL(event.target.files[0]);
+            this.setState({  tempPictureFile: event.target.files[0] });
         }
         $('#picture-upload').val(null);
     }
@@ -149,11 +140,13 @@ class PuppyPictureForm extends Component {
                         <Link className="btn btn-secondary ml-1" to="/puppies">Cancel</Link>
                     </div>
                 </div>
-                <PictureCropModal 
-                    aspect={1/1}
-                    pictureFile={tempPictureFile} 
+                <ImageCropModal
+                    imageFile={tempPictureFile}
                     onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
-                    onResetTempPictureFile={this.handleResetTempPictureFile}
+                    handleResetTempPictureFile={this.handleResetTempPictureFile}
+                    onShowLoading={this.props.onShowLoading.bind(this)} 
+                    onDoneLoading={this.props.onDoneLoading.bind(this)}
+                    aspectRatio={1}
                 />
             </React.Fragment>
         );

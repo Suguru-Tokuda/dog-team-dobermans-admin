@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import HomepageContentService from '../../services/homepageContentService';
-import PictureCropModal from '../miscellaneous/pictureCropModal';
 import toastr from 'toastr';
 import imageCompression from 'browser-image-compression';
 
@@ -72,16 +71,6 @@ class BannerEditor extends Component {
                 tempPictureURL: objectURL
             });
         }
-        // if (event.target.files && event.target.files[0]) {
-        //     const reader = new FileReader();
-        //     reader.addEventListener('load', () => {
-        //         this.setState({
-        //             tempImageFile: reader.result
-        //         });
-        //     });
-        //     reader.readAsDataURL(event.target.files[0]);
-        // }
-        // $('#picture-upload').val(null);
     }
 
     handleFinishImageCropping = (newFile) => {
@@ -144,7 +133,7 @@ class BannerEditor extends Component {
     }
 
     render() {
-        const { title, description, bannerPicture, tempImageFile, formSubmitted } = this.state;
+        const { title, description, bannerPicture, formSubmitted } = this.state;
         const { authenticated } = this.props;
         if (authenticated === true) {
             return (
@@ -197,12 +186,6 @@ class BannerEditor extends Component {
                             </div>
                         </form>
                     </div>
-                    <PictureCropModal
-                        aspect={1.85/1}
-                        pictureFile={tempImageFile}
-                        onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
-                        onResetTempPictureFile={this.handleResetTempPictureFile}
-                    />
                 </React.Fragment>
             );
         } else {

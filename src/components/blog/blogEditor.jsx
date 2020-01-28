@@ -348,7 +348,7 @@ class BlogEditor extends Component {
                                 {(action === 'create' || action === 'update') && (
                                     <React.Fragment>
                                         <label htmlFor="picture-upload" className="custom-file-upload">
-                                            <i className="fa fa-cloud-upload"></i> Select
+                                            <i className="fa fa-picture-o"></i> Select
                                         </label>
                                         <input id="picture-upload" type="file" accept="image/*" onChange={this.handleImageChange} />
                                         {formSubmitted === true && typeof validations.thumbnail !== 'undefined' && (

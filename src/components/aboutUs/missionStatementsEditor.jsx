@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import toastr from 'toastr';
 import $ from 'jquery';
 import SortableIntroductionRows from './sortableMissionStatementRows';
-import PictureCropModal from '../miscellaneous/pictureCropModal';
+import ImageCropModal from '../miscellaneous/imageCropModal';
 
 class MissionStatementsEditor extends Component {
     state = {
@@ -107,14 +107,10 @@ class MissionStatementsEditor extends Component {
 
     handleImageChanged = (index, event) => {
         if (event.target.files && event.target.files[0]) {
-            const reader = new FileReader();
-            reader.addEventListener('load', () => {
-                this.setState({
-                    tempPictureFile: reader.result
-                });
+            this.setState({ 
+                tempPictureFile: event.target.files[0],
+                pictureIndex: index
             });
-            this.setState({ pictureIndex: index });
-            reader.readAsDataURL(event.target.files[0]);
         }
         $('#picture-upload').val(null);
     }
@@ -258,11 +254,14 @@ class MissionStatementsEditor extends Component {
                         <button type="submit" className="btn btn-primary ml-2" onClick={this.handleSubmitBtnClicked}>{this.getSubmitBtnLabel()}</button>
                     </div>
                 </div>
-                <PictureCropModal
-                    aspect={16/9}
-                    pictureFile={tempPictureFile}
+                <ImageCropModal
+                    imageFile={tempPictureFile}
                     onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
-                    onResetTempPictureFile={this.handleResetTempPictureFile} />
+                    handleResetTempPictureFile={this.handleResetTempPictureFile}
+                    onShowLoading={this.props.onShowLoading.bind(this)} 
+                    onDoneLoading={this.props.onDoneLoading.bind(this)}
+                    aspectRatio={16/9}
+                />
             </React.Fragment>
         );
     }
