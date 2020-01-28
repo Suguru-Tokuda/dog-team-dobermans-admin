@@ -11,8 +11,6 @@ class ImageCropModal extends Component {
         imageFile: null,
         imageURL: null,
         croppedURL: null,
-        crop: { x: 0, y: 0 },
-        zoom: 1,
         aspectRatio: 1,
         updateOriginalImage: false
     };
