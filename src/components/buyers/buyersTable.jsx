@@ -156,7 +156,7 @@ class BuyersTable extends Component {
                                 <button type="button" className="btn btn-sm btn-success ml-1" onClick={() => this.props.onSeePurchasedPuppiesBtnClicked(buyer.buyerID, JSON.stringify(buyer))}><i className="fas fas fa-dog"></i> Purchased Dogs</button>
                             )}
                             <button type="button" className="btn btn-sm btn-primary ml-1" onClick={() => this.props.onUpdateBtnClicked(buyer.buyerID)}><i className="fa fa-edit"></i> Update</button>
-                            <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(buyer.buyerID)}><i className="fa fa-close"></i> Delete</button>
+                            {/* <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(buyer.buyerID)}><i className="fa fa-close"></i> Delete</button> */}
                         </td>
                     </tr>
                 );

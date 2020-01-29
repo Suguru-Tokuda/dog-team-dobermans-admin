@@ -184,7 +184,7 @@ class ParentsTable extends Component {
                         <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(parent.parentID)}><i className="fa fa-search"></i> View</button>
                         <button type="button" className="btn btn-sm btn-success ml-1" onClick={() => this.props.onUpdateBtnClicked(parent.parentID)}><i className="fa fa-edit"></i> Update</button>
                         <button type="button" className="btn btn-sm btn-info ml-1" onClick={() => this.props.onLiveBtnClicked(parent.parentID)}><i className={`${parent.live === true ? 'fa fa-eye-slash' : 'fa fa-eye'}`}></i> {`${parent.live === true ? 'Hide' : 'Go Live'}`}</button>
-                        <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(parent.parentID)}><i className="fa fa-close"></i> Delete</button>
+                        {/* <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(parent.parentID)}><i className="fa fa-close"></i> Delete</button> */}
                       </td>
                   </tr>  
                 );
