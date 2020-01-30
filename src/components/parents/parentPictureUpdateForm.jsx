@@ -82,7 +82,7 @@ class ParentPictureUpdateForm extends Component {
 
     handleFinishImageCropping = async (newFile) => {
         const { parentID, parentDetail } = this.state;
-        this.props.onShowLoading(true, 1);
+        this.props.onShowLoading(false, 1);
         // upload a picture and get { reference, url }
         const newPicture = await ParentsService.uploadPicture(newFile);
         // push the new picture reference
@@ -105,7 +105,7 @@ class ParentPictureUpdateForm extends Component {
         parentDetail.pictures.splice(index, 1);
         ParentsService.deletePicture(pictureToDelete.reference)
             .then(() => {
-                parentDetail.pictures.splice(index, 1);
+                delete parentDetail.parentID;
                 ParentsService.updateParent(parentID, parentDetail)
                     .then(() => {
                         toastr.success('Successfully deleted the picture');

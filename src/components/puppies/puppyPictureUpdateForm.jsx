@@ -81,7 +81,7 @@ class PuppyPictureUpdateForm extends Component {
     }
 
     handleFinishImageCropping = async (newFile) => {
-        this.props.onShowLoading(true, 1);
+        this.props.onShowLoading(false, 1);
         // upload a picture and get { reference, url }
         const newPicture = await PuppiesService.uploadPicture(newFile);
         const puppyData = this.state.puppyData;
@@ -108,6 +108,7 @@ class PuppyPictureUpdateForm extends Component {
         puppyData.pictures = pictures;
         PuppiesService.deletePicture(pictureToDelete.reference)
             .then(res => {
+                delete puppyData.puppyID;
                 PuppiesService.updatePuppy(this.state.puppyID, puppyData)
                     .then(res => {
                         toastr.success('Successfully deleted the picture');
