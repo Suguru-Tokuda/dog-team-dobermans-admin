@@ -151,7 +151,7 @@ class BuyersTable extends Component {
                         <td>{buyer.city}</td>
                         <td>{buyer.state}</td>
                         <td>
-                            <button type="button" className="btn btn-sm btn-primary"><i className="fa fa-search"></i> View</button>
+                            {/* <button type="button" className="btn btn-sm btn-primary"><i className="fa fa-search"></i> View</button> */}
                             {buyer.puppyIDs.length > 0 && (
                                 <button type="button" className="btn btn-sm btn-success ml-1" onClick={() => this.props.onSeePurchasedPuppiesBtnClicked(buyer.buyerID, JSON.stringify(buyer))}><i className="fas fas fa-dog"></i> Purchased Dogs</button>
                             )}
@@ -199,7 +199,8 @@ class BuyersTable extends Component {
             filteredData = tableData;
         }
         paginationInfo.totalItems = filteredData.length;
-        this.setState({ filteredData, paginationInfo });
+        const updateDisplayedData = true;
+        this.setState({ filteredData, paginationInfo, updateDisplayedData });
     }
 
     filterForKeywords(tableData, searchKeywords) {

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Checkbox } from 'react-ui-icheck';
 import DeleteTestimonialsModal from './deleteTestimonialsModal';
 import SortService from '../../services/sortService';
@@ -163,6 +164,7 @@ class TestimonialsTable extends Component {
                     <th className="pointer" onClick={() => this.sortTable('approved')}>Approved {this.getSortIcon('approved')}</th>
                     <th className="pointer" onClick={() => this.sortTable('created')}>Created {this.getSortIcon('created')}</th>
                     <th>Picture</th>
+                    <th>Actions</th>
                 </tr>
                 <tr>
                     <th colSpan="100%">
@@ -192,6 +194,9 @@ class TestimonialsTable extends Component {
                     <td>{testimonial.approved === true ? 'True' : 'False'}</td>
                     <td>{moment(testimonial.created).format('MM/DD/YYYY')}</td>
                     <td><img src={testimonial.picture.url} className="rounded" style={{width: "50px"}} alt={testimonial.picture.reference} /></td>
+                    <td>
+                        <Link to={`/testimonials/editor/${testimonial.testimonialID}`} className="btn btn-sm btn-success"><i className="fa fa-edit"></i> Edit</Link>
+                    </td>
                 </tr>
             );
             tbody = <tbody>{rows}</tbody>;
@@ -390,7 +395,8 @@ class TestimonialsTable extends Component {
                         <div className="col-12">
                             <div className="row">
                                 <div className="col-6">
-                                    <button className="btn btn-primary" disabled={buttonDisabled} onClick={this.handleApproveSelectedTestimonials}>Approve</button>
+                                    <Link className="btn btn-success" to="/testimonials/editor">Create</Link>
+                                    <button className="btn btn-primary ml-2" disabled={buttonDisabled} onClick={this.handleApproveSelectedTestimonials}>Approve</button>
                                     <button className="btn btn-warning ml-2" disabled={buttonDisabled} onClick={this.handleDisapproveSelectedTestimonials}>Disapprove</button>
                                     <button className="btn btn-danger ml-2" disabled={buttonDisabled} onClick={this.handleDeleteSelectedTestimonials}>Delete</button>
                                 </div>

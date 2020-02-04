@@ -5,6 +5,7 @@ import Pagination from '../miscellaneous/pagination';
 import moment from 'moment';
 import $ from 'jquery';
 import WaitListEmailModal from './waitListEmailModal';
+import WaitListService from '../../services/waitListService';
 
 class WaitListTable extends Component {
     state = {
@@ -164,6 +165,7 @@ class WaitListTable extends Component {
                     <th>Message</th>
                     <th className="pointer" onClick={() => this.sortTable('created')}>Created {this.getSortIcon('created')}</th>
                     <th className="pointer" onClick={() => this.sortTable('notified')}>Last Notified {this.getSortIcon('notified')}</th>
+                    <th>Actions</th>
                 </tr>
                 <tr>
                     <th colSpan="100%">
@@ -194,6 +196,9 @@ class WaitListTable extends Component {
                     <td>{waitRequest.message}</td>
                     <td>{waitRequest.created === undefined ? '' : moment(waitRequest.created).format('MM/DD/YYYY hh:mm:ss')}</td>
                     <td>{waitRequest.notified === undefined ? '' : moment(waitRequest.notified).format('MM/DD/YYYY hh:mm:ss')}</td>
+                    <td>
+                        <button type="button" className="btn btn-sm btn-success"><i className="fa fa-edit"></i> Edit</button>
+                    </td>
                 </tr>
             );
             tbody = <tbody>{rows}</tbody>
@@ -342,6 +347,17 @@ class WaitListTable extends Component {
         return retVal;
     }
 
+    handleDeleteBtnClicked = () => {
+        const waitRequestIDs = [];
+        const { tableData } = this.state;
+        tableData.forEach(waitRequest => {
+            if (waitRequest.selected === true)
+                waitRequestIDs.push(waitRequest.waitRequestID);
+        });
+        if (waitRequestIDs.length > 0)
+            this.props.onDeleteBtnClicked(waitRequestIDs);
+    }
+
     render() {
         const buttonDisabled = this.getNumberOfSelectedWaitRequests() === 0;
         const { waitRequestsToNotify } = this.state;
@@ -352,7 +368,8 @@ class WaitListTable extends Component {
                         <div className="col-12">
                             <div className="row">
                                 <div className="col-6">
-                                    <button className="btn btn-primary" disabled={buttonDisabled} onClick={this.handleNotifyBtnClicked}>Notify</button>
+                                    <button className="btn btn-success">Create</button>
+                                    <button className="btn btn-primary ml-2" disabled={buttonDisabled} onClick={this.handleNotifyBtnClicked}>Notify</button>
                                     <button className="btn btn-danger ml-2" disabled={buttonDisabled} onClick={this.handleDeleteBtnClicked}>Delete</button>
                                 </div>
                                 <div className="col-6">

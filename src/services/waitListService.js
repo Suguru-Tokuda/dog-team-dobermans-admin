@@ -13,16 +13,8 @@ export default class WaitListService {
         return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}`);
     }
 
-    static updateWaitRequest(waitRequestIDs, color, email, firstName, lastName, message, phone) {
-        const data = {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            phone: phone,
-            color: color,
-            message: message
-        };
-        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}&waitRequestIDs=${waitRequestIDs}`, data);
+    static updateWaitRequest(waitRequests) {
+        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, waitRequests);
     }
 
     static deleteWaitRequests(waitRequestIDs) {

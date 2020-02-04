@@ -46,6 +46,7 @@ class WaitList extends Component {
                     waitRequests={waitRequests}
                     totalItems={waitRequests.length}
                     onSendEmailBtnClicked={this.handleSendEmailBtnClicked.bind(this)}
+                    onDeleteBtnClicked={this.handleDeleteBtnClicked.bind(this)}
                     />
                 );
             } else if (waitRequests.length === 0) {
@@ -56,20 +57,24 @@ class WaitList extends Component {
     }
 
     handleDeleteBtnClicked = (waitRequestIDs) => {
-        this.props.onShowLoading(true, 1);
-        WaitListService.deleteWaitRequests(waitRequestIDs)
-            .then(async () => {
-                const successMessage = waitRequestIDs.length > 1 ? `Successfully deleted ${waitRequestIDs.length} requests` : 'Successfully deleted one request';
-                toastr.success(successMessage);
-                const res = await WaitListService.getWaitList();
-                this.setState({ waitRequests: res.data });
-            })
-            .catch(() => {
-                toastr.error('There was an error ')
-            })
-            .finally(() => {
-                this.props.onDoneLoading();
-            })
+        if (waitRequestIDs.length > 0) { 
+            this.props.onShowLoading(true, 1);
+            WaitListService.deleteWaitRequests(waitRequestIDs)
+                .then(async () => {
+                    const successMessage = waitRequestIDs.length > 1 ? `Successfully deleted ${waitRequestIDs.length} requests` : 'Successfully deleted one request';
+                    toastr.success(successMessage);
+                    setTimeout(async () => {
+                        const res = await WaitListService.getWaitList();
+                        this.setState({ waitRequests: res.data });
+                    }, 100);
+                })
+                .catch(() => {
+                    toastr.error('There was an error ')
+                })
+                .finally(() => {
+                    this.props.onDoneLoading();
+                });
+        }
     }
 
     handleSendEmailBtnClicked = async (waitRequestIDs, subject, body) => {
