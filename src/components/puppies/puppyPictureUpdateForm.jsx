@@ -4,12 +4,16 @@ import PuppiesService from '../../services/puppiesService';
 import SortablePictureLlist from '../miscellaneous/sortablePictureList';
 import toastr from 'toastr';
 import ImageCropModal from '../miscellaneous/imageCropModal';
+import ImageDeleteConfModal from '../miscellaneous/imageDeleteConfModal';
+import $ from 'jquery';
 
 class PuppyPictureUpdateForm extends Component {
     state = {
         puppyID: '',
         tempPictureFile: null,
-        puppyData: {}
+        puppyData: {},
+        imageToDelete: {},
+        imageDeleteIndex: -1
     };
 
     constructor(props) {
@@ -43,13 +47,13 @@ class PuppyPictureUpdateForm extends Component {
                 pictureCards = <SortablePictureLlist 
                                 pictures={pictures} 
                                 onSortEnd={this.handleUpdatePictureOrder.bind(this)} 
-                                onDeletePictureBtnClicked={this.handleDeletePicture.bind(this)}
+                                onDeletePictureBtnClicked={this.openImageDeleteConfModal.bind(this)}
                                 />;
             }
         }
         if (pictures.length <= 4) {
             pictureAddCard = (
-                <div className="col-12">
+                <div className="col-4">
                     <label htmlFor="picture-upload" className="custom-file-upload">
                         <i className="fa fa-picture-o"></i> Upload
                     </label>
@@ -59,9 +63,7 @@ class PuppyPictureUpdateForm extends Component {
         }
         return (
             <React.Fragment>
-                <div className="co-12">
-                    {pictureCards}
-                </div>
+                {pictureCards}
                 {pictureAddCard}
             </React.Fragment>
         );
@@ -112,6 +114,7 @@ class PuppyPictureUpdateForm extends Component {
                 PuppiesService.updatePuppy(this.state.puppyID, puppyData)
                     .then(res => {
                         toastr.success('Successfully deleted the picture');
+                        $('#imageDeleteConfModal').modal('hide');
                         this.setState({ puppyData });
                     })
                     .catch(err => {
@@ -123,12 +126,23 @@ class PuppyPictureUpdateForm extends Component {
             });
     }
 
+    openImageDeleteConfModal = (index) => {
+        const imageToDelete = this.state.puppyData.pictures[index];
+        this.setState({ imageToDelete: imageToDelete, imageDeleteIndex: index });
+        $('#imageDeleteConfModal').modal('show');
+    }
+
+    handleCancelDeleteBtnClicked = () => {
+        $('#imageDeleteConfModal').modal('hide');
+        this.setState({ imageToDelete: {}, imageDeleteIndex: -1 });
+    }
+
     handleResetTempPictureFile = () => {
         this.setState({ tempPictureFile: null });
     }
 
     render() {
-        const { tempPictureFile, puppyID } = this.state;
+        const { tempPictureFile, puppyID, imageToDelete, imageDeleteIndex } = this.state;
         return (
             <React.Fragment>
                 <div className="card">
@@ -149,6 +163,12 @@ class PuppyPictureUpdateForm extends Component {
                     onShowLoading={this.props.onShowLoading.bind(this)} 
                     onDoneLoading={this.props.onDoneLoading.bind(this)}
                     aspectRatio={1}
+                />
+                <ImageDeleteConfModal
+                    image={imageToDelete}
+                    index={imageDeleteIndex}
+                    onCancelBtnClicked={this.handleCancelDeleteBtnClicked}
+                    onDoDeleteBtnClicked={this.handleDeletePicture.bind(this)}
                 />
             </React.Fragment>
         );

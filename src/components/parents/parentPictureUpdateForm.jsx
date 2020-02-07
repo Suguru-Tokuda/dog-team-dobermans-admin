@@ -4,13 +4,17 @@ import ParentsService from '../../services/parentsService';
 import SortablePictureList from '../miscellaneous/sortablePictureList';
 import toastr from 'toastr';
 import ImageCropModal from '../miscellaneous/imageCropModal';
+import ImageDeleteConfModal from '../miscellaneous/imageDeleteConfModal';
+import $ from 'jquery';
 
 class ParentPictureUpdateForm extends Component {
     state = {
         parentID: '',
         tempPictureFile: null,
         tempPictureFileName: '',
-        parentDetail: {}
+        parentDetail: {},
+        imageToDelete: {},
+        imageDeleteIndex: -1
     };
 
     constructor(props) {
@@ -43,13 +47,13 @@ class ParentPictureUpdateForm extends Component {
                 pictureCards = <SortablePictureList
                                 pictures={pictures}
                                 onSortEnd={this.handleUpdatePictureOrder.bind(this)}
-                                onDeletePictureBtnClicked={this.handleDeletePicture.bind(this)}
+                                onDeletePictureBtnClicked={this.openImageDeleteConfModal.bind(this)}
                                 />;
             }
         }
         if (pictures.length <= 4) {
             pictureAddCard = (
-                <div className="col-12">
+                <div className="col-4">
                     <label htmlFor="picture-upload" className="custom-file-upload">
                         <i className="fa fa-picture-o"></i> Upload
                     </label>
@@ -59,9 +63,7 @@ class ParentPictureUpdateForm extends Component {
         }
         return (
             <React.Fragment>
-                <div className="col-12">
-                    {pictureCards}
-                </div>
+                {pictureCards}
                 {pictureAddCard}
             </React.Fragment>
         );
@@ -109,6 +111,7 @@ class ParentPictureUpdateForm extends Component {
                 ParentsService.updateParent(parentID, parentDetail)
                     .then(() => {
                         toastr.success('Successfully deleted the picture');
+                        $('#imageDeleteConfModal').modal('hide');
                         this.setState({ parentDetail });
                     })
                     .catch((err) => {
@@ -118,7 +121,18 @@ class ParentPictureUpdateForm extends Component {
             })
             .catch(() => {
                 toastr.error('There was an error in deleting a picture');
-            })
+            });
+    }
+
+    openImageDeleteConfModal = (index) => {
+        const imageToDelete = this.state.parentDetail.pictures[index];
+        this.setState({ imageToDelete: imageToDelete, imageDeleteIndex: index });
+        $('#imageDeleteConfModal').modal('show');
+    }
+
+    handleCancelDeleteBtnClicked = () => {
+        $('#imageDeleteConfModal').modal('hide');
+        this.setState({ imageToDelete: {}, imageDeleteIndex: -1 });
     }
 
     handleResetTempPictureFile = () => {
@@ -126,7 +140,7 @@ class ParentPictureUpdateForm extends Component {
     }
 
     render() {
-        const { tempPictureFile, parentID } = this.state;
+        const { tempPictureFile, parentID, imageToDelete, imageDeleteIndex } = this.state;
         return (
             <React.Fragment>
                 <div className="card">
@@ -147,6 +161,12 @@ class ParentPictureUpdateForm extends Component {
                     onShowLoading={this.props.onShowLoading.bind(this)} 
                     onDoneLoading={this.props.onDoneLoading.bind(this)}
                     aspectRatio={1}
+                />
+                <ImageDeleteConfModal
+                    image={imageToDelete}
+                    index={imageDeleteIndex}
+                    onCancelBtnClicked={this.handleCancelDeleteBtnClicked}
+                    onDoDeleteBtnClicked={this.handleDeletePicture.bind(this)}
                 />
             </React.Fragment>
         )
