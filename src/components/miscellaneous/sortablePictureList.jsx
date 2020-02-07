@@ -23,7 +23,7 @@ class SortablePictureList extends Component {
         if (pictures.length > 0) {
             const pictureGrids = pictures.map((picture, i) => {
                 return (
-                    <div key={`picture-${i}`}>
+                    <div key={`picture-${i}`} className="grid-square">
                          <div className="row">
                              <div className="col-12">
                                  <img src={picture.url} alt={picture.reference} className="img-fluid" />
@@ -56,7 +56,7 @@ class SortablePictureList extends Component {
 
     render() {
         return (
-            <Sortable tag="div" className="grid-wrapper" style={{columns: 3, listStyle: 'none'}} onChange={this.handleSortChange}>{this.getPictures()}</Sortable>
+            <Sortable tag="div" style={{columns: 3, listStyle: 'none'}} onChange={this.handleSortChange}>{this.getPictures()}</Sortable>
         )
     }
 }
