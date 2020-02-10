@@ -15,7 +15,8 @@ class ContactUsEditor extends Component {
             city: '',
             state: '',
             email: '',
-            phone: ''
+            phone: '',
+            zip: ''
         },
         validations: {
             firstName: '',
@@ -40,8 +41,9 @@ class ContactUsEditor extends Component {
                     city: res.data.city,
                     state: res.data.state,
                     email: res.data.email,
-                    phone: res.data.phone
-                }
+                    phone: res.data.phone,
+                    zip: res.data.zip
+                };
                 this.setState({
                     contacdtID: res.data.contactID,
                     selections: selections,
@@ -153,15 +155,33 @@ class ContactUsEditor extends Component {
         const { selections, validations } = this.state;
         if (phone.length > 0) {
             phone = phone.replace(/\D/g, '');
-            if (phone !== '') {
+            if (phone.length === 10) {
                 validations.phone = '';
                 selections.phone = phone;
-            } else {
-                validations.phone = 'Enter phone number';
+            } else if (phone.length < 10) {
+                validations.phone = 'Enter a valid phone number';
             }
         } else {
             selections.phone = '';
             validations.phone = 'Enter phone number';
+        }
+        this.setState({ selections, validations });
+    }
+
+    handleSetZip = (event) => {
+        let zip = event.target.value;
+        const { selections, validations } = this.state;
+        if (zip.length > 0) {
+            zip = zip.replace(/\D/g, '');
+            if (zip.length === 5) {
+                validations.zip = '';
+                selections.zip = zip;
+            } else if (zip.length > 5) {
+                validations.zip = 'Enter a valid zip code';
+            }
+        } else {
+            selections.zip = '';
+            selections.zip = 'Enter zip code'; 
         }
         this.setState({ selections, validations });
     }
@@ -179,9 +199,9 @@ class ContactUsEditor extends Component {
         }
         if (isValid === true) {
             this.props.onShowLoading(true, 1);
-            const { firstName, lastName, street, city, state, email, phone } = selections;
+            const { firstName, lastName, street, city, state, email, phone, zip } = selections;
             const { contactID } = contactInfo;
-            ContactService.updateContactdInfo(firstName, lastName, street, city, state, email, phone, contactID)
+            ContactService.updateContactdInfo(firstName, lastName, street, city, state, email, phone, zip, contactID)
                 .then(() => {
                     if (Object.keys(contactInfo).length > 0) {
                         toastr.success('Successfully updated contact info');
@@ -256,6 +276,13 @@ class ContactUsEditor extends Component {
                                 {this.getStateOptions()}
                             </select>
                             {this.getErrorMessage('state')}
+                        </div>
+                    </div>
+                    <div className="row form-group">
+                    <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Zip</label>
+                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+                            <input type="text" className={`form-control ${this.getErrorClass('zip')}`} value={selections.zip || ''} onChange={this.handleSetZip} />
+                            {this.getErrorMessage('zip')}
                         </div>
                     </div>
                 </div>

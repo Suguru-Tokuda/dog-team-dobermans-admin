@@ -137,7 +137,11 @@ class Parents extends Component {
         this.props.onShowLoading(true, 1);
         if (pictures.length > 0) {
             pictures.forEach(async picture => {
-                await ParentsService.deletePicture(picture.reference);
+                try { 
+                    await ParentsService.deletePicture(picture.reference);
+                } catch (err) {
+                    console.log(err);
+                }
             });
         }
         ParentsService.deleteParent(parentToDelete.parentID)

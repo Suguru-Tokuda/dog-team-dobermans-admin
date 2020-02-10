@@ -85,21 +85,28 @@ class PuppyPictureUpdateForm extends Component {
     handleFinishImageCropping = async (newFile) => {
         this.props.onShowLoading(false, 1);
         // upload a picture and get { reference, url }
-        const newPicture = await PuppiesService.uploadPicture(newFile);
         const puppyData = this.state.puppyData;
-        // push the new picture reference
-        puppyData.pictures.push(newPicture);
-        PuppiesService.updatePuppy(this.state.puppyID, puppyData)
-            .then(res => {
-                toastr.success('Upload success');
-                this.setState({ tempPictureFile: null })
-            })
-            .catch(err => {
-                toastr.error('There was an error in uploading a file');
-            })
-            .finally(() => {
-                this.props.onDoneLoading();
-            });
+        let newPicture;
+        try {
+            newPicture = await PuppiesService.uploadPicture(newFile);
+        } catch (err) {
+            toastr.error('There was an error in uploading a file');
+        }
+        if (typeof newPicture !== 'undefined') {
+            // push the new picture reference
+            puppyData.pictures.push(newPicture);
+            PuppiesService.updatePuppy(this.state.puppyID, puppyData)
+                .then(res => {
+                    toastr.success('Upload success');
+                    this.setState({ tempPictureFile: null })
+                })
+                .catch(err => {
+                    toastr.error('There was an error in uploading a file');
+                })
+                .finally(() => {
+                    this.props.onDoneLoading();
+                });
+        }
     }
 
     handleDeletePicture = async (index) => {

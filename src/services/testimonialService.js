@@ -31,10 +31,10 @@ export default class TestimonialService {
         return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}&testimonialID=${testimonialID}`);
     }
 
-    static updateTestimonial(testimonial) {
+    static updateTestimonial(testimonialID, testimonial) {
         const data = JSON.parse(JSON.stringify(testimonial));
         delete data.testimonialID;
-        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}&testimonialID=${testimonial.testimonialID}`, data);
+        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}&testimonialID=${testimonialID}`, data);
     }
 
     static deleteTestimonials(testimonialIDs) {

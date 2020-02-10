@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import ContactService from '../../services/contactService';
+import UtilService from '../../services/utilService';
 import toastr from 'toastr';
 
 class ContactUsDetail extends Component {
@@ -27,7 +28,7 @@ class ContactUsDetail extends Component {
         return (
             <div className="card">
                 <div className="card-header">
-                    <h3>Cotnact Us Info</h3>
+                    <h3>Cotnact Info</h3>
                 </div>
                 <div className="card-body">
                     <div className="table-responsive">
@@ -47,7 +48,7 @@ class ContactUsDetail extends Component {
                                 </tr>
                                 <tr>
                                     <th>Phone</th>
-                                    <td>{contactInfo.phone}</td>
+                                    <td>{UtilService.formatPhoneNumber(contactInfo.phone)}</td>
                                 </tr>
                                 <tr>
                                     <th>Street</th>
@@ -60,6 +61,10 @@ class ContactUsDetail extends Component {
                                 <tr>
                                     <th>State</th>
                                     <td>{contactInfo.state}</td>
+                                </tr>
+                                <tr>
+                                    <th>Zip</th>
+                                    <td>{contactInfo.zip}</td>
                                 </tr>
                             </tbody>
                         </table>

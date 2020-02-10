@@ -73,15 +73,14 @@ class TestimonialsList extends Component {
                 setTimeout(async () => {
                     await TestimonialService.getAllTestimonials()
                         .then(res => {
-                            console.log(res.data);
                             this.setState({ testimonials: res.data });
                         })
                         .catch(() => {
                             toastr.error('There was an error in loading testimonials data');
                         });
-                    const message = testimonialIDs.length > 1 ? `Successfully deleted ${testimonialIDs.length} testimonials.` : 'Successfully deleted 1 testimonial.';
-                    toastr.success(message);
-                }, 50); 
+                        const message = testimonialIDs.length > 1 ? `Successfully deleted ${testimonialIDs.length} testimonials.` : 'Successfully deleted 1 testimonial.';
+                        toastr.success(message);
+                }, 50);
             })
             .catch((err) => {
                 toastr.error('There was an error in deleting testimonials');

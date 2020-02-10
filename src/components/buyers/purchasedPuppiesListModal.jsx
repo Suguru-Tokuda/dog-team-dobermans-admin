@@ -20,6 +20,7 @@ class PurchasedPuppiesModal extends Component {
             this.props.onShowLoading(true, 1);
             PuppiesService.getPuppiesForBuyerID(buyerID)
                 .then(res => {
+                    console.log(res.data);
                     this.setState({ puppies: res.data });
                 })
                 .catch(err => {
@@ -52,6 +53,7 @@ class PurchasedPuppiesModal extends Component {
                     <th>Name</th>
                     <th>Date of Birth</th>
                     <th>Price</th>
+                    <th>Paid Amount</th>
                     <th>Purchase Date</th>
                     <th>Link</th>
                 </tr>
@@ -66,6 +68,7 @@ class PurchasedPuppiesModal extends Component {
                         <td>{puppy.name}</td>
                         <td>{moment(puppy.dateOfBirth).format('MM/DD/YYYY')}</td>
                         <td>{`$${puppy.price}`}</td>
+                        <td>{`$${puppy.paidAmount}`}</td>
                         <td>{moment(puppy.soldDate).format('MM/DD/YYYY')}</td>
                         <td>
                             <a target="_blank" href={`/puppy/view/${puppy.puppyID}`} className="btn btn-sm btn-success">View</a>

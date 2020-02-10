@@ -151,7 +151,7 @@ class TestimonialsTable extends Component {
         const thead = (
             <thead>
                 <tr>
-                    <th className="text-center">
+                    <th className="text-center" data-toggle="tooltip" data-placement="top" title="Select/Unselect All">
                         {displayedData.length > 0 && (
                             <Checkbox checkboxClass="icheckbox_square-blue" increaseArea="-100%" checked={checkAll} onChange={this.handleAllCheckChanged} label=" "></Checkbox>
                         )}
@@ -193,7 +193,7 @@ class TestimonialsTable extends Component {
                     <td>{testimonial.message}</td>
                     <td>{testimonial.approved === true ? 'True' : 'False'}</td>
                     <td>{moment(testimonial.created).format('MM/DD/YYYY')}</td>
-                    <td><img src={testimonial.picture.url} className="rounded" style={{width: "50px"}} alt={testimonial.picture.reference} /></td>
+                    <td>{testimonial.picture !== null && (<img src={testimonial.picture.url} className="rounded" style={{width: "50px"}} alt={testimonial.picture.reference} />)}</td>
                     <td>
                         <Link to={`/testimonials/editor/${testimonial.testimonialID}`} className="btn btn-sm btn-success"><i className="fa fa-edit"></i> Edit</Link>
                     </td>
@@ -331,8 +331,14 @@ class TestimonialsTable extends Component {
         const testimonialIDs = [];
         testimonialsToDelete.forEach(async (testimonial) => {
             testimonialIDs.push(testimonial.testimonialID);
-            await TestimonialService.deleteImage(testimonial.picture.reference);
-        })
+            if (testimonial.picture !== null) {
+                try {
+                    await TestimonialService.deleteImage(testimonial.picture.reference);
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+        });
         this.handleCancelBtnClicked();
         this.props.onDeleteConfBtnClicked(testimonialIDs);
     }

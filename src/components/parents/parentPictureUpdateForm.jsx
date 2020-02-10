@@ -86,19 +86,27 @@ class ParentPictureUpdateForm extends Component {
         const { parentID, parentDetail } = this.state;
         this.props.onShowLoading(false, 1);
         // upload a picture and get { reference, url }
-        const newPicture = await ParentsService.uploadPicture(newFile);
+        let newPicture;
+        try {
+            newPicture = await ParentsService.uploadPicture(newFile);
+        } catch (err) {
+            console.log(err);
+            toastr.error('There was an error in uploading a file');
+        }
         // push the new picture reference
-        parentDetail.pictures.push(newPicture);
-        ParentsService.updateParent(parentID, parentDetail)
-            .then(() => {
-                toastr.success('Upload success');
-            })
-            .catch(() => {
-                toastr.error('There was an error in uploading a file');
-            })
-            .finally(() => {
-                this.props.onDoneLoading();
-            });
+        if (typeof newPicture !== 'undefined') {
+            parentDetail.pictures.push(newPicture);
+            ParentsService.updateParent(parentID, parentDetail)
+                .then(() => {
+                    toastr.success('Upload success');
+                })
+                .catch(() => {
+                    toastr.error('There was an error in uploading a file');
+                })
+                .finally(() => {
+                    this.props.onDoneLoading();
+                });
+        }
     }
 
     handleDeletePicture = (index) => {

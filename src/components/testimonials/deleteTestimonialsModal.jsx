@@ -22,9 +22,13 @@ class DeleteTestimonialsModa extends Component {
                         <td>{testimonial.firstName}</td>
                         <td>{testimonial.lastName}</td>
                         <td>{testimonial.email}</td>
-                        <td>{testimonial.live}</td>
+                        <td>{testimonial.approved === true ? 'True' : 'False'}</td>
                         <td>{testimonial.created}</td>
-                        <td><img src={testimonial.picture.url} className="rounded" style={{width: "50px"}} alt={testimonial.picture.reference} /></td>
+                        <td>
+                            {testimonial.picture !== null && (
+                                <img src={testimonial.picture.url} className="rounded" style={{width: "50px"}} alt={testimonial.picture.reference} />
+                            )}
+                        </td>
                     </tr>
                 );
             });
@@ -48,7 +52,7 @@ class DeleteTestimonialsModa extends Component {
                                             <th>First Name</th>
                                             <th>Last Name</th>
                                             <th>Email</th>
-                                            <th>Live</th>
+                                            <th>Approved</th>
                                             <th>Created</th>
                                             <th>Picture</th>
                                         </tr>
