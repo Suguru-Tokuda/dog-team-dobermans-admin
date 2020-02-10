@@ -152,9 +152,15 @@ class Puppies extends Component {
         const { puppyToDelete } = this.state;
         const pictures = puppyToDelete.pictures;
         this.props.onShowLoading(true, 1);
+        
         if (pictures.length > 0) {
+            
             pictures.forEach(async picture => {
-                await PuppiesService.deletePicture(picture.reference);
+                try {
+                    await PuppiesService.deletePicture(picture.reference);
+                } catch (err) {
+                    console.log(err);
+                }
             });
         }
         PuppiesService.deletePuppy(puppyToDelete.puppyID)

@@ -167,7 +167,6 @@ class PuppyInitialForm extends Component {
         } else {
             validations.dateOfBirth = 'Enter date of birth';
         }
-
         this.setState({ selections, validations });
     }
 
