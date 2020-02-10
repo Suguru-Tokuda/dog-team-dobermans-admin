@@ -52,11 +52,13 @@ export default class TestimonialEditor extends Component {
                             dogName: testimonial.dogName,
                             email: testimonial.email,
                             message: testimonial.message,
-                            picture: testimonial.picture
                         };
                         let imageURL = '';
-                        if (testimonial.picture.url) {
-                            imageURL = testimonial.picture.url;
+                        if (testimonial.picture !== null) {
+                            selections.picture = testimonial.picture;
+                            if (testimonial.picture.url) {
+                                imageURL = testimonial.picture.url;
+                            }
                         }
                         this.setState({ testimonialData: res.data, selections: selections, imageURL: imageURL });
                     }
@@ -165,6 +167,8 @@ export default class TestimonialEditor extends Component {
     }
 
     handleClearImageBtnClicked = () => {
+        const { selections } = this.state;
+        selections.picture = null;
         this.setState({ tempImageFile: null, imageURL: '' });
     }
 
@@ -176,7 +180,8 @@ export default class TestimonialEditor extends Component {
         const selectionKeys = Object.keys(selections);
         selectionKeys.forEach(key => {
             if (selections[key] === '' || selections[key] === null) {
-                isValid = false;
+                if (key !== 'picture')
+                    isValid = false;
                 if (key !== 'picture') {
                     validations[key] = `Enter ${key}`;
                 }
@@ -203,7 +208,7 @@ export default class TestimonialEditor extends Component {
             }
             TestimonialService.createTestimonial(firstName, lastName, dogName, email.toLowerCase(), message, image, new Date())
                 .then(() => {
-                    toastr.success('Thanks for submitting a testimonial! We will review it within a coule business days.');
+                    toastr.success('A new testimonial created.');
                     const selections = {
                         firstName: '',
                         lastName: '',
@@ -215,6 +220,7 @@ export default class TestimonialEditor extends Component {
                     const { imageURL } = this.state;
                     URL.revokeObjectURL(imageURL); // Revoke the URL before erase it.
                     this.setState({ selections: selections, tempImageFile: null, imageURL: '', validations: {}, formSubmitted: false });
+                    this.props.history.push('/testimonials');
                 })
                 .catch(err => {
                     console.log(err);
@@ -227,16 +233,16 @@ export default class TestimonialEditor extends Component {
         }
     }
 
-    handleUpdateTestimonial = (event) => {
+    handleUpdateTestimonial = async (event) => {
         event.preventDefault();
         this.setState({ formSubmitted: true });
-        const { selections, validations } = this.state;
+        const { testimonialID, selections, validations, testimonialData } = this.state;
         let isValid = true;
         const selectionKeys = Object.keys(selections);
         selectionKeys.forEach(key => {
             if (selections[key] === '' || selections[key] === null) {
-                isValid = false;
                 if (key !== 'picture') {
+                    isValid = false;
                     validations[key] = `Enter ${key}`;
                 }
             } else {
@@ -253,15 +259,89 @@ export default class TestimonialEditor extends Component {
                 }
             }
         });
+        this.setState({ validations });
         if (isValid === true) {
             const { firstName, lastName, dogName, email, message, picture } = selections;
             this.props.onShowLoading(true, 1);
-            let image = null
-            if (typeof picture.reference === 'undefined') {
-
+            let image;
+            if (typeof picture !== 'undefined' && picture !== null && typeof picture.reference === 'undefined') {
+                try {
+                    image = await TestimonialService.uploadPicture(picture, dogName);
+                } catch (err) {
+                    console.log(err);
+                }
+                if (typeof testimonialData.picture.reference !== 'undefined') {
+                    try {
+                        await TestimonialService.deleteImage(testimonialData.picture.reference);
+                    } catch (err) {
+                        console.log(err);
+                    }
+                }
+            } else if (picture === null) {
+                if (typeof testimonialData.picture.reference !== 'undefined') {
+                    try {
+                        await TestimonialService.deleteImage(testimonialData.picture.reference);
+                    } catch (err) {
+                        console.log(err);
+                    }
+                }
+                image = null;
+            }
+            if (testimonialID === '') {
+                this.props.onShowLoading(true, 1);
+                TestimonialService.createTestimonial(firstName, lastName, dogName, email, message, image, new Date())
+                    .then(() => {
+                        toastr.success('New testimonial created.');
+                        this.props.history.push('/testimonials');
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        toastr.error('There was an error in creating a testimonial.');
+                    })
+                    .finally(() => {
+                        this.props.onDoneLoading();
+                    });
+            } else {
+                const updateData = testimonialData;
+                updateData.firstName = firstName;
+                updateData.lastName = lastName;
+                updateData.dogName = dogName;
+                updateData.email = email;
+                updateData.message = message;
+                if (typeof image !== 'undefined') {
+                    updateData.picture = image;
+                }
+                delete updateData.testimonialID;
+                this.props.onShowLoading(true, 1);
+                TestimonialService.updateTestimonial(testimonialID, updateData)
+                    .then(() => {
+                        toastr.success('Updated a testimonial.');
+                        this.props.history.push('/testimonials');
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        toastr.error('There was an error in updating a testimonial.');
+                    })
+                    .finally(() => {
+                        this.props.onDoneLoading();
+                    });
             }
         }
+    }
 
+    handleUndoClicked = () => {
+        const { selections, testimonialData, imageURL } = this.state;
+        selections.firstName = testimonialData.firstName;
+        selections.lastName = testimonialData.lastName;
+        selections.dogName = testimonialData.dogName;
+        selections.email = testimonialData.email;
+        selections.message = testimonialData.message;
+        let imageURLForUndo = '';
+        if (testimonialData.picture !== null) {
+            URL.revokeObjectURL(imageURL);
+            imageURLForUndo = testimonialData.picture.url;
+        }
+        this.setState({ selections, imageURL: imageURLForUndo, validations: {} });
     }
 
     render() {
@@ -346,10 +426,13 @@ export default class TestimonialEditor extends Component {
                         </div>
                         <div className="card-footer">
                             {testimonialID === '' && (
-                                <button type="button" className="btn btn-primary">Create</button>
+                                <button type="button" className="btn btn-primary" onClick={this.handleCreateTestimonial}>Create</button>
                             )}
                             {(testimonialID !== '' && Object.keys(testimonialData).length > 0) && (
-                                <button type="button" className="btn btn-success ml-1">Update</button>
+                                <React.Fragment>
+                                    <button type="button" className="btn btn-success" onClick={this.handleUpdateTestimonial}>Update</button>
+                                    <button type="button" className="btn btn-secondary ml-1" onClick={this.handleUndoClicked}><i className="fa fa-undo"></i> Undo</button>
+                                </React.Fragment>
                             )}
                             <Link to="/testimonials" className="btn btn-secondary ml-1">Cancel</Link>
                         </div>
