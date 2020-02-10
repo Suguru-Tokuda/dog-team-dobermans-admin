@@ -130,6 +130,7 @@ class BuyersTable extends Component {
                     <th className="pointer" onClick={() => this.sortTable('phone')}>Phone {this.getSortIcon('phone')}</th>
                     <th className="pointer" onClick={() => this.sortTable('city')}>City {this.getSortIcon('city')}</th>
                     <th className="pointer" onClick={() => this.sortTable('state')}>State {this.getSortIcon('state')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('hasPartialPayment')}>Has Partial Payment {this.getSortIcon('hasPartialPayment')}</th>
                     <th>Action</th>
                 </tr>
                 <tr>
@@ -150,6 +151,7 @@ class BuyersTable extends Component {
                         <td>{buyer.phone}</td>
                         <td>{buyer.city}</td>
                         <td>{buyer.state}</td>
+                        <td>{buyer.hasPartialPayment === true ? 'True' : 'False'}</td>
                         <td>
                             {/* <button type="button" className="btn btn-sm btn-primary"><i className="fa fa-search"></i> View</button> */}
                             {buyer.puppyIDs.length > 0 && (
@@ -218,6 +220,8 @@ class BuyersTable extends Component {
                     if (buyer.city.toLowerCase().indexOf(searchKeyword) !== -1)
                         foundCount++;
                     if (buyer.state.toLowerCase().indexOf(searchKeyword) !== -1)
+                        foundCount++;
+                    if (buyer.hasPartialPayment === true && searchKeyword.indexOf('partial') !== -1)
                         foundCount++;
                 });
                 return foundCount > 0;
