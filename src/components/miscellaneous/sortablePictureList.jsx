@@ -56,7 +56,7 @@ class SortablePictureList extends Component {
 
     render() {
         return (
-            <Sortable tag="div" style={{columns: 3, listStyle: 'none'}} onChange={this.handleSortChange}>{this.getPictures()}</Sortable>
+            <Sortable tag="div" onChange={this.handleSortChange}>{this.getPictures()}</Sortable>
         )
     }
 }
