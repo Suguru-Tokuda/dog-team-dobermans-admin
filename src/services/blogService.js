@@ -10,7 +10,6 @@ export default class BlogService {
     }
 
     static getAllBlogs() {
-        console.log(`${this.getServiceBase()}`);
         return axios.get(`${this.getServiceBase()}`);
     }
 
