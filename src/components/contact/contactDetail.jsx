@@ -62,6 +62,10 @@ class ContactUsDetail extends Component {
                                     <th>State</th>
                                     <td>{contactInfo.state}</td>
                                 </tr>
+                                <tr>
+                                    <th>Zip</th>
+                                    <td>{contactInfo.zip}</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
