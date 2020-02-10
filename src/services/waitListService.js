@@ -9,11 +9,27 @@ export default class WaitListService {
         return `${SessionInfoService.getBaseUrlForAPI()}waitList`;
     }
 
+    static getWaitRequest(waitRequestID) {
+        return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}&waitRequestID=${waitRequestID}`);
+    }
+
     static getWaitList() {
         return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}`);
     }
 
-    static updateWaitRequest(waitRequests) {
+    static waitRequest(data) {
+        return axios.post(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
+    }
+
+    static createWaitRequest(data) {
+        return axios.post(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
+    }
+
+    static updateWaitRequest(waitRequestID, data) {
+        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}&waitRequestID=${waitRequestID}`, data);
+    }
+
+    static updateWaitRequests(waitRequests) {
         return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, waitRequests);
     }
 
