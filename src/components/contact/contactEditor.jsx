@@ -153,11 +153,11 @@ class ContactUsEditor extends Component {
         const { selections, validations } = this.state;
         if (phone.length > 0) {
             phone = phone.replace(/\D/g, '');
-            if (phone !== '') {
+            if (phone.length === 10) {
                 validations.phone = '';
                 selections.phone = phone;
-            } else {
-                validations.phone = 'Enter phone number';
+            } else if (phone.length < 10) {
+                validations.phone = 'Enter valid phone number';
             }
         } else {
             selections.phone = '';
@@ -256,6 +256,13 @@ class ContactUsEditor extends Component {
                                 {this.getStateOptions()}
                             </select>
                             {this.getErrorMessage('state')}
+                        </div>
+                    </div>
+                    <div className="row form-group">
+                    <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Zip</label>
+                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+                            <input type="text" className={`form-control ${this.getErrorClass('zip')}`} value={selections.zip || ''} onChange={this.handleSetZip} />
+                            {this.getErrorMessage('zip')}
                         </div>
                     </div>
                 </div>
