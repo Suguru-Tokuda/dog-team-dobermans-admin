@@ -287,7 +287,11 @@ class BlogEditor extends Component {
         this.props.onShowLoading(true, 1);
         // delete the thumbnail
         if (typeof originalBlog.thumbnail.reference !== 'undefined') {
-            await BlogService.deleteImage(originalBlog.thumbnail.reference);
+            try {
+                await BlogService.deleteImage(originalBlog.thumbnail.reference);
+            } catch (err) {
+                console.log(err);
+            }
         }
         // delete all the images inside the message
         const regex = /\<img (.*?)>/g;
@@ -295,8 +299,12 @@ class BlogEditor extends Component {
         let result;
         while ((result = regex.exec(originalBlog.message)) !== null) {
             const reference = regexForAlt.exec((result[1]));
-            if (reference[1] !== null) {
-                await BlogService.deleteImage(reference[1]);
+            if (reference !== null && reference[1] !== null) {
+                try {
+                    await BlogService.deleteImage(reference[1]);
+                } catch (err) {
+                    console.log(err);
+                }
             }
         }
         BlogService.deleteBlog(blogID)
