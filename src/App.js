@@ -14,12 +14,13 @@ import Parent from './components/parents/parent';
 import Parents from './components/parents/parents';
 import Buyers from './components/buyers/buyers';
 import Testimonials from './components/testimonials/testimonials';
-import WaitList from './components/waitList/waitList';
+import WaitRequests from './components/waitRequests/waitRequests';
 import AboutDobermans from './components/aboutDobermans/aboutDobermans';
 import AboutUs from './components/aboutUs/aboutUs';
 import Blog from './components/blog/blog';
 import Contact from './components/contact/contact';
 import NotFound from './components/common/notFound';
+import $ from 'jquery';
 
 class App extends Component {
 
@@ -47,6 +48,12 @@ class App extends Component {
         this.setState({ authenticated: false });
       }
       this.setState({ authenticationChecked: true });
+    });
+  }
+
+  componentDidUpdate() {
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
     });
   }
   
@@ -107,7 +114,7 @@ class App extends Component {
                       <Route path="/parents" exact render={(props) => <Parents {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                       <Route path="/buyers" exact render={(props) => <Buyers {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                       <Route path="/testimonials" render={(props) => <Testimonials {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                      <Route path="/wait-list" exact render={(props) => <WaitList {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                      <Route path="/wait-list" render={(props) => <WaitRequests {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                       <Route path="/about-dobermans" exact render={(props) => <AboutDobermans {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                       <Route path="/about-us" render={(props) => <AboutUs {...props} authenticated={authenticated} url="/about-us" onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                       <Route path="/blog" render={(props) => <Blog {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
