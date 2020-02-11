@@ -52,6 +52,7 @@ class Puppies extends Component {
                 <div className="row form-group mt-2">
                     <div className="col-xs-4 col-sm-4 col-md-3 col-lg-2">
                         <Link className="btn btn-primary" to="/puppy/create/initial-params">Create New Puppy</Link>
+                        <Link className="btn btn-success ml-2" to="/puppy/unavailable-message">Unavailable Message</Link>
                     </div>
                 </div>
             </React.Fragment>
