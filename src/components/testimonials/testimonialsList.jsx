@@ -47,7 +47,13 @@ class TestimonialsList extends Component {
         this.props.onShowLoading(true, 1);
         try {
             testimonials.forEach(async (testimonial) => {
-                await TestimonialService.updateTestimonial(testimonial);
+                const testimonialID = testimonial.testimonialID;
+                delete testimonial.testominialID;
+                try {
+                    await TestimonialService.updateTestimonial(testimonialID, testimonial);
+                } catch (err) {
+                    console.log(err);
+                }
             });
             await TestimonialService.getAllTestimonials()
                 .then(res => {
