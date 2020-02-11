@@ -41,6 +41,13 @@ export default class HomepageContentService {
         return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
     }
 
+    static updatePuppyUnavailableMessage(message) {
+        const data = {
+            puppyUnavailableMessage: message
+        };
+        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
+    }
+
     static uploadVideo(videoFile) {
         return new Promise((resolve) => {
             const videoID = UtilService.generateID(10);
