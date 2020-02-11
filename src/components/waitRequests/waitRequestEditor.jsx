@@ -120,14 +120,9 @@ export default class WaitRequestEditor extends Component {
 
     handleSetColor = (event) => {
         const color = event.target.value;
-        const { selections, validations } = this.state;
-        if (color !== '') {
-            delete validations.color;
-        } else {
-            validations.type = 'Enter color';
-        }
+        const { selections } = this.state;
         selections.color = color;
-        this.setState({ selections, validations });
+        this.setState({ selections });
     }
 
     handleSetPhone = (event) => {
@@ -178,7 +173,7 @@ export default class WaitRequestEditor extends Component {
         let isValid = true;
         const selectionKeys = Object.keys(selections);
         selectionKeys.forEach(key => {
-            if (selections[key] === '' || selections[key] === null) {
+            if ((selections[key] === '' || selections[key] === null) && key !== 'color') {
                 isValid = false;
                 if (key === 'expectedPurchaseDate') {
                     validations[key] = `Select ${key}`;
@@ -306,14 +301,11 @@ export default class WaitRequestEditor extends Component {
                         </div>
                         <div className="row">
                             <div className="col-sm-6">
-                                <label htmlFor="color" className={`form-label`}>Color *</label>
-                                <select className={`form-control ${this.getFormClass('color')}`} name="color" id="color" value={color} onChange={this.handleSetColor}>
+                                <label htmlFor="color" className={`form-label`}>Color</label>
+                                <select className={`form-control`} name="color" id="color" value={color} onChange={this.handleSetColor}>
                                     <option>--Select color for puppy--</option>
                                     {this.getColorOptions()}
                                 </select>
-                                {formSubmitted === true && validations.color && (
-                                        <small className="text-danger">{validations.color}</small>
-                                )}
                             </div>
                             <div className="col-sm-6">
                                 <label className="form-label">Expected Purchase Date *</label><br/>

@@ -201,7 +201,7 @@ class WaitListTable extends Component {
                     <td>{waitRequest.lastName}</td>
                     <td>{waitRequest.email}</td>
                     <td>{waitRequest.phone}</td>
-                    <td>{waitRequest.color}</td>
+                    <td>{(waitRequest.color !== undefined && waitRequest.color !== null && waitRequest.color !== '') ? waitRequest.color : 'No preference'}</td>
                     <td>{waitRequest.message}</td>
                     <td>{waitRequest.created === undefined ? '' : moment(waitRequest.created).format('MM/DD/YYYY hh:mm:ss')}</td>
                     <td>{waitRequest.expectedPurchaseDate === undefined || waitRequest.expectedPurchaseDate === null ? '' : moment(waitRequest.expectedPurchaseDate).format('MM/DD/YYYY')}</td>
