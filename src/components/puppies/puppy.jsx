@@ -4,6 +4,7 @@ import PuppyDetail from './puppyDetail';
 import PuppyCreate from './puppyCreate';
 import PuppyUpdate from './puppyUpdate';
 import PuppySalesForm from './puppySalesForm';
+import PuppyUnavailableMessageEditor from './puppyUnavailableMessageEditor';
 
 class Puppy extends Component {
     state = {
@@ -25,6 +26,7 @@ class Puppy extends Component {
                     <Route path={`${url}/create`} render={(props) => <PuppyCreate {...props} url={`${url}/create`} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
                     <Route path={`${url}/update/:puppyID`} render={(props) => <PuppyUpdate {...props} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
                     <Route path={`${url}/sales/:puppyID`} render={(props) => <PuppySalesForm {...props} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                    <Route path={`${url}/unavailable-message`} render={(props) => <PuppyUnavailableMessageEditor {...props} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
                 </React.Fragment>
             );
         } else {
