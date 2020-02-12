@@ -13,9 +13,11 @@ export default class HomepageContentService {
         return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}`);
     }
 
-    static updateBackgroundVideo(url, reference) {
+    static updateBackgroundVideo(title, description, url, reference) {
         const data = {
             backgroundVideo: {
+                titie: title,
+                description: description,
                 url: url,
                 reference: reference
             }
