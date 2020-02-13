@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import HomepageContentService from '../../services/homepageContentService';
 import toastr from 'toastr';
+import $ from 'jquery';
 import imageCompression from 'browser-image-compression';
 
 class BannerEditor extends Component {
@@ -71,6 +72,10 @@ class BannerEditor extends Component {
                 tempPictureURL: objectURL
             });
         }
+    }
+
+    handleSelectImageClicked() {
+        $('#picture-upload').click();
     }
 
     handleFinishImageCropping = (newFile) => {
@@ -169,9 +174,7 @@ class BannerEditor extends Component {
                                             this.getBannerPicture()
                                         )}
                                         <React.Fragment>
-                                            <label htmlFor="picture-upload" className="custom-file-upload">
-                                                <i className="fa fa-picture-o"></i> Select
-                                            </label>
+                                        <button type="button" className="btn btn-primary" onClick={this.handleSelectImageClicked}><i className="fa fa-picture-o"></i> Select</button>
                                             <input id="picture-upload" type="file" accept="image/*" onChange={this.handleImageChange} />
                                             {(formSubmitted === true && bannerPicture === null) && (
                                                 <small className="text-danger"><br />Select Picture</small>
