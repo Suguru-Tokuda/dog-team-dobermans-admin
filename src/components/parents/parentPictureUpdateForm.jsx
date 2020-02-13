@@ -54,9 +54,7 @@ class ParentPictureUpdateForm extends Component {
         if (pictures.length <= 4) {
             pictureAddCard = (
                 <div className="col-4">
-                    <label htmlFor="picture-upload" className="custom-file-upload">
-                        <i className="fa fa-picture-o"></i> Upload
-                    </label>
+                    <button type="button" className="btn btn-primary" onClick={this.handleSelectImageClicked}><i className="fa fa-picture-o"></i> Upload</button>
                     <input id="picture-upload" type="file" accept="image/*" onChange={this.handleImageChange} />
                 </div>
             );
@@ -67,6 +65,10 @@ class ParentPictureUpdateForm extends Component {
                 {pictureAddCard}
             </React.Fragment>
         );
+    }
+
+    handleSelectImageClicked() {
+        $('#picture-upload').click();
     }
 
     handleUpdatePictureOrder = (pictures) => {

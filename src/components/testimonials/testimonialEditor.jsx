@@ -137,6 +137,10 @@ export default class TestimonialEditor extends Component {
         }
         $('#picture-upload').val(null);
     }
+
+    handleSelectImageClicked() {
+        $('#picture-upload').click();
+    }
     
     handleSetMessage = (event) => {
         const message = event.target.value;
@@ -398,9 +402,7 @@ export default class TestimonialEditor extends Component {
                         <div className="row">
                             <div className="col-sm-6">
                                 <label>Picture of your dog</label><br />
-                                <label htmlFor="picture-upload" className="btn btn-primary">
-                                    <i className="fa fa-picture-o"></i> Select
-                                </label>
+                                <button type="button" className="btn btn-primary" onClick={this.handleSelectImageClicked}><i className="fa fa-picture-o"></i> Select</button>
                                 <input id="picture-upload" type="file" accept="image/*" onChange={this.handleImageChange} />
                                 {formSubmitted === true && validations.picture && (
                                     <React.Fragment>

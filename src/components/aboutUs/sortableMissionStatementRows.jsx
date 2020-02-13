@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Sortable from 'react-sortablejs';
+import $ from 'jquery';
 
 class SortableMissionStatementRows extends Component {
     state = {
@@ -24,6 +25,10 @@ class SortableMissionStatementRows extends Component {
             return state;
         }
         return null;
+    }
+
+    handleSelectImageClicked() {
+        $('#picture-upload').click();
     }
 
     getRows = () => {
@@ -70,9 +75,7 @@ class SortableMissionStatementRows extends Component {
                 } else if (picture === null) {
                     imageElement = (
                         <React.Fragment>
-                            <label htmlFor="picture-upload" className="custom-file-upload">
-                                <i className="fa fa-image"></i> Select
-                            </label>
+                            <button type="button" className="btn btn-primary" onClick={this.handleSelectImageClicked}><i className="fa fa-picture-o"></i> Select</button>
                             <input id="picture-upload" type="file" accept="image/*" onChange={this.props.onImageChanged.bind(this, i)} />
                         </React.Fragment>
                     );

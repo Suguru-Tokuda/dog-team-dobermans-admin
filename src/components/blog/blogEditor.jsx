@@ -6,6 +6,7 @@ import BlogService from '../../services/blogService';
 import ReactQuill, { Quill } from 'react-quill';
 import imageCompression from 'browser-image-compression';
 import toastr from 'toastr';
+import $ from 'jquery';
 Quill.register('modules/imageResize', ImageResize);
 Quill.register('modules/imageDrop', ImageDrop);
 
@@ -149,6 +150,10 @@ class BlogEditor extends Component {
             const objectURL = URL.createObjectURL(event.target.files[0]);
             this.setState({ thumbnailPicture: event.target.files[0], tempPictureURL: objectURL, validations: validations });
         }
+    }
+
+    handleSelectImageClicked() {
+        $('#picture-upload').click();
     }
 
     handleSubmitBtnClicked = async () => {
@@ -355,9 +360,7 @@ class BlogEditor extends Component {
                                 )}
                                 {(action === 'create' || action === 'update') && (
                                     <React.Fragment>
-                                        <label htmlFor="picture-upload" className="custom-file-upload">
-                                            <i className="fa fa-picture-o"></i> Select
-                                        </label>
+                                        <button type="button" className="btn btn-primary" onClick={this.handleSelectImageClicked}><i className="fa fa-picture-o"></i> Upload</button>
                                         <input id="picture-upload" type="file" accept="image/*" onChange={this.handleImageChange} />
                                         {formSubmitted === true && typeof validations.thumbnail !== 'undefined' && (
                                             <small className="text-danger"><br />{validations.thumbnail}</small>

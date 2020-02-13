@@ -16,7 +16,7 @@ export default class HomepageContentService {
     static updateBackgroundVideo(title, description, url, reference) {
         const data = {
             backgroundVideo: {
-                titie: title,
+                title: title,
                 description: description,
                 url: url,
                 reference: reference

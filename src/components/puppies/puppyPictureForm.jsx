@@ -61,9 +61,7 @@ class PuppyPictureForm extends Component {
         if (this.state.pictures.length <= 4) {
             pictureAddCard = (
                 <div className="col-3">
-                    <label htmlFor="picture-upload" className="custom-file-upload">
-                        <i className="fa fa-picture-o"></i> Upload
-                    </label>
+                    <button type="button" className="btn btn-primary" onClick={this.handleSelectImageClicked}><i className="fa fa-picture-o"></i> Select</button>
                     <input id="picture-upload" type="file" accept="image/*" onChange={this.handleImageChange} />
                 </div>
             );
@@ -74,6 +72,10 @@ class PuppyPictureForm extends Component {
                 {pictureAddCard}
             </div>
         );
+    }
+
+    handleSelectImageClicked() {
+        $('#picture-upload').click();
     }
 
     handleImageChange = (event) => {
