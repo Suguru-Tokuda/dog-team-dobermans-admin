@@ -86,8 +86,6 @@ class BuyerRegistrationModal extends Component {
         return null;
     }
 
-
-
     getStateOptions = () => {
         const states = ConstantsService.getStates();
         return states.map(state => <option key={state.abbreviation} value={state.abbreviation}>{`${state.abbreviation} - ${state.name}`}</option>);
@@ -194,6 +192,12 @@ class BuyerRegistrationModal extends Component {
         }
         this.setState({ validations });
         if (isValid === true) {
+            selections.firstName = selections.firstName.trim();
+            selections.lastName = selections.lastName.trim();
+            selections.email = selections.email.toLowerCase().trim();
+            selections.phone = selections.phone.trim();
+            selections.state = selections.state.trim();
+            selections.city = selections.city.trim();
             this.props.onShowLoading(true, 1);
             BuyersService.createBuyer(selections.firstName, selections.lastName, selections.email, selections.phone, selections.state, selections.city)
                 .then(res => {
