@@ -173,7 +173,7 @@ export default class VideoBackgroundEditor extends Component {
                     }
                 }
                 try {
-                    videoToSend = await HomepageContentService.updateBackgroundVideo(selections.tempVideoFile);
+                    videoToSend = await HomepageContentService.uploadVideo(selections.tempVideoFile);
                 } catch (err) {
                     toastr.error('There was an error in uploading a video');
                     this.props.onDoneLoading();
