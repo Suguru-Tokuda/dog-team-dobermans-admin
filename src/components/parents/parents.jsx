@@ -32,7 +32,6 @@ class Parents extends Component {
         this.props.onShowLoading(true, 1);
         ParentsService.getAllParents()
             .then(res => {
-                console.log(res.data);
                 this.setState({ parents: res.data });
             })
             .catch(err => {

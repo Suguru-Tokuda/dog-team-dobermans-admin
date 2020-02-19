@@ -34,7 +34,6 @@ class ParentDetail extends Component {
             this.props.onShowLoading(true, 1);
             ParentsService.getParent(parentID)
                 .then(res => {
-                    console.log(res);
                     this.setState({ parentDetail: res.data });
                 })
                 .catch(() => {
