@@ -49,6 +49,7 @@ class ImageCropModal extends Component {
             .on('shown.bs.modal', () => {
                 cropper = new Cropper(image, {
                     aspectRatio: this.state.aspectRatio,
+                    preview: '.preview',
                     cropend() {
                         if (cropper) {
                             cropper.getCroppedCanvas().toBlob((blob) => {
@@ -109,8 +110,8 @@ class ImageCropModal extends Component {
                             const newFile = new File([blobFile], 'new_picture', { type: 'image/png' });
                             try {
                                 const options = {
-                                    maxSizeMB: 0.15,
-                                    maxWidthOrHeight: 1200,
+                                    maxSizeMB: 0.30,
+                                    maxWidthOrHeight: 500,
                                     useWebWorker: true
                                 };
                                 const compressedFile = await imageCompression(newFile, options);
@@ -152,11 +153,12 @@ class ImageCropModal extends Component {
                                     </div>
                                 </div>
                                 <div className="col-6">
-                                    {croppedURL !== null && (
-                                        <div className="img-container">
-                                            <img src={croppedURL} />
-                                        </div>
-                                    )}
+                                    <div className="preview"></div>
+                                    {/* {croppedURL !== null && ( */}
+                                        {/* <div className="img-container">
+                                             <img src={croppedURL} />
+                                        </div> */}
+                                    {/* )} */}
                                 </div>
                             </div>
                         </div>

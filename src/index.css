@@ -94,6 +94,23 @@ input[type="file"] {
   max-width: 100%;
 }
 
+@media screen and (max-width: 991px) {
+  .preview {
+    overflow: hidden;
+    width: 200px; 
+    height: 200px;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .preview {
+    overflow: hidden;
+    width: 350px; 
+    height: 350px;
+  }
+}
+
+
 /*
 *
 * ==========================================

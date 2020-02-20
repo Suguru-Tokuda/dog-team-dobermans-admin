@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import VideoBackground from './videoBackground';
 import News from './news';
 import Banner from './banner';
+import GalleryImages from './galleryImages';
 import HomepageContentsService from '../../services/homepageContentService';
 import toastr from 'toastr';
 import $ from 'jquery';
@@ -10,7 +11,8 @@ class HomepageContent extends Component {
     state = {
         video: {},
         news: '',
-        banner: {}
+        banner: {},
+        galleryImages: []
     };
 
     componentDidMount() {
@@ -30,6 +32,9 @@ class HomepageContent extends Component {
                 if (typeof res.data.banner !== 'undefined') {
                     this.setState({ banner: res.data.banner });
                 }
+                if (res.data.galleryImages) {
+                    this.setState({ galleryImages: res.data.galleryImages });
+                }
                 if ($('#newsEditorModal').is(':visible') === true) {
                     $('#newsEditorModal').modal('hide')
                 }
@@ -44,10 +49,11 @@ class HomepageContent extends Component {
     }
 
     render() {
-        const { video, news, banner } = this.state;
+        const { video, news, banner, galleryImages } = this.state;
         return (
             <React.Fragment>
                 <VideoBackground {...this.props} video={video} onUpdateData={this.handleUpdateData} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                <GalleryImages {...this.props} images={galleryImages} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
                 <News {...this.props} news={news} onUpdateData={this.handleUpdateData} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
                 <Banner {...this.props} banner={banner} onUpdateData={this.handleUpdateData} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
             </React.Fragment>

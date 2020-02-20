@@ -13,6 +13,7 @@ import 'react-trumbowyg/dist/trumbowyg.min.css';
 import 'react-quill/dist/quill.snow.css'; 
 import 'react-quill/dist/quill.bubble.css'; 
 import 'react-quill/dist/quill.core.css';
+import 'react-image-gallery/styles/css/image-gallery.css';
 import 'icheck/skins/all.css';
 import './index.css';
 import 'jquery';
