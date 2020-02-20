@@ -154,11 +154,6 @@ class ImageCropModal extends Component {
                                 </div>
                                 <div className="col-6">
                                     <div className="preview"></div>
-                                    {/* {croppedURL !== null && ( */}
-                                        {/* <div className="img-container">
-                                             <img src={croppedURL} />
-                                        </div> */}
-                                    {/* )} */}
                                 </div>
                             </div>
                         </div>
