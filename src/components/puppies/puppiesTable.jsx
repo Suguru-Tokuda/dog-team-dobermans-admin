@@ -135,13 +135,14 @@ class PuppiesTable extends Component {
                     <th className="pointer" onClick={() => this.sortTable('price')}>Price {this.getSortIcon('price')}</th>
                     <th>Picture</th>
                     <th className="pointer" onClick={() => this.sortTable('color')}>Color {this.getSortIcon('color')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('type')}>Type {this.getSortIcon('type')}</th>
                     <th className="pointer" onClick={() => this.sortTable('sold')}>Status {this.getSortIcon('sold')}</th>
                     <th className="pointer" onClick={() => this.sortTable('live')}>Live {this.getSortIcon('live')}</th>
                     <th>Action</th>
                 </tr>
                 <tr>
                     <th colSpan="100%">
-                        <input type="text" className="form-control" placeholder="Search for PuppyID, name, sex, price, and sold & live status" value ={this.state.gridSearch} onChange={this.handleGirdSearch} />
+                        <input type="text" className="form-control" placeholder="Search for PuppyID, name, color, type, sex, price, and sold & live status" value ={this.state.gridSearch} onChange={this.handleGirdSearch} />
                     </th>
                 </tr>
             </thead>
@@ -166,6 +167,7 @@ class PuppiesTable extends Component {
                         <td>{`$${puppy.price}`}</td>
                         <td>{picture}</td>
                         <td>{puppy.color}</td>
+                        <td>{`${puppy.type.substring(0, 1).toUpperCase()}${puppy.type.substring(1, puppy.type.length)}`}</td>
                         <td>{puppy.paidAmount === 0 ? 'Unsold' : puppy.paidAmount !== puppy.price ? 'Partially sold' : 'Sold'}</td>
                         <td>{puppy.live === true ? 'Live' : 'No'}</td>
                         <td>
@@ -244,6 +246,8 @@ class PuppiesTable extends Component {
                     if (puppy.gender.toLowerCase() === searchKeyword)
                         foundCount++;
                     if (puppy.price === parseInt(searchKeyword))
+                        foundCount++;
+                    if (puppy.type.toLowerCase().indexOf(searchKeyword) !== -1)
                         foundCount++;
                     if (puppy.paidAmount === 0 && searchKeyword === 'unsold')
                         foundCount++;
