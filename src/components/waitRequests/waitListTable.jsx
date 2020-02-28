@@ -199,8 +199,8 @@ class WaitListTable extends Component {
                     <td>{waitRequest.waitRequestID}</td>
                     <td>{waitRequest.firstName}</td>
                     <td>{waitRequest.lastName}</td>
-                    <td>{waitRequest.email}</td>
-                    <td>{waitRequest.phone}</td>
+                    <td><a href={`mailto:${waitRequest.email}`}>{waitRequest.email}</a></td>
+                    <td><a href={`tel:${waitRequest.phone}`}>{waitRequest.phone}</a></td>
                     <td>{(waitRequest.color !== undefined && waitRequest.color !== null && waitRequest.color !== '') ? waitRequest.color : 'No preference'}</td>
                     <td>{waitRequest.message}</td>
                     <td>{waitRequest.created === undefined ? '' : moment(waitRequest.created).format('MM/DD/YYYY hh:mm:ss')}</td>
