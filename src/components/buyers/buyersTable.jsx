@@ -147,8 +147,8 @@ class BuyersTable extends Component {
                     <tr key={`buyer-${buyer.buyerID}`}>
                         <td>{buyer.firstName}</td>
                         <td>{buyer.lastName}</td>
-                        <td>{buyer.email}</td>
-                        <td>{buyer.phone}</td>
+                        <td><a href={`mailto:${buyer.email}`}>{buyer.email}</a></td>
+                        <td><a href={`tel:${buyer.email}`}>{buyer.phone}</a></td>
                         <td>{buyer.city}</td>
                         <td>{buyer.state}</td>
                         <td>{buyer.hasPartialPayment === true ? 'True' : 'False'}</td>
