@@ -253,6 +253,10 @@ class PuppiesTable extends Component {
                         foundCount++;
                     if (puppy.paidAmount > 0 && searchKeyword === 'sold')
                         foundCount++;
+                    if (puppy.live === true && searchKeyword === 'live')
+                        foundCount++;
+                    if (puppy.live === false && searchKeyword === 'unlive')
+                        foundCount++;
                 }
                 if (foundForID === true) {
                     return true;

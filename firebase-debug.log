@@ -1,0 +1,13 @@
+[debug] [2020-02-28T15:54:27.902Z] ----------------------------------------------------------------------
+[debug] [2020-02-28T15:54:27.905Z] Command:       /usr/local/bin/node /usr/local/bin/firebase deploy --only hosting:admin
+[debug] [2020-02-28T15:54:27.905Z] CLI Version:   7.13.1
+[debug] [2020-02-28T15:54:27.905Z] Platform:      darwin
+[debug] [2020-02-28T15:54:27.905Z] Node Version:  v12.14.1
+[debug] [2020-02-28T15:54:27.916Z] Time:          Fri Feb 28 2020 09:54:27 GMT-0600 (Central Standard Time)
+[debug] [2020-02-28T15:54:27.916Z] ----------------------------------------------------------------------
+[debug] [2020-02-28T15:54:27.916Z] 
+[debug] [2020-02-28T15:54:27.928Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-02-28T15:54:27.928Z] > authorizing via signed-in user
+[debug] [2020-02-28T15:54:27.928Z] [iam] checking project dogteamdobermans for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2020-02-28T15:54:27.929Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/dogteamdobermans:testIamPermissions  
+
