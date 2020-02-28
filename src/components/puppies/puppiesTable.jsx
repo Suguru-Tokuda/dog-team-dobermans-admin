@@ -127,19 +127,21 @@ class PuppiesTable extends Component {
         const thead = (
             <thead>
                 <tr>
+                    <th className="pointer" onClick={() => this.sortTable('puppyID')}>PuppyID {this.getSortIcon('puppyID')}</th>
                     <th className="pointer" onClick={() => this.sortTable('name')}>Name {this.getSortIcon('name')}</th>
                     <th className="pointer" onClick={() => this.sortTable('dateOfBirth')}>DOB {this.getSortIcon('dateOfBirth')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('gender')}>Gender {this.getSortIcon('gender')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('gender')}>Sex {this.getSortIcon('gender')}</th>
                     <th className="pointer" onClick={() => this.sortTable('weight')}>Weight {this.getSortIcon('weight')}</th>
                     <th className="pointer" onClick={() => this.sortTable('price')}>Price {this.getSortIcon('price')}</th>
                     <th>Picture</th>
+                    <th className="pointer" onClick={() => this.sortTable('color')}>Color {this.getSortIcon('color')}</th>
                     <th className="pointer" onClick={() => this.sortTable('sold')}>Status {this.getSortIcon('sold')}</th>
                     <th className="pointer" onClick={() => this.sortTable('live')}>Live {this.getSortIcon('live')}</th>
                     <th>Action</th>
                 </tr>
                 <tr>
                     <th colSpan="100%">
-                        <input type="text" className="form-control" placeholder="Search for puppies" value ={this.state.gridSearch} onChange={this.handleGirdSearch} />
+                        <input type="text" className="form-control" placeholder="Search for PuppyID, name, sex, price, and sold & live status" value ={this.state.gridSearch} onChange={this.handleGirdSearch} />
                     </th>
                 </tr>
             </thead>
@@ -156,12 +158,14 @@ class PuppiesTable extends Component {
                 }
                 return (
                     <tr key={`puppy-${puppy.puppyID}`}>
+                        <td>{puppy.puppyID}</td>
                         <td>{puppy.name}</td>
                         <td>{moment(puppy.dateOfBirth).format('MM/DD/YYYY')}</td>
-                        <td>{puppy.gender}</td>
+                        <td>{`${puppy.gender.substring(0, 1).toUpperCase()}${puppy.gender.substring(1, puppy.gender.length)}`}</td>
                         <td>{puppy.weight}</td>
                         <td>{`$${puppy.price}`}</td>
                         <td>{picture}</td>
+                        <td>{puppy.color}</td>
                         <td>{puppy.paidAmount === 0 ? 'Unsold' : puppy.paidAmount !== puppy.price ? 'Partially sold' : 'Sold'}</td>
                         <td>{puppy.live === true ? 'Live' : 'No'}</td>
                         <td>
@@ -228,17 +232,29 @@ class PuppiesTable extends Component {
         if (searchKeywords.length > 0) {
             retVal = tableData.filter(puppy => {
                 let foundCount = 0;
-                searchKeywords.forEach(searchKeyword => {
+                let foundForID = false;
+                for (let i = 0, max = searchKeywords.length; i < max; i++) {
+                    const searchKeyword = searchKeywords[i];
+                    if (puppy.puppyID.toLowerCase() === searchKeyword) {
+                        foundForID = true;
+                        break;
+                    }
                     if (puppy.name.toLowerCase().indexOf(searchKeyword) !== -1)
                         foundCount++;
                     if (puppy.gender.toLowerCase() === searchKeyword)
                         foundCount++;
-                    if (puppy.weight === parseFloat(searchKeyword))
-                        foundCount++;
                     if (puppy.price === parseInt(searchKeyword))
                         foundCount++;
-                });
-                return foundCount === searchKeywords.length;
+                    if (puppy.paidAmount === 0 && searchKeyword === 'unsold')
+                        foundCount++;
+                    if (puppy.paidAmount > 0 && searchKeyword === 'sold')
+                        foundCount++;
+                }
+                if (foundForID === true) {
+                    return true;
+                } else {
+                    return foundCount === searchKeywords.length;
+                }
             });
         } else {
             retVal = tableData;
