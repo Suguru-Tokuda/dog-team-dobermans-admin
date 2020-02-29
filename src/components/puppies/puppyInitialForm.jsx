@@ -276,7 +276,7 @@ class PuppyInitialForm extends Component {
     handleSetPrice = (event) => {
         let input = event.target.value;
         const { selections, validations } = this.state;
-        const regex = new RegExp(/^([0-9]|[0-9]([.][0-9]{0,3}?$)|[1-9][0-9]{1,2}([.][0-9]{0,2})?$)$/g);
+        const regex = new RegExp(/^([0-9]|[0-9]([.][0-9]{0,2}?$)|[1-9][0-9]{1,3}([.][0-9]{0,2})?$)$/g);
         if (input.length > 0) {
             if (regex.test(input) === true) {
                 if (input !== '') {
