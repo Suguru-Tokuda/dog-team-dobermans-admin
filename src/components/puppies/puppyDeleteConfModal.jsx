@@ -85,7 +85,7 @@ class PuppyDeleteConfModal extends Component {
                                             <th width="10%">Weight</th>
                                             <td width="90%">
                                                 {puppyDetail.weight && (
-                                                    `${puppyDetail.weight} lbs`
+                                                    `${puppyDetail.weight} lb`
                                                 )}
                                             </td>
                                         </tr>

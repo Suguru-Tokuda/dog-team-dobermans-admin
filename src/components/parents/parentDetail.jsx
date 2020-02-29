@@ -126,7 +126,7 @@ class ParentDetail extends Component {
                                         <th width="10%">Weight</th>
                                         <td width="90%">
                                             {parentDetail.weight && (
-                                                `${parentDetail.weight} lbs`
+                                                `${parentDetail.weight} lb`
                                             )}
                                         </td>
                                     </tr>

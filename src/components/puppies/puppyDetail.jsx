@@ -171,7 +171,7 @@ class PuppyDetail extends Component {
                                         <th width="10%">Weight</th>
                                         <td width="90%">
                                             {puppyData.weight && (
-                                                `${puppyData.weight} lbs`
+                                                `${puppyData.weight} lb`
                                             )}
                                         </td>
                                     </tr>
