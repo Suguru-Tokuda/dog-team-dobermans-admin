@@ -162,13 +162,15 @@ class ParentInitialForm extends Component {
     handleSetWeight = (event) => {
         let input = event.target.value;
         const { selections, validations } = this.state;
+        const regex = new RegExp(/^([0-9]|[0-9]([.][0-9]{0,2}?$)|[1-9][0-9]{1,2}([.][0-9]{0,2})?$)$/g);
         if (input.length > 0) {
-            input = input.replace(/\D/g, '');
-            if (input !== '') {
-                validations.weight = '';
-                selections.weight = parseFloat(input);
-            } else {
-                validations.weight = 'Enter weight';
+            if (regex.test(input) === true) {
+                if (input !== '') {
+                    validations.weight = '';
+                    selections.weight = input;
+                } else {
+                    validations.weight = 'Enter weight';
+                }
             }
         } else {
             selections.weight = '';
@@ -205,7 +207,10 @@ class ParentInitialForm extends Component {
         }
         this.setState({ validations });
         if (invalidCount === 0) {
-            const newParent = selections;
+            const newParent = Object.assign({}, selections);
+            newParent.name = newParent.name.trim();
+            newParent.description = newParent.description.trim();
+            newParent.weight = parseFloat(newParent.weight);
             this.props.onToPictureBtnClicked(newParent);
             this.props.history.push('/parent/create/pictures');
         }
@@ -227,10 +232,12 @@ class ParentInitialForm extends Component {
         }
         this.setState({ validations });
         if (valid === true) {
-            selections.name = selections.name.trim();
-            selections.description = selections.description.trim();
+            const parentToUpdate = Object.assign({}, selections);
+            parentToUpdate.name = parentToUpdate.name.trim();
+            parentToUpdate.description = parentToUpdate.description.trim();
+            parentToUpdate.weight = parseFloat(parentToUpdate.weight);
             this.props.onShowLoading(true, 1);
-            ParentsService.updateParent(parentID, selections)
+            ParentsService.updateParent(parentID, parentToUpdate)
                 .then(() => {
                     toastr.success('Profile updated');
                     this.props.history.push(`/parent/update/${parentID}`);
