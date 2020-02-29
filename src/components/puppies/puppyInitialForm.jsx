@@ -346,7 +346,7 @@ class PuppyInitialForm extends Component {
         const { puppyID, puppyDetail, selections, validations } = this.state;
         for (const key in selections) {
             const selection = selections[key];
-            if (selection === '' || selection === 0 || selection === null) {
+            if (key !== 'ounces' && selection === '' || selection === 0 || selection === null) {
                 valid = false;
                 validations[key] = `Enter ${key}`;
             } else {
