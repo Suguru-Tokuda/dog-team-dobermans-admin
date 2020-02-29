@@ -460,7 +460,7 @@ class PuppyInitialForm extends Component {
                                     <div className="col-auto">
                                         <div className="form-inline">
                                             <input type="text" value={selections.pounds} className={`form-control ${this.getErrorClass('pounds')}`} onChange={this.handleSetPounds} />
-                                            <span className="ml-1">lbs</span>
+                                            <span className="ml-1">lb</span>
                                         </div>
                                         {this.getErrorMessage('pounds')}
                                     </div>

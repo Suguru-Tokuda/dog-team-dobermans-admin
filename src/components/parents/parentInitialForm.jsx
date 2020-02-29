@@ -305,7 +305,7 @@ class ParentInitialForm extends Component {
                             </div>
                         </div>
                         <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Weight (lbs)</label>
+                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Weight (lb)</label>
                             <div className="col-xs-5 col-sm-5 col-md-2 col-lg-3">
                                 <input type="text" value={selections.weight} className={`form-control ${this.getErrorClass('weight')}`} onChange={this.handleSetWeight} />
                                 {this.getErrorMessage('weight')}
