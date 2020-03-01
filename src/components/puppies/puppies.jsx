@@ -31,6 +31,7 @@ class Puppies extends Component {
         this.props.onShowLoading(true, 1);
         PuppiesService.getAllPuppies()
             .then(res => {
+                console.log(res.data);
                 this.setState({ puppies: res.data });
             })
             .catch(err => {

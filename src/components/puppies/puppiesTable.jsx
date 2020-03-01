@@ -137,6 +137,7 @@ class PuppiesTable extends Component {
                     <th className="pointer" onClick={() => this.sortTable('color')}>Color {this.getSortIcon('color')}</th>
                     <th className="pointer" onClick={() => this.sortTable('type')}>Type {this.getSortIcon('type')}</th>
                     <th className="pointer" onClick={() => this.sortTable('sold')}>Status {this.getSortIcon('sold')}</th>
+                    <th>Buyer</th>
                     <th className="pointer" onClick={() => this.sortTable('live')}>Live {this.getSortIcon('live')}</th>
                     <th>Action</th>
                 </tr>
@@ -169,6 +170,9 @@ class PuppiesTable extends Component {
                         <td>{puppy.color}</td>
                         <td>{`${puppy.type.substring(0, 1).toUpperCase()}${puppy.type.substring(1, puppy.type.length)}`}</td>
                         <td>{puppy.paidAmount === 0 ? 'Unsold' : puppy.paidAmount !== puppy.price ? 'Partially sold' : 'Sold'}</td>
+                        <td>{puppy.buyer && (
+                            `${puppy.buyer.firstName} ${puppy.buyer.lastName}`
+                        )}</td>
                         <td>{puppy.live === true ? 'Live' : 'No'}</td>
                         <td>
                             <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(puppy.puppyID)}><i className="fa fa-search"></i> View</button>
