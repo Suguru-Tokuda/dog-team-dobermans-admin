@@ -165,10 +165,12 @@ class WaitListTable extends Component {
                         )}
                     </th>
                     <th>Wait Request ID</th>
+                    <th>Puppy ID</th>
                     <th className="pointer" onClick={() => this.sortTable('firstName')}>First Name {this.getSortIcon('firstName')}</th>
                     <th className="pointer" onClick={() => this.sortTable('lastName')}>Last Name {this.getSortIcon('lastName')}</th>
                     <th className="pointer" onClick={() => this.sortTable('email')}>Email {this.getSortIcon('email')}</th>
                     <th className="pointer" onClick={() => this.sortTable('phone')}>Phone {this.getSortIcon('phone')}</th>
+                    <th>Puppy Name</th>
                     <th className="pointer" onClick={() => this.sortTable('color')}>Color {this.getSortIcon('color')}</th>
                     <th>Message</th>
                     <th className="pointer" onClick={() => this.sortTable('created')}>Created {this.getSortIcon('created')}</th>
@@ -197,10 +199,12 @@ class WaitListTable extends Component {
                          />
                     </td>
                     <td>{waitRequest.waitRequestID}</td>
+                    <td>{waitRequest.puppyID && (<Link to={`/puppy/view/${waitRequest.puppyID}`}>{waitRequest.puppyID}</Link>)}</td>
                     <td>{waitRequest.firstName}</td>
                     <td>{waitRequest.lastName}</td>
                     <td><a href={`mailto:${waitRequest.email}`}>{waitRequest.email}</a></td>
                     <td><a href={`tel:${waitRequest.phone}`}>{waitRequest.phone}</a></td>
+                    <td>{waitRequest.puppyName && (waitRequest.puppyName)}</td>
                     <td>{(waitRequest.color !== undefined && waitRequest.color !== null && waitRequest.color !== '') ? waitRequest.color : 'No preference'}</td>
                     <td>{waitRequest.message}</td>
                     <td>{waitRequest.created === undefined ? '' : moment(waitRequest.created).format('MM/DD/YYYY hh:mm:ss')}</td>
