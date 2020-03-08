@@ -42,12 +42,13 @@ export default class WaitRequestEditor extends Component {
             WaitListService.getWaitRequest(waitRequestID)
                 .then(res => {
                     const { selections } = this.state;
-                    const { firstName, lastName, email, phone, message, color, expectedPurchaseDate } = res.data;
+                    const { firstName, lastName, email, phone, message, note, color, expectedPurchaseDate } = res.data;
                     selections.firstName = firstName !== undefined ? firstName : '';
                     selections.lastName = lastName !== undefined ? lastName : '';
                     selections.email = email !== undefined ? email : '';
                     selections.phone = phone !== undefined ? phone : '';
                     selections.message = message !== undefined ? message : '';
+                    selections.note = note !== undefined ? note : '';
                     selections.color = color !== undefined ? color : '';
                     selections.expectedPurchaseDate = expectedPurchaseDate !== undefined ? new Date(expectedPurchaseDate) : null;
                     this.setState({ waitRequestData: res.data, selections: selections });
@@ -166,6 +167,13 @@ export default class WaitRequestEditor extends Component {
         this.setState({ selections, validations });
     }
 
+    handleSetNote = (event) => {
+        const note = event.target.value;
+        const { selections } = this.state;
+        selections.note = note;
+        this.setState({ selections });
+    }
+
     handleSubmitForm = (event) => {
         event.preventDefault();
         this.setState({ formSubmitted: true });
@@ -173,7 +181,7 @@ export default class WaitRequestEditor extends Component {
         let isValid = true;
         const selectionKeys = Object.keys(selections);
         selectionKeys.forEach(key => {
-            if ((selections[key] === '' || selections[key] === null) && key !== 'color') {
+            if ((selections[key] === '' || selections[key] === null) && key !== 'color' && key !== 'note') {
                 isValid = false;
                 if (key === 'expectedPurchaseDate') {
                     validations[key] = `Select ${key}`;
@@ -184,17 +192,18 @@ export default class WaitRequestEditor extends Component {
                 delete validations[key];
             }
         });
-        const { firstName, lastName, email, phone, color, message, expectedPurchaseDate } = selections;
+        const { firstName, lastName, email, phone, color, message, note, expectedPurchaseDate } = selections;
         if (isValid === true) {
             if (waitRequestID === '') {
                 const createData = {
-                    firstName: firstName,
-                    lastName: lastName,
-                    email: email,
-                    phone: phone,
-                    color: color,
+                    firstName: firstName.trim(),
+                    lastName: lastName.trim(),
+                    email: email.trim(),
+                    phone: phone.trim(),
+                    color: color.trim(),
                     expectedPurchaseDate: expectedPurchaseDate,
-                    message: message,
+                    message: message.trim(),
+                    note: note.trim(),
                     created: new Date(),
                     notified: null
                 };
@@ -213,13 +222,14 @@ export default class WaitRequestEditor extends Component {
                     });
             } else {
                 const updateData = waitRequestData;
-                updateData.firstName = firstName;
-                updateData.lastName = lastName;
-                updateData.email = email;
-                updateData.phone = phone;
+                updateData.firstName = firstName.trim();
+                updateData.lastName = lastName.trim();
+                updateData.email = email.trim();
+                updateData.phone = phone.trim();
                 updateData.color = color;
                 updateData.expectedPurchaseDate = expectedPurchaseDate;
-                updateData.message = message;
+                updateData.message = message.trim();
+                updateData.note = note.trim();
                 this.props.onShowLoading(true, 1);
                 WaitListService.updateWaitRequest(waitRequestID, updateData)
                     .then(() => {
@@ -239,19 +249,21 @@ export default class WaitRequestEditor extends Component {
 
     handleUndoClicked = () => {
         const { selections, waitRequestData } = this.state;
-        selections.firstName = waitRequestData.firstName;
-        selections.lastName = waitRequestData.lastName;
-        selections.email = waitRequestData.email;
-        selections.phone = waitRequestData.phone;
-        selections.message = waitRequestData.message;
-        selections.color = waitRequestData.color;
-        selections.expectedPurchaseDate = new Date(waitRequestData.expectedPurchaseDate);
+        const { firstName, lastName, email, phone, message, note, color, expectedPurchaseDate } = waitRequestData;
+        selections.firstName = firstName !== undefined ? firstName : '';
+        selections.lastName = lastName !== undefined ? lastName : '';
+        selections.email = email !== undefined ? email : '';
+        selections.phone = phone !== undefined ? phone : '';
+        selections.message = message !== undefined ? message : '';
+        selections.note = note !== undefined ? note : '';
+        selections.color = color !== undefined ? color : '';
+        selections.expectedPurchaseDate = expectedPurchaseDate !== undefined ? new Date(expectedPurchaseDate) : null;
         this.setState({ selections, validations: {} });
     }
 
     render() {
         const { waitRequestID, selections, validations, formSubmitted } = this.state;
-        const { firstName, lastName, email, phone, color, message, expectedPurchaseDate } = selections;
+        const { firstName, lastName, email, phone, color, message, note, expectedPurchaseDate } = selections;
         return (
             <div className="card">
                 <form noValidate>
@@ -321,6 +333,14 @@ export default class WaitRequestEditor extends Component {
                                     {formSubmitted === true && validations.message && (
                                         <small className="text-danger">{validations.message}</small>
                                     )}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-12">
+                                <div className="form-group">
+                                    <label htmlFor="message" className={`form-label`}>Note</label>
+                                    <textarea row="4" className="form-control" placehodler="Note about the wait request" value={note} onChange={this.handleSetNote}></textarea>
                                 </div>
                             </div>
                         </div>

@@ -94,6 +94,14 @@ input[type="file"] {
   max-width: 100%;
 }
 
+.popover-body {
+  background-color: #2F353A;
+}
+
+.bs-popover-top > .arrow::after, .bs-popover-auto[x-placement^="top"] > .arrow::after {
+  border-top-color: #2F353A;
+}
+
 @media screen and (max-width: 991px) {
   .preview {
     overflow: hidden;

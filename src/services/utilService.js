@@ -77,4 +77,18 @@ export default class UtilService {
         return (lb + ozInLb);
     }
 
+    static shortenStr(str, len) {
+        if (str === null || str === undefined || str.length === 0) {
+            return '';
+        }
+        const strLength = str.length;
+        let retVal = '';
+        if (len <= strLength) {
+            retVal = `${str.substring(0, len)}...`;
+        } else {
+            retVal = str;
+        }
+        return retVal;
+    }
+
 }
