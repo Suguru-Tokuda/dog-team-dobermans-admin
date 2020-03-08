@@ -29,14 +29,14 @@ class VideoBackground extends Component {
                 </div>
                 <div className="card-body">
                     <div className="row form-group">
-                        <label className="col-1"><strong>Title</strong></label>
-                        <div className="col-4">
+                        <label className="col-xs-6 col-sm-3 col-md-2 col-lg-1"><strong>Title</strong></label>
+                        <div className="col-xs-12 col-sm-9 col-md-10 col-lg-11">
                             {currentVideo.title}
                         </div>
                     </div>
                     <div className="row form-group">
-                        <label className="col-1"><strong>Description</strong></label>
-                        <div className="col-4">
+                        <label className="col-xs-6 col-sm-3 col-md-2 col-lg-1"><strong>Description</strong></label>
+                        <div className="col-xs-12 col-sm-9 col-md-10 col-lg-11">
                             {currentVideo.description}
                         </div>
                     </div>
