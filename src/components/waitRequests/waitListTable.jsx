@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Checkbox } from 'react-ui-icheck';
 import DatePicker from 'react-datepicker';
 import SortService from '../../services/sortService';
+import UtilService from '../../services/utilService';
 import Pagination from '../miscellaneous/pagination';
 import moment from 'moment';
 import $ from 'jquery';
@@ -43,6 +44,15 @@ class WaitListTable extends Component {
         this.state.paginationInfo.totalItems = props.totalItems;
     }
 
+    componentDidMount() {
+        $(document).ready(() => {
+            $('[data-toggle="popover"]').popover({
+                placement: 'top',
+                trigger: 'hover'
+            });
+        });
+    }
+
     componentDidUpdate(props) {
         const { tableData, paginationInfo, gridSearch, updateDisplayedData, updateFilteredData, doFilterForExpectedPurchaseDate, expectedPurchaseDateToSearch } = this.state;
         if (updateFilteredData === true) {
@@ -54,7 +64,6 @@ class WaitListTable extends Component {
             } else {
                 filteredData = JSON.parse(JSON.stringify(tableData));
             }
-            console.log(doFilterForExpectedPurchaseDate);
             if (doFilterForExpectedPurchaseDate === true) {
                 filteredData = this.filterForExpectedPurchaseDate(filteredData, expectedPurchaseDateToSearch);
             }
@@ -165,12 +174,15 @@ class WaitListTable extends Component {
                         )}
                     </th>
                     <th>Wait Request ID</th>
+                    <th>Puppy ID</th>
                     <th className="pointer" onClick={() => this.sortTable('firstName')}>First Name {this.getSortIcon('firstName')}</th>
                     <th className="pointer" onClick={() => this.sortTable('lastName')}>Last Name {this.getSortIcon('lastName')}</th>
                     <th className="pointer" onClick={() => this.sortTable('email')}>Email {this.getSortIcon('email')}</th>
                     <th className="pointer" onClick={() => this.sortTable('phone')}>Phone {this.getSortIcon('phone')}</th>
+                    <th>Puppy Name</th>
                     <th className="pointer" onClick={() => this.sortTable('color')}>Color {this.getSortIcon('color')}</th>
                     <th>Message</th>
+                    <th>Note</th>
                     <th className="pointer" onClick={() => this.sortTable('created')}>Created {this.getSortIcon('created')}</th>
                     <th className="pointer" onClick={() => this.sortTable('expectedPurchaseDate')}>Expected Purchase {this.getSortIcon('expectedPurchaseDate')}</th>
                     <th className="pointer" onClick={() => this.sortTable('notified')}>Last Notified {this.getSortIcon('notified')}</th>
@@ -197,12 +209,15 @@ class WaitListTable extends Component {
                          />
                     </td>
                     <td>{waitRequest.waitRequestID}</td>
+                    <td>{waitRequest.puppyID && (<Link to={`/puppy/view/${waitRequest.puppyID}`}>{waitRequest.puppyID}</Link>)}</td>
                     <td>{waitRequest.firstName}</td>
                     <td>{waitRequest.lastName}</td>
                     <td><a href={`mailto:${waitRequest.email}`}>{waitRequest.email}</a></td>
                     <td><a href={`tel:${waitRequest.phone}`}>{waitRequest.phone}</a></td>
+                    <td>{waitRequest.puppyName && (waitRequest.puppyName)}</td>
                     <td>{(waitRequest.color !== undefined && waitRequest.color !== null && waitRequest.color !== '') ? waitRequest.color : 'No preference'}</td>
-                    <td>{waitRequest.message}</td>
+                    <td data-toggle="popover" data-content={waitRequest.message}>{UtilService.shortenStr(waitRequest.message, 10)}</td>
+                    <td data-toggle="popover" data-content={waitRequest.note}>{UtilService.shortenStr(waitRequest.note, 10)}</td>
                     <td>{waitRequest.created === undefined ? '' : moment(waitRequest.created).format('MM/DD/YYYY hh:mm:ss')}</td>
                     <td>{waitRequest.expectedPurchaseDate === undefined || waitRequest.expectedPurchaseDate === null ? '' : moment(waitRequest.expectedPurchaseDate).format('MM/DD/YYYY')}</td>
                     <td>{waitRequest.notified === undefined || waitRequest.notified === null ? 'N/A' : moment(waitRequest.notified).format('MM/DD/YYYY hh:mm:ss')}</td>

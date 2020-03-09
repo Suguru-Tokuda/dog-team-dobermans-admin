@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ConstantsService from '../../services/constantsService';
 import DatePicker from 'react-datepicker';
 import PuppiesService from '../../services/puppiesService';
+import UtilService from '../../services/utilService';
 import toastr from 'toastr';
 
 class PuppyInitialForm extends Component {
@@ -14,7 +15,8 @@ class PuppyInitialForm extends Component {
             gender: '',
             color: '',
             price: '',
-            weight: '',
+            pounds: '',
+            ounces: '',
             dadID: '',
             momID: '',
             description: '',
@@ -26,7 +28,8 @@ class PuppyInitialForm extends Component {
             gender: '',
             color: '',
             price: '',
-            weight: '',
+            pounds: '',
+            ounces: '',
             dadID: '',
             momID: '',
             description: '',
@@ -54,7 +57,9 @@ class PuppyInitialForm extends Component {
             this.state.selections.gender = props.initialParams.gender;
             this.state.selections.color = props.initialParams.color;
             this.state.selections.price = props.initialParams.price;
-            this.state.selections.weight = props.initialParams.weight;
+            const weight = UtilService.convertPoundsToOunces(props.initialParams.weight);
+            this.state.selections.pounds = weight.lb;
+            this.state.selections.ounces = weight.oz;
             this.state.selections.dadID = props.initialParams.dadID;
             this.state.selections.momID = props.initialParams.momID;
             this.state.selections.description = props.initialParams.description;
@@ -75,7 +80,9 @@ class PuppyInitialForm extends Component {
                     selections.gender = puppyDetail.gender;
                     selections.color = puppyDetail.color;
                     selections.price = puppyDetail.price;
-                    selections.weight = puppyDetail.weight;
+                    const weight = UtilService.convertPoundsToOunces(puppyDetail.weight);
+                    selections.pounds = weight.lb;
+                    selections.ounces = weight.oz;
                     selections.dadID = puppyDetail.dadID;
                     selections.momID = puppyDetail.momID;
                     selections.description = puppyDetail.description;
@@ -230,35 +237,55 @@ class PuppyInitialForm extends Component {
         this.setState({ selections, validations });
     }
 
-    handleSetWeight = (event) => {
+    handleSetPounds = (event) => {
         let input = event.target.value;
         const { selections, validations } = this.state;
+        const regex = new RegExp(/^([0-9]|[1-9][0-9]{1,2}?$)$$/g);
         if (input.length > 0) {
-            input = input.replace(/\D/g, '');
-            if (input !== '') {
-                validations.weight = '';
-                selections.weight = parseFloat(input);
-            } else {
-                validations.weight = 'Enter weight';
+            if (regex.test(input) === true) {
+                if (input !== '') {
+                    validations.pounds = '';
+                    selections.pounds = input;
+                } else {
+                    validations.pounds = 'Enter pounds';
+                }
             }
         } else {
-            selections.weight = '';
-            validations.weight = 'Enter weight';
+            selections.pounds = '';
+            validations.pounds = 'Enter pounds';
         }
         this.setState({ selections, validations });
+    }
+
+    handleSetOunces = (event) => {
+        let input = event.target.value;
+        const { selections } = this.state;
+        const regex = new RegExp(/^([0-9]|[1-9][0-9]{1,1}?$)$/g);
+        if (input.length > 0) {
+            if (regex.test(input) === true ) {
+                if (input !== '') {
+                    selections.ounces = input;
+                }
+            }
+        } else {
+            selections.ounces = '';
+        }
+        this.setState({ selections });
     }
 
     handleSetPrice = (event) => {
         let input = event.target.value;
         const { selections, validations } = this.state;
+        const regex = new RegExp(/^([0-9]|[0-9]([.][0-9]{0,2}?$)|[1-9][0-9]{1,3}([.][0-9]{0,2})?$)$/g);
         if (input.length > 0) {
-            input = input.replace(/\D/g, '');
-            if (input !== '') {
-                validations.price = '';
-                const price = parseInt(input);
-                selections.price = price;
-            } else {
-                validations.price = 'Enter price';
+            if (regex.test(input) === true) {
+                if (input !== '') {
+                    validations.price = '';
+                    const price = input;
+                    selections.price = price;
+                } else {
+                    validations.price = 'Enter price';
+                }
             }
         } else {
             selections.price = '';
@@ -281,12 +308,13 @@ class PuppyInitialForm extends Component {
 
     handleCreateBtnClicked = (event) => {
         event.preventDefault();
+        const { selections } = this.state;
         this.setState({ formSubmitted: true });
         let invalidCount = 0;
         const validations = this.state.validations;
-        for (const key in this.state.selections) {
-            const selection = this.state.selections[key];
-            if (selection === '' || selection === 0 || selection === null) {
+        for (const key in selections) {
+            const selection = selections[key];
+            if (key !== 'ounces' && selection === '' || selection === 0 || selection === null) {
                 invalidCount++;
                 validations[key] = `Enter ${key}`;
             } else {
@@ -295,13 +323,17 @@ class PuppyInitialForm extends Component {
         }
         this.setState({ validations });
         if (invalidCount === 0) {
-            const newPuppy = this.state.selections;
+            const newPuppy = Object.assign({}, selections);
+            delete newPuppy.pounds;
+            delete newPuppy.ounces;
             newPuppy.sold = false;
+            newPuppy.price = parseFloat(newPuppy.price);
             newPuppy.buyerID = null;
             newPuppy.paidAmount = 0;
             newPuppy.live = false;
             newPuppy.soldDate = null;
             newPuppy.paidAmount = 0;
+            newPuppy.weight = UtilService.getPounds(selections.pounds, selections.ounces);
             this.props.onToPictureBtnClicked(newPuppy);
             this.props.history.push('/puppy/create/pictures');
         }
@@ -314,7 +346,7 @@ class PuppyInitialForm extends Component {
         const { puppyID, puppyDetail, selections, validations } = this.state;
         for (const key in selections) {
             const selection = selections[key];
-            if (selection === '' || selection === 0 || selection === null) {
+            if (key !== 'ounces' && selection === '' || selection === 0 || selection === null) {
                 valid = false;
                 validations[key] = `Enter ${key}`;
             } else {
@@ -327,8 +359,8 @@ class PuppyInitialForm extends Component {
               puppyDetail.type = selections.type;
               puppyDetail.gender = selections.gender;
               puppyDetail.color = selections.color;
-              puppyDetail.price = selections.price;
-              puppyDetail.weight = selections.weight;
+              puppyDetail.price = parseFloat(selections.price);
+              puppyDetail.weight = UtilService.getPounds(selections.pounds, selections.ounces);
               puppyDetail.dadID = selections.dadID;
               puppyDetail.momID = selections.momID;
               puppyDetail.description = selections.description;
@@ -422,10 +454,23 @@ class PuppyInitialForm extends Component {
                             </div>
                         </div>
                         <div className="row form-group">
-                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Weight (lbs)</label>
+                            <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1">Weight</label>
                             <div className="col-xs-5 col-sm-5 col-md-2 col-lg-3">
-                                <input type="text" value={selections.weight} className={`form-control ${this.getErrorClass('weight')}`} onChange={this.handleSetWeight} />
-                                {this.getErrorMessage('weight')}
+                                <div className="row">
+                                    <div className="col-auto">
+                                        <div className="form-inline">
+                                            <input type="text" value={selections.pounds} className={`form-control ${this.getErrorClass('pounds')}`} onChange={this.handleSetPounds} />
+                                            <span className="ml-1">lb</span>
+                                        </div>
+                                        {this.getErrorMessage('pounds')}
+                                    </div>
+                                    <div className="col-auto">
+                                        <div className="form-inline">
+                                            <input type="text" value={selections.ounces} className="form-control" onChange={this.handleSetOunces} />
+                                            <span className="ml-1">oz</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div className="row form-group">

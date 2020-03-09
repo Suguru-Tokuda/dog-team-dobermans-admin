@@ -120,6 +120,10 @@ class PuppyDetail extends Component {
                             <table className="table table-borderless">
                                 <tbody>
                                     <tr>
+                                        <th width="10%">PuppyID</th>
+                                        <td width="90%">{puppyID}</td>
+                                    </tr>
+                                    <tr>
                                         <th width="10%">Name</th>
                                         <td width="90%">
                                             {puppyData.name && (
@@ -171,7 +175,7 @@ class PuppyDetail extends Component {
                                         <th width="10%">Weight</th>
                                         <td width="90%">
                                             {puppyData.weight && (
-                                                `${puppyData.weight} lbs`
+                                                `${puppyData.weight} lb`
                                             )}
                                         </td>
                                     </tr>

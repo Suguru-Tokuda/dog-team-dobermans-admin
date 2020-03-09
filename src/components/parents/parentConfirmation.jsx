@@ -77,7 +77,7 @@ class ParentConfirmation extends Component {
                         <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{params.color}</div>
                     </div>
                     <div className="row form-group">
-                        <label className="col-xs-12 col-sm-12 col-md-1 col-ld-1"><strong>Weight</strong></label>
+                        <label className="col-xs-12 col-sm-12 col-md-1 col-ld-1"><strong>Weight (lb)</strong></label>
                         <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{params.weight}</div>
                     </div>
                     <div className="row form-group">

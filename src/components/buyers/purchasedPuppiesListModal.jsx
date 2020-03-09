@@ -20,7 +20,6 @@ class PurchasedPuppiesModal extends Component {
             this.props.onShowLoading(true, 1);
             PuppiesService.getPuppiesForBuyerID(buyerID)
                 .then(res => {
-                    console.log(res.data);
                     this.setState({ puppies: res.data });
                 })
                 .catch(err => {
@@ -49,7 +48,7 @@ class PurchasedPuppiesModal extends Component {
         const thead = (
             <thead>
                 <tr>
-                    <th>PuppyID</th>
+                    {/* <th>PuppyID</th> */}
                     <th>Name</th>
                     <th>Date of Birth</th>
                     <th>Price</th>
@@ -64,7 +63,7 @@ class PurchasedPuppiesModal extends Component {
             const rows = puppies.map((puppy, i) => {
                 return (
                     <tr key={`puppy-${puppy.puppyID}`}>
-                        <td>{puppy.puppyID}</td>
+                        {/* <td>{puppy.puppyID}</td> */}
                         <td>{puppy.name}</td>
                         <td>{moment(puppy.dateOfBirth).format('MM/DD/YYYY')}</td>
                         <td>{`$${puppy.price}`}</td>

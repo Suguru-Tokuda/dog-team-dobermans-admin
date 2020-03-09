@@ -126,7 +126,7 @@ class PuppyConfirmation extends Component {
                     </div>
                     <div className="row form-group">
                         <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Weight</strong></label>
-                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{`${params.weight} lbs`}</div>
+                        <div className="col-xs-4 col-sm-4 col-md-3 col-lg-3">{`${params.weight} lb`}</div>
                     </div>
                     <div className="row form-group">
                         <label className="col-xs-12 col-sm-12 col-md-1 col-lg-1"><strong>Price</strong></label>

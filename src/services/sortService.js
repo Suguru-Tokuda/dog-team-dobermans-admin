@@ -25,6 +25,9 @@ export default class SortService {
                         valA = parseFloat(utilService.accessValue(a, key));
                         valB = parseFloat(utilService.accessValue(b, key));
                     }
+                } else {
+                    valA = utilService.accessValue(a, key);
+                    valB = utilService.accessValue(b, key);
                 }
                 return (valA > valB ? 1: (valA < valB ? -1 : 0));
             })
@@ -56,6 +59,9 @@ export default class SortService {
                         valA = parseFloat(utilService.accessValue(a, key));
                         valB = parseFloat(utilService.accessValue(b, key));
                     }
+                } else {
+                    valA = utilService.accessValue(a, key);
+                    valB = utilService.accessValue(b, key);
                 }
                 return (valA < valB ? 1: (valA > valB ? -1 : 0));
             });
