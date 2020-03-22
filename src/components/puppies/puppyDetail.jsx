@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import PuppiesService from '../../services/puppiesService';
 import ParentsService from '../../services/parentsService';
 import toastr from 'toastr';
+import moment from 'moment';
 
 class PuppyDetail extends Component {
     state = {
@@ -128,6 +129,14 @@ class PuppyDetail extends Component {
                                         <td width="90%">
                                             {puppyData.name && (
                                                 puppyData.name
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th width="10%">Date of Birth</th>
+                                        <td width="90%">
+                                            {puppyData.dateOfBirth && (
+                                                moment(puppyData.dateOfBirth).format('MM/DD/YYYY')
                                             )}
                                         </td>
                                     </tr>
