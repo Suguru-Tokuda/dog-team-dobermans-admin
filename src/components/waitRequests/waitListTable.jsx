@@ -24,7 +24,7 @@ class WaitListTable extends Component {
             totalItems: 0
         },
         sortData: {
-            key: 'name',
+            key: 'created',
             orderAcs: false
         },
         checkAll: false,
