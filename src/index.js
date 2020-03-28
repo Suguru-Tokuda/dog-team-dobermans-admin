@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import '@coreui/coreui/dist/css/coreui.min.css';
 import './css/coreui-dark.css';
 import 'toastr/build/toastr.min.css';
 import 'font-awesome/css/font-awesome.css';
@@ -21,7 +22,7 @@ import 'jquery-ui';
 import 'popper.js';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import 'toastr/build/toastr.min.js';
-import '@coreui/coreui';
+import '@coreui/coreui/dist/js/coreui.bundle.min.js';
 
 ReactDOM.render(<App />, document.getElementById('root'));
 serviceWorker.unregister();
