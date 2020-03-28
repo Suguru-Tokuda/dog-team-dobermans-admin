@@ -221,7 +221,7 @@ class WaitListTable extends Component {
                     <td>{waitRequest.created === undefined ? '' : moment(waitRequest.created).format('MM/DD/YYYY hh:mm:ss')}</td>
                     <td>{waitRequest.expectedPurchaseDate === undefined || waitRequest.expectedPurchaseDate === null ? '' : moment(waitRequest.expectedPurchaseDate).format('MM/DD/YYYY')}</td>
                     <td>{waitRequest.notified === undefined || waitRequest.notified === null ? 'N/A' : moment(waitRequest.notified).format('MM/DD/YYYY hh:mm:ss')}</td>
-                    <td>
+                    <td style={{ whiteSpace: 'nowrap'}}>
                         <Link type="button" className="btn btn-sm btn-success" to={`/wait-list/editor/${waitRequest.waitRequestID}`}><i className="fa fa-edit"></i> Edit</Link>
                     </td>
                 </tr>

@@ -194,7 +194,7 @@ class TestimonialsTable extends Component {
                     <td>{testimonial.approved === true ? 'True' : 'False'}</td>
                     <td>{moment(testimonial.created).format('MM/DD/YYYY')}</td>
                     <td>{testimonial.picture !== null && (<img src={testimonial.picture.url} className="rounded" style={{width: "50px"}} alt={testimonial.picture.reference} />)}</td>
-                    <td>
+                    <td style={{ whiteSpace: 'nowrap'}}>
                         <Link to={`/testimonials/editor/${testimonial.testimonialID}`} className="btn btn-sm btn-success"><i className="fa fa-edit"></i> Edit</Link>
                     </td>
                 </tr>

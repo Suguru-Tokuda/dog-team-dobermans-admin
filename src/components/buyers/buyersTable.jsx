@@ -154,13 +154,15 @@ class BuyersTable extends Component {
                         <td>{buyer.state}</td>
                         <td>{buyer.hasPartialPayment === true ? 'True' : 'False'}</td>
                         <td>
-                            {buyer.puppyIDs.length > 0 && (
-                                <button type="button" className="btn btn-sm btn-success ml-1" onClick={() => this.props.onSeePurchasedPuppiesBtnClicked(buyer.buyerID, JSON.stringify(buyer))}><i className="fas fas fa-dog"></i> Purchased Dogs</button>
-                            )}
-                            <button type="button" className="btn btn-sm btn-primary ml-1" onClick={() => this.props.onUpdateBtnClicked(buyer.buyerID)}><i className="fa fa-edit"></i> Update</button>
-                            {buyer.puppyIDs.length === 0 && (
-                                <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(buyer.buyerID)}><i className="fa fa-close"></i> Delete</button>
-                            )}
+                            <div style={{ whiteSpace: 'nowrap' }}>
+                                {buyer.puppyIDs.length > 0 && (
+                                    <button type="button" className="btn btn-sm btn-success ml-1" onClick={() => this.props.onSeePurchasedPuppiesBtnClicked(buyer.buyerID, JSON.stringify(buyer))}><i className="fas fas fa-dog"></i> Purchased Dogs</button>
+                                )}
+                                <button type="button" className="btn btn-sm btn-primary ml-1" onClick={() => this.props.onUpdateBtnClicked(buyer.buyerID)}><i className="fa fa-edit"></i> Update</button>
+                                {buyer.puppyIDs.length === 0 && (
+                                    <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(buyer.buyerID)}><i className="fa fa-close"></i> Delete</button>
+                                )}
+                            </div>
                         </td>
                     </tr>
                 );

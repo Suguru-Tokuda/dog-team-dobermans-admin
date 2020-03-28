@@ -174,7 +174,7 @@ class PuppiesTable extends Component {
                             `${puppy.buyer.firstName} ${puppy.buyer.lastName}`
                         )}</td>
                         <td>{puppy.live === true ? 'Live' : 'No'}</td>
-                        <td>
+                        <td style={{ whiteSpace: 'nowrap'}}>
                             <button type="button" className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(puppy.puppyID)}><i className="fa fa-search"></i> View</button>
                             <button type="button" className="btn btn-sm btn-success ml-1" onClick={() => this.props.onUpdateBtnClicked(puppy.puppyID)}><i className="fa fa-edit"></i> Update</button>
                             <button type="button" className="btn btn-sm btn-info ml-1" onClick={() => this.props.onTransactionBtnClicked(puppy.puppyID)}><i className="fa fa-dollar"></i> Transaction</button>

@@ -156,7 +156,7 @@ class BlogsTable extends Component {
                             <img src={blog.thumbnail.url} alt={blog.thumbnail.reference} style={{width: '50px' }} />
                         </td>
                         <td>{moment(blog.created).format('MM/DD/YYYY hh:mm:ss')}</td>
-                        <td>
+                        <td style={{ whiteSpace: 'nowrap'}}>
                             <button className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(blog.blogID)}>View</button>
                             <button className="btn btn-sm btn-success ml-2" onClick={() => this.props.onUpdateBtnClicked(blog.blogID)}>Update</button>
                             <button className="btn btn-sm btn-danger ml-2" onClick={() => this.props.onDeleteBtnClicked(blog.blogID)}>Delete</button>
