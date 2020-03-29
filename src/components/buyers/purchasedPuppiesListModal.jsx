@@ -93,6 +93,7 @@ class PurchasedPuppiesModal extends Component {
 
     handleCloseBtnClicked = () => {
         $('#purchasedPuppiesModal').modal('hide');
+        $('.modal-backdrop').remove();
     }
 
     render() {

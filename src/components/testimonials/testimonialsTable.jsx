@@ -323,6 +323,7 @@ class TestimonialsTable extends Component {
         this.setState({ testimonialsToDelete: [] });
         if ($('#deleteTestimonialsModal').is(':visible') === true) {
             $('#deleteTestimonialsModal').modal('hide');
+            $('.modal-backdrop').remove();
         }
     }
 

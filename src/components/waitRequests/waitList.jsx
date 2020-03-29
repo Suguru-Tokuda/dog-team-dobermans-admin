@@ -121,6 +121,7 @@ class WaitList extends Component {
             .then(async () => {
                 toastr.success('Email sent');
                 $('#waitListEmailModal').modal('hide');
+                $('.modal-backdrop').remove();
                 const res = await WaitListService.getWaitList();
                 this.setState({ waitRequests: res.data });
             })

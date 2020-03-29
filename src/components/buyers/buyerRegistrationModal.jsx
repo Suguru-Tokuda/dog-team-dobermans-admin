@@ -223,6 +223,7 @@ class BuyerRegistrationModal extends Component {
                     });
                     toastr.success('A new buyer created');
                     $('#buyerRegistrationModal').modal('hide');
+                    $('.modal-backdrop').remove();
                 })
                 .catch(err => {
                     toastr.error('There was an error in creating a buyer');
@@ -255,6 +256,7 @@ class BuyerRegistrationModal extends Component {
                     this.props.onBuyerUpdated();
                     toastr.success('Successfully updated a buyer');
                     $('#buyerRegistrationModal').modal('hide');
+                    $('.modal-backdrop').remove();
                 })
                 .catch(err => {
                     console.log(err);
@@ -268,6 +270,7 @@ class BuyerRegistrationModal extends Component {
 
     handleCancelBtnClicked = () => {
         $('#buyerRegistrationModal').modal('hide');
+        $('.modal-backdrop').remove();
     }
 
     render() {

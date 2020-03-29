@@ -107,6 +107,7 @@ class Buyers extends Component {
     hanldeDeleteCancelBtnClicked = () => {
         this.setState({ buyerToDelete: {} });
         $('#buyerDeleteConfModal').modal('hide');
+        $('.modal-backdrop').remove();
     }
 
     handleDoDeleteBtnClicked = () => {
@@ -120,6 +121,7 @@ class Buyers extends Component {
                 });
                 toastr.success('Successfully deleted a buyer');
                 $('#buyerDeleteConfModal').modal('hide');
+                $('.modal-backdrop').remove();
                 this.getBuyers();
             })
             .catch(() => {

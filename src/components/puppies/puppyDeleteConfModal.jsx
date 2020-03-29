@@ -21,6 +21,7 @@ class PuppyDeleteConfModal extends Component {
             }
         } else {
             $('#puppyDeleteConfModal').modal('hide');
+            $('.modal-backdrop').remove();
         }
     }
 

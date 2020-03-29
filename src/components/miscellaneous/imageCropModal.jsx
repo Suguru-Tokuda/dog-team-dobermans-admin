@@ -117,6 +117,7 @@ class ImageCropModal extends Component {
                                 const compressedFile = await imageCompression(newFile, options);
                                 this.props.onFinishImageCropping(compressedFile);
                                 $('#imageCropModal').modal('hide');
+                                $('.modal-backdrop').remove();
                                 URL.revokeObjectURL(croppedURL);
                             } catch (err) {
                                 toastr.err('There was an error in image cropping');
@@ -134,6 +135,7 @@ class ImageCropModal extends Component {
 
     handleCancelBtnClicked = () => {
         $('#imageCropModal').modal('hide');
+        $('.modal-backdrop').remove();
     }
 
     render() {

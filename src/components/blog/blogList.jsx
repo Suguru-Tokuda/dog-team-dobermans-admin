@@ -90,6 +90,7 @@ class BlogList extends Component {
             action: ''
         });
         $('#blogEditorModal').modal('hide');
+        $('.modal-backdrop').remove();
     }
 
     render() {

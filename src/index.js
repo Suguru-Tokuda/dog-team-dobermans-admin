@@ -20,9 +20,9 @@ import './index.css';
 import 'jquery';
 import 'jquery-ui';
 import 'popper.js';
-import 'bootstrap/dist/js/bootstrap.min.js';
+import '@coreui/coreui/dist/js/coreui.bundle';
 import 'toastr/build/toastr.min.js';
-import '@coreui/coreui/dist/js/coreui.bundle.min.js';
+import 'bootstrap/dist/js/bootstrap.min.js';
 
 ReactDOM.render(<App />, document.getElementById('root'));
 serviceWorker.unregister();

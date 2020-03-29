@@ -43,9 +43,9 @@ export default class HomepageContentService {
         return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
     }
 
-    static updatePuppyUnavailableMessage(message) {
+    static updatePuppyMessage(message) {
         const data = {
-            puppyUnavailableMessage: message
+            puppyMessage: message
         };
         return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
     }

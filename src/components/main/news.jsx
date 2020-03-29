@@ -25,6 +25,7 @@ class News extends Component {
 
     handleCancelEditBtnClicked() {
         $('#newsEditorModal').modal('hide');
+        $('.modal-backdrop').remove();
     }
 
     render() {

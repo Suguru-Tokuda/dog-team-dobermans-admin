@@ -122,6 +122,7 @@ class ParentPictureUpdateForm extends Component {
                     .then(() => {
                         toastr.success('Successfully deleted the picture');
                         $('#imageDeleteConfModal').modal('hide');
+                        $('.modal-backdrop').remove();
                         this.setState({ parentDetail });
                     })
                     .catch((err) => {
@@ -142,6 +143,7 @@ class ParentPictureUpdateForm extends Component {
 
     handleCancelDeleteBtnClicked = () => {
         $('#imageDeleteConfModal').modal('hide');
+        $('.modal-backdrop').remove();
         this.setState({ imageToDelete: {}, imageDeleteIndex: -1 });
     }
 

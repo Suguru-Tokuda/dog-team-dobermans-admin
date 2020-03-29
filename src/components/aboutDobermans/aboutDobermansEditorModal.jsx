@@ -125,6 +125,7 @@ class AboutDobermansEditorModal extends Component {
                 this.props.onUpdateData();
                 toastr.success('Successfully updated the About Dobermans');
                 $('#aboutDobermansEditorModal').modal('hide');
+                $('.modal-backdrop').remove();
             })
             .catch(err => {
                 toastr.error('There was an error in updating the About Dobermans');
@@ -137,6 +138,7 @@ class AboutDobermansEditorModal extends Component {
 
     handleCancelClicked = () => {
         $('#aboutDobermansEditorModal').modal('hide');
+        $('.modal-backdrop').remove();
     }
 
     render() {

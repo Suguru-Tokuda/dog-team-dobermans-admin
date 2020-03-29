@@ -115,6 +115,7 @@ export default class GalleryImageEditor extends Component {
                 .then(() => {
                     toastr.success('Successfully deleted the picture');
                     $('#imageDeleteConfModal').modal('hide');
+                    $('.modal-backdrop').remove();
                     this.setState({ images });
                 })
                 .catch(() => {
@@ -136,6 +137,7 @@ export default class GalleryImageEditor extends Component {
 
     handleCancelDeleteBtnClicked = () => {
         $('#imageDeleteConfModal').modal('hide');
+        $('.modal-backdrop').remove();
         this.setState({ imageToDelete: {}, imageDeleteIndex: -1 });
     }
 

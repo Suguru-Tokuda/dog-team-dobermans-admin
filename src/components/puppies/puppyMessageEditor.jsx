@@ -9,7 +9,7 @@ import toastr from 'toastr';
 Quill.register('modules/imageResize', ImageResize);
 Quill.register('modules/imageDrop', ImageDrop);
 
-export default class PuppyUnavailableMessageEditor extends Component {
+export default class PuppyMessageEditor extends Component {
     state = {
         messageBody: '',
         originalBody: '',
@@ -19,9 +19,10 @@ export default class PuppyUnavailableMessageEditor extends Component {
         this.props.onShowLoading(true, 1);
         HomepageContentService.getHomePageInfo()
             .then(res => {
+                console.log(res);
                 this.setState({ 
-                    messageBody: res.data.puppyUnavailableMessage,
-                    originalBody: JSON.parse(JSON.stringify(res.data.puppyUnavailableMessage))
+                    messageBody: res.data.puppyMessage,
+                    originalBody: JSON.parse(JSON.stringify(res.data.puppyMessage))
                  });
             })
             .catch(err => {
@@ -114,7 +115,7 @@ export default class PuppyUnavailableMessageEditor extends Component {
                 }
             }
         }
-        HomepageContentService.updatePuppyUnavailableMessage(messageBodyToSend)
+        HomepageContentService.updatePuppyMessage(messageBodyToSend)
             .then(() => {
                 toastr.success('Successfully updated the unavailable message.');
                 this.props.history.push('/puppies');
@@ -132,7 +133,7 @@ export default class PuppyUnavailableMessageEditor extends Component {
         return ( 
             <div className="card">
                 <div className="card-header">
-                    <strong>Puppy Unavailable Message</strong>
+                    <strong>Puppy Message</strong>
                 </div>
                 <div className="card-body">
                     <div className="row form-group">

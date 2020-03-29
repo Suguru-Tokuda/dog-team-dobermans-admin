@@ -124,6 +124,7 @@ class PuppyPictureUpdateForm extends Component {
                     .then(res => {
                         toastr.success('Successfully deleted the picture');
                         $('#imageDeleteConfModal').modal('hide');
+                        $('.modal-backdrop').remove();
                         this.setState({ puppyData });
                     })
                     .catch(err => {
@@ -143,6 +144,7 @@ class PuppyPictureUpdateForm extends Component {
 
     handleCancelDeleteBtnClicked = () => {
         $('#imageDeleteConfModal').modal('hide');
+        $('.modal-backdrop').remove();
         this.setState({ imageToDelete: {}, imageDeleteIndex: -1 });
     }
 

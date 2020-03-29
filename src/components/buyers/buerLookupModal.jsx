@@ -22,7 +22,7 @@ class BuyerLookupModal extends Component {
                         <td>{buyer.email}</td>
                         <td>{buyer.state}</td>
                         <td>{buyer.city}</td>
-                        <td><button className="btn btn-sm btn-success" onClick={() => this.handleBuyerSelected(buyer.buyerID)}>Select</button></td>
+                        <td><button type="button" className="btn btn-sm btn-success" onClick={() => this.handleBuyerSelected(buyer.buyerID)}>Select</button></td>
                     </tr>
                 );
             });
@@ -64,6 +64,7 @@ class BuyerLookupModal extends Component {
 
     handleBuyerSelected = (buyerID) => {
         $('#buyerLookupModal').modal('hide');
+        $('.modal-backdrop').remove();
         this.props.onBuyerSelected(buyerID);
     }
 
@@ -119,7 +120,7 @@ class BuyerLookupModal extends Component {
                             )}
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-sm btn-secondary ml-2 col-2" data-toggle="modal" data-target="#buyerLookupModal">Cancel</button>
+                            <button className="btn btn-sm btn-secondary ml-2 col-2" type="button" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>

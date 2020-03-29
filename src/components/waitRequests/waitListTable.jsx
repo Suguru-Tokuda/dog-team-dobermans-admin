@@ -322,6 +322,7 @@ class WaitListTable extends Component {
         this.setState({ waitRequestsToNotify: [] });
         if ($('#waitListEmailModal').is(':visible') === true) {
             $('#waitListEmailModal').modal('hide');
+            $('.modal-backdrop').remove();
         }
     }
 

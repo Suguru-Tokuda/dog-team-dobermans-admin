@@ -21,6 +21,7 @@ class ParentDeleteConfModal extends Component {
             }
         } else {
             $('#parentDeleteConfModal').modal('hide');
+            $('.modal-backdrop').remove();
         }
     }
 
