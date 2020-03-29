@@ -27,4 +27,4 @@ src/api.json
 
 package-lock.json
 
-.firebase
+.firebase/
