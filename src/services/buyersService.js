@@ -19,6 +19,10 @@ export default class BuyersService {
         return axios.get(`${this.getServiceBase()}buyer?key=${api.API_KEY}&buyerID=${buyerID}`);
     }
 
+    static checkEmailAvailability(email, buyerID) {
+        return axios.post(`${this.getServiceBase()}buyer/check-email-availability?key=${api.API_KEY}`, { email: email, buyerID: buyerID });
+    }
+
     static createBuyer(firstName, lastName, email, phone, state, city) {
         const data = {
             firstName: firstName,
