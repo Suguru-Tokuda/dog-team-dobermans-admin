@@ -32,7 +32,7 @@ class AdminHeader extends Component {
                 <ul className="ml-auto c-header-nav mr-5">
                     {authenticated === true && (
                         <li className="c-header-nav-item">
-                            <a className="c-header-nav-link" href="/" onClick={this.handleSignoutClicked}>Sing out</a>
+                            <a className="c-header-nav-link" href="/" onClick={this.handleSignoutClicked}>Sign out</a>
                         </li>
                     )}
                 </ul>

@@ -89,7 +89,7 @@ class Login extends Component {
                                                     <i className="fa fa-user"></i>
                                                 </span>
                                             </div>
-                                            <input className="form-control" type="text" placeholder="Email" vlaue={email} onChange={this.handleSetEmail} onKeyUp={this.handleSubmitByEnter} />
+                                            <input className="form-control" type="text" placeholder="Email" value={email} onChange={this.handleSetEmail} onKeyUp={this.handleSubmitByEnter} />
                                             {(formSubmitted === true && email === '') && (
                                                 <React.Fragment>
                                                     <br />
