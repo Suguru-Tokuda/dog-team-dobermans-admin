@@ -230,38 +230,40 @@ class BuyerRegistrationModal extends Component {
             }
             if (emailAvailable === true) {
                 this.props.onShowLoading(true, 1);
-                BuyersService.createBuyer(selections.firstName, selections.lastName, selections.email, selections.phone, selections.state, selections.city)
-                    .then(res => {
-                        this.props.onBuyerSelected(res.data.buyerID);
-                        this.setState({
-                            selections: {
-                                firstName: '',
-                                lastName: '',
-                                email: '',
-                                phone: '',
-                                city: '',
-                                state: ''
-                            },
-                            validations: {
-                                firstName: '',
-                                lastName: '',
-                                email: '',
-                                phone: '',
-                                city: '',
-                                state: ''
-                            },
-                            formSubmitted: false
+                setTimeout(() => {
+                    BuyersService.createBuyer(selections.firstName, selections.lastName, selections.email, selections.phone, selections.state, selections.city)
+                        .then(res => {
+                            this.props.onBuyerSelected(res.data.buyerID);
+                            this.setState({
+                                selections: {
+                                    firstName: '',
+                                    lastName: '',
+                                    email: '',
+                                    phone: '',
+                                    city: '',
+                                    state: ''
+                                },
+                                validations: {
+                                    firstName: '',
+                                    lastName: '',
+                                    email: '',
+                                    phone: '',
+                                    city: '',
+                                    state: ''
+                                },
+                                formSubmitted: false
+                            });
+                            toastr.success('A new buyer created');
+                            $('#buyerRegistrationModal').modal('hide');
+                            $('.modal-backdrop').remove();
+                        })
+                        .catch(err => {
+                            toastr.error('There was an error in creating a buyer');
+                        })
+                        .finally(() => {
+                            this.props.onDoneLoading(true);
                         });
-                        toastr.success('A new buyer created');
-                        $('#buyerRegistrationModal').modal('hide');
-                        $('.modal-backdrop').remove();
-                    })
-                    .catch(err => {
-                        toastr.error('There was an error in creating a buyer');
-                    })
-                    .finally(() => {
-                        this.props.onDoneLoading(true);
-                    });
+                }, 500);
             } else {
                 this.props.onDoneLoading(true);
             }
@@ -304,23 +306,24 @@ class BuyerRegistrationModal extends Component {
             } catch {
                 toastr.error('There was an error in checking email availability.');
             }
-            if (emailAvailable === true)
-            setTimeout(() => {
-                BuyersService.updateBuyer(buyerID, firstName, lastName, email, phone, state, city, puppyIDs)
-                    .then(() => {
-                        this.props.onBuyerUpdated();
-                        toastr.success('Successfully updated a buyer');
-                        $('#buyerRegistrationModal').modal('hide');
-                        $('.modal-backdrop').remove();
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        toastr.error('There was an error in updating the buyer information')
-                    })
-                    .finally(() => {
-                        this.props.onDoneLoading(true);
-                    });
-            }, 200);
+            if (emailAvailable === true) {
+                setTimeout(() => {
+                    BuyersService.updateBuyer(buyerID, firstName, lastName, email, phone, state, city, puppyIDs)
+                        .then(() => {
+                            this.props.onBuyerUpdated();
+                            toastr.success('Successfully updated a buyer');
+                            $('#buyerRegistrationModal').modal('hide');
+                            $('.modal-backdrop').remove();
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            toastr.error('There was an error in updating the buyer information')
+                        })
+                        .finally(() => {
+                            this.props.onDoneLoading(true);
+                        });
+                }, 500);
+            }
         }
         this.setState({ validations });
     }
