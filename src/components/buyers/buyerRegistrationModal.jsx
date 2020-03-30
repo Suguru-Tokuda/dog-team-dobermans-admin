@@ -3,6 +3,7 @@ import toastr from 'toastr';
 import $ from 'jquery';
 import BuyersService from '../../services/buyersService';
 import ConstantsService from '../../services/constantsService';
+import ValidationService from '../../services/validationService';
 
 class BuyerRegistrationModal extends Component {
     state = {
@@ -93,7 +94,7 @@ class BuyerRegistrationModal extends Component {
 
     getErrorMsg(key) {
         const { validations, formSubmitted } = this.state;
-        return (validations[key] !== '' && formSubmitted === true ? <span className="text-danger">{`Enter ${key}`}</span> : null);
+        return (validations[key] !== '' && formSubmitted === true ? <span className="text-danger">{validations[key]}</span> : null);
     }
 
     getErrorClass(key) {
@@ -125,13 +126,17 @@ class BuyerRegistrationModal extends Component {
         this.setState({ selections, validations });
     }
 
-    handleSetEmail = (event) => {
+    handleSetEmail = async (event) => {
         const email = event.target.value.trim();
         const { selections, validations } = this.state;
         if (email !== '') {
-            validations.name = '';
+            if (ValidationService.validateEmail(email) === true) {
+                validations.email = '';
+            } else {
+                validations.email = 'Enter valid email';
+            }
         } else {
-            validations.name = 'Enter first name';
+            validations.email = 'Enter email name';
         }
         selections.email = email;
         this.setState({ selections, validations });
@@ -179,7 +184,7 @@ class BuyerRegistrationModal extends Component {
         this.setState({ selections, validations });
     }
 
-    handleCreateBtnClicked = (event) => {
+    handleCreateBtnClicked = async (event) => {
         this.setState({ formSubmitted: true });
         event.preventDefault();
         let isValid = true;
@@ -190,7 +195,6 @@ class BuyerRegistrationModal extends Component {
                 validations[key] = `Enter ${key}`;
             }
         }
-        this.setState({ validations });
         if (isValid === true) {
             selections.firstName = selections.firstName.trim();
             selections.lastName = selections.lastName.trim();
@@ -198,43 +202,58 @@ class BuyerRegistrationModal extends Component {
             selections.phone = selections.phone.trim();
             selections.state = selections.state.trim();
             selections.city = selections.city.trim();
+            let emailAvailable = false;
             this.props.onShowLoading(true, 1);
-            BuyersService.createBuyer(selections.firstName, selections.lastName, selections.email, selections.phone, selections.state, selections.city)
-                .then(res => {
-                    this.props.onBuyerSelected(res.data.buyerID);
-                    this.setState({
-                        selections: {
-                            firstName: '',
-                            lastName: '',
-                            email: '',
-                            phone: '',
-                            city: '',
-                            state: ''
-                        },
-                        validations: {
-                            firstName: '',
-                            lastName: '',
-                            email: '',
-                            phone: '',
-                            city: '',
-                            state: ''
-                        },
-                        formSubmitted: false
+            try {
+                const res = await BuyersService.checkEmailAvailability(selections.email);
+                emailAvailable = res.data;
+                if (emailAvailable === false)
+                    validations.email = 'Email taken already.';
+            } catch {
+                toastr.error('There was an error in checking email availability.');
+            }
+            if (emailAvailable === true) {
+                this.props.onShowLoading(true, 1);
+                BuyersService.createBuyer(selections.firstName, selections.lastName, selections.email, selections.phone, selections.state, selections.city)
+                    .then(res => {
+                        this.props.onBuyerSelected(res.data.buyerID);
+                        this.setState({
+                            selections: {
+                                firstName: '',
+                                lastName: '',
+                                email: '',
+                                phone: '',
+                                city: '',
+                                state: ''
+                            },
+                            validations: {
+                                firstName: '',
+                                lastName: '',
+                                email: '',
+                                phone: '',
+                                city: '',
+                                state: ''
+                            },
+                            formSubmitted: false
+                        });
+                        toastr.success('A new buyer created');
+                        $('#buyerRegistrationModal').modal('hide');
+                        $('.modal-backdrop').remove();
+                    })
+                    .catch(err => {
+                        toastr.error('There was an error in creating a buyer');
+                    })
+                    .finally(() => {
+                        this.props.onDoneLoading(true);
                     });
-                    toastr.success('A new buyer created');
-                    $('#buyerRegistrationModal').modal('hide');
-                    $('.modal-backdrop').remove();
-                })
-                .catch(err => {
-                    toastr.error('There was an error in creating a buyer');
-                })
-                .finally(() => {
-                    this.props.onDoneLoading();
-                });
+            } else {
+                this.props.onDoneLoading(true);
+            }
         }
+        this.setState({ validations });
     }
 
-    handleUpdateBtnClicked = (event) => {
+    handleUpdateBtnClicked = async (event) => {
         this.setState({ formSubmitted: true });
         event.preventDefault();
         let isValid = true;
@@ -245,27 +264,46 @@ class BuyerRegistrationModal extends Component {
                 validations[key] = `Enter ${key}`;
             }
         }
-        this.setState({ validations });
         if (isValid === true) {
             this.props.onShowLoading(true, 1);
+            selections.firstName = selections.firstName.trim();
+            selections.lastName = selections.lastName.trim();
+            selections.email = selections.email.toLowerCase().trim();
+            selections.phone = selections.phone.trim();
+            selections.state = selections.state.trim();
+            selections.city = selections.city.trim();
             const { firstName, lastName, email, phone, city, state } = selections;
             const { puppyIDs } = this.state.buyerToUpdate;
-            this.props.onShowLoading(true, 1);
-            BuyersService.updateBuyer(buyerID, firstName, lastName, email, phone, state, city, puppyIDs)
-                .then(res => {
-                    this.props.onBuyerUpdated();
-                    toastr.success('Successfully updated a buyer');
-                    $('#buyerRegistrationModal').modal('hide');
-                    $('.modal-backdrop').remove();
-                })
-                .catch(err => {
-                    console.log(err);
-                    toastr.error('There was an error in updating the buyer information')
-                })
-                .finally(() => {
-                    this.props.onDoneLoading();
-                });
+            let emailAvailable = false;
+            try {
+                const res = await BuyersService.checkEmailAvailability(email, buyerID);
+                emailAvailable = res.data;
+                if (emailAvailable === false)
+                    validations.email = 'Email taken already.';
+            } catch {
+                toastr.error('There was an error in checking email availability.');
+            }
+            if (emailAvailable === true) {
+                this.props.onShowLoading(true, 1);
+                BuyersService.updateBuyer(buyerID, firstName, lastName, email, phone, state, city, puppyIDs)
+                    .then(res => {
+                        this.props.onBuyerUpdated();
+                        toastr.success('Successfully updated a buyer');
+                        $('#buyerRegistrationModal').modal('hide');
+                        $('.modal-backdrop').remove();
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        toastr.error('There was an error in updating the buyer information')
+                    })
+                    .finally(() => {
+                        this.props.onDoneLoading(true );
+                    });
+            } else {
+                this.props.onDoneLoading(true);
+            }
         }
+        this.setState({ validations });
     }
 
     handleCancelBtnClicked = () => {
