@@ -4,6 +4,8 @@ import { Checkbox } from 'react-ui-icheck';
 import toastr from 'toastr';
 import Cookies from 'js-cookie';
 import * as siteLogo from '../../assets/img/site_logo.PNG';
+import CryptoJS from 'crypto-js';
+import * as key from '../../key.json';
 
 class Login extends Component {
     state = {
@@ -21,7 +23,8 @@ class Login extends Component {
         if (this.state.rememberMe === true) {
             if (Cookies.get('email') && Cookies.get('password')) {
                 this.state.email = Cookies.get('email');
-                this.state.password = Cookies.get('password');
+                const bytes = CryptoJS.AES.decrypt(Cookies.get('password'), key.PRIVATE_KEY);
+                this.state.password = bytes.toString(CryptoJS.enc.Utf8);
             } else {
                 Cookies.remove('rememberMe');
             }
@@ -44,8 +47,9 @@ class Login extends Component {
             auth.signInWithEmailAndPassword(email, password)
                 .then(() => {
                     if (rememberMe === true) {
+                        const encryptedPassword = CryptoJS.AES.encrypt(password, key.PRIVATE_KEY).toString();
                         Cookies.set('email', email);
-                        Cookies.set('password', password);
+                        Cookies.set('password', encryptedPassword);
                         Cookies.set('rememberMe', rememberMe);
                     } else {
                         Cookies.remove('email');

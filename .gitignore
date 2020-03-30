@@ -24,6 +24,7 @@ yarn-debug.log*
 yarn-error.log*
 
 src/api.json
+src/key.json
 
 package-lock.json
 
