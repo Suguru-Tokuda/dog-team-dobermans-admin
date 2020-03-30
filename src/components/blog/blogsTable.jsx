@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import SortService from '../../services/sortService';
 import Pagination from '../miscellaneous/pagination';
+import UtilService from '../../services/utilService';
+import $ from 'jquery';
 import moment from 'moment';
 
 class BlogsTable extends Component {
@@ -30,6 +32,15 @@ class BlogsTable extends Component {
         this.state.tableData = props.blogs;
         this.state.filteredData = JSON.parse(JSON.stringify(props.blogs));
         this.state.paginationInfo.totalItems = props.totalItems;
+    }
+
+    componentDidMount() {
+        $(document).ready(() => {
+            $('[data-toggle="popover"]').popover({
+                placement: 'top',
+                trigger: 'hover'
+            });
+        });
     }
 
     componentDidUpdate(props) {
@@ -151,7 +162,7 @@ class BlogsTable extends Component {
                         <td>{blog.blogID}</td>
                         <td>{blog.author}</td>
                         <td>{blog.title}</td>
-                        <td>{blog.message}</td>
+                        <td data-toggle="popover" data-content={blog.message}>{UtilService.shortenStr(blog.message, 10)}</td>
                         <td>
                             <img src={blog.thumbnail.url} alt={blog.thumbnail.reference} style={{width: '50px' }} />
                         </td>

@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import UtilService from '../../services/utilService';
+import $ from 'jquery';
 
 class OurTeam extends Component {
     state = {
@@ -8,6 +10,15 @@ class OurTeam extends Component {
     constructor(props) {
         super(props);
         this.state.ourTeam = props.ourTeam;
+    }
+
+    componentDidMount() {
+        $(document).ready(() => {
+            $('[data-toggle="popover"]').popover({
+                placement: 'top',
+                trigger: 'hover'
+            });
+        });
     }
 
     getOurTeam() {
@@ -29,7 +40,7 @@ class OurTeam extends Component {
                     <tr key={`member-${i}`}>
                         <td>{name}</td>
                         <td>{title}</td>
-                        <td>{description}</td>
+                        <td><div data-toggle="popover" data-content={description}>{UtilService.shortenStr(description, 10)}</div></td>
                         <td>
                             <img src={picture.url} alt={picture.reference} />
                         </td>
