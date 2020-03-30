@@ -124,6 +124,7 @@ class BuyersTable extends Component {
         const thead = (
             <thead>
                 <tr>
+                    <th>BuyerID</th>
                     <th className="pointer" onClick={() => this.sortTable('firstName')}>First Name {this.getSortIcon('firstName')}</th>
                     <th className="pointer" onClick={() => this.sortTable('lastName')}>Last Name {this.getSortIcon('lastName')}</th>
                     <th className="pointer" onClick={() => this.sortTable('email')}>Email {this.getSortIcon('email')}</th>
@@ -143,9 +144,9 @@ class BuyersTable extends Component {
         let tbody;
         if (displayedData.length > 0) {
             const rows = displayedData.map(buyer => {
-                console.log(buyer.puppyIDs.length);
                 return (
                     <tr key={`buyer-${buyer.buyerID}`}>
+                        <td>{buyer.buyerID}</td>
                         <td>{buyer.firstName}</td>
                         <td>{buyer.lastName}</td>
                         <td><a href={`mailto:${buyer.email}`}>{buyer.email}</a></td>
