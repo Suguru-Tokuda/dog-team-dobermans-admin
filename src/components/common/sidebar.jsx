@@ -9,8 +9,8 @@ class AdminSidebar extends Component {
         return (
         <div className="c-sidebar c-sidebar-dark c-sidebar-fixed c-sidebar-lg-show" id="sidebar">
             <div className="c-sidebar-brand d-lg-down-none">
-                <img className="c-sidebar-brand-full" src={siteLogo} width="89" height="25" style={{filter: 'invert(90%)'}} alt="Dog Team Dobermans Logo"></img>
-                <img className="c-sidebar-brand-minimized" src={siteLogo} width="89" height="25" style={{filter: 'invert(90%)'}} alt="Dog Team Dobermans Logo"></img>
+                <Link to="/"><img className="c-sidebar-brand-full" src={siteLogo} width="89" height="25" style={{filter: 'invert(90%)'}} alt="Dog Team Dobermans Logo"></img></Link>
+                <Link to="/"><img className="c-sidebar-brand-minimized" src={siteLogo} width="89" height="25" style={{filter: 'invert(90%)'}} alt="Dog Team Dobermans Logo"></img></Link>
             </div>
             <ul className="c-sidebar-nav">
                 {authenticated === false && (
