@@ -4,6 +4,7 @@ import { Checkbox } from 'react-ui-icheck';
 import DeleteTestimonialsModal from './deleteTestimonialsModal';
 import SortService from '../../services/sortService';
 import TestimonialService from '../../services/testimonialService';
+import UtilService from '../../services/utilService';
 import Pagination from '../miscellaneous/pagination';
 import $ from 'jquery';
 import moment from 'moment';
@@ -38,6 +39,15 @@ class TestimonialsTable extends Component {
         this.state.tableData = props.testimonials.map(testimonial => { testimonial.selected = false; return testimonial; });
         this.state.filteredData = JSON.parse(JSON.stringify(this.state.tableData));
         this.state.paginationInfo.totalItems = props.totalItems;
+    }
+
+    componentDidMount() {
+        $(document).ready(() => {
+            $('[data-toggle="popover"]').popover({
+                placement: 'top',
+                trigger: 'hover'
+            });
+        });
     }
 
     componentDidUpdate(props) {
@@ -190,7 +200,7 @@ class TestimonialsTable extends Component {
                     <td>{testimonial.firstName}</td>
                     <td>{testimonial.lastName}</td>
                     <td>{testimonial.email}</td>
-                    <td>{testimonial.message}</td>
+                    <td data-toggle="popover" data-content={testimonial.message}>{UtilService.shortenStr(testimonial.message, 10)}</td>
                     <td>{testimonial.approved === true ? 'True' : 'False'}</td>
                     <td>{moment(testimonial.created).format('MM/DD/YYYY')}</td>
                     <td>{testimonial.picture !== null && (<img src={testimonial.picture.url} className="rounded" style={{width: "50px"}} alt={testimonial.picture.reference} />)}</td>
@@ -401,13 +411,13 @@ class TestimonialsTable extends Component {
                     <div className="row">
                         <div className="col-12">
                             <div className="row">
-                                <div className="col-6">
+                                <div className="col-xs-12 col-sm-6 col-md-6 col-lg-6" style={{ whiteSpace: 'nowrap' }}>
                                     <Link className="btn btn-success" to="/testimonials/editor">Create</Link>
                                     <button className="btn btn-primary ml-2" disabled={buttonDisabled} onClick={this.handleApproveSelectedTestimonials}>Approve</button>
                                     <button className="btn btn-warning ml-2" disabled={buttonDisabled} onClick={this.handleDisapproveSelectedTestimonials}>Disapprove</button>
                                     <button className="btn btn-danger ml-2" disabled={buttonDisabled} onClick={this.handleDeleteSelectedTestimonials}>Delete</button>
                                 </div>
-                                <div className="col-6">
+                                <div className="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                     <div className="float-right">
                                         {this.getPageSizeOptions()}
                                     </div>
