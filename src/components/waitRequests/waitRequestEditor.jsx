@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import toastr from 'toastr';
 import WaitListService from '../../services/waitListService';
 import ValidationService from '../../services/validationService';
+import ConstantsService from '../../services/constantsService';
 import DatePicker from 'react-datepicker';
 
 export default class WaitRequestEditor extends Component {
@@ -14,6 +15,8 @@ export default class WaitRequestEditor extends Component {
             lastName: '',
             email: '',
             phone: '',
+            city: '',
+            state: '',
             message: '',
             color: '',
             expectedPurchaseDate: null
@@ -42,11 +45,13 @@ export default class WaitRequestEditor extends Component {
             WaitListService.getWaitRequest(waitRequestID)
                 .then(res => {
                     const { selections } = this.state;
-                    const { firstName, lastName, email, phone, message, note, color, expectedPurchaseDate } = res.data;
+                    const { firstName, lastName, email, phone, city, state, message, note, color, expectedPurchaseDate } = res.data;
                     selections.firstName = firstName !== undefined ? firstName : '';
                     selections.lastName = lastName !== undefined ? lastName : '';
                     selections.email = email !== undefined ? email : '';
                     selections.phone = phone !== undefined ? phone : '';
+                    selections.city = city !== undefined ? city : '';
+                    selections.state = state !== undefined ? state : '';
                     selections.message = message !== undefined ? message : '';
                     selections.note = note !== undefined ? note : '';
                     selections.color = color !== undefined ? color : '';
@@ -73,6 +78,11 @@ export default class WaitRequestEditor extends Component {
         return types.map(type => <option value={type} key={type}>{type}</option>);
     }
 
+    getStateOptions() {
+        const states = ConstantsService.getStates();
+        return states.map(state => <option value={state.abbreviation} key={state.abbreviation}>{`${state.abbreviation} - ${state.name}`}</option>);
+    }
+
     getFormClass(key) {
         const { formSubmitted, validations } = this.state;
         return formSubmitted === true && typeof validations[key] !== 'undefined' && validations[key].length > 0 ? 'is-invalid' : '';
@@ -96,7 +106,7 @@ export default class WaitRequestEditor extends Component {
         if (lastName !== '') {
             delete validations.lastName;
         } else {
-            validations.lastName = 'Enter last Name';
+            validations.lastName = 'Enter last name';
         }
         selections.lastName = lastName;
         this.setState({ lastName, validations });
@@ -116,6 +126,30 @@ export default class WaitRequestEditor extends Component {
             validations.email = 'Enter email';
         }
         selections.email = email;
+        this.setState({ selections, validations });
+    }
+
+    handleSetState = (event) => {
+        const { selections, validations } = this.state;
+        const state = event.target.value;
+        if (state !== '') {
+            delete validations.state;
+        } else {
+            validations.state = 'Select state';
+        }
+        selections.state = event.target.value;
+        this.setState({ selections });
+    }
+
+    handleSetCity = (event) => {
+        const { selections, validations } = this.state;
+        const city = event.target.value;
+        if (city !== '') {
+            delete validations.city;
+        } else {
+            validations.city = 'Enter city';
+        }
+        selections.city = city;
         this.setState({ selections, validations });
     }
 
@@ -192,7 +226,7 @@ export default class WaitRequestEditor extends Component {
                 delete validations[key];
             }
         });
-        const { firstName, lastName, email, phone, color, message, note, expectedPurchaseDate } = selections;
+        const { firstName, lastName, email, phone, city, state, color, message, note, expectedPurchaseDate } = selections;
         if (isValid === true) {
             if (waitRequestID === '') {
                 const createData = {
@@ -200,6 +234,8 @@ export default class WaitRequestEditor extends Component {
                     lastName: lastName.trim(),
                     email: email.trim(),
                     phone: phone.trim(),
+                    city: city.trim(),
+                    state: state,
                     color: color.trim(),
                     expectedPurchaseDate: expectedPurchaseDate,
                     message: message.trim(),
@@ -226,6 +262,8 @@ export default class WaitRequestEditor extends Component {
                 updateData.lastName = lastName.trim();
                 updateData.email = email.trim();
                 updateData.phone = phone.trim();
+                updateData.city = city.trim();
+                updateData.state = state;
                 updateData.color = color;
                 updateData.expectedPurchaseDate = expectedPurchaseDate;
                 updateData.message = message.trim();
@@ -249,11 +287,13 @@ export default class WaitRequestEditor extends Component {
 
     handleUndoClicked = () => {
         const { selections, waitRequestData } = this.state;
-        const { firstName, lastName, email, phone, message, note, color, expectedPurchaseDate } = waitRequestData;
+        const { firstName, lastName, email, phone, city, state, message, note, color, expectedPurchaseDate } = waitRequestData;
         selections.firstName = firstName !== undefined ? firstName : '';
         selections.lastName = lastName !== undefined ? lastName : '';
         selections.email = email !== undefined ? email : '';
         selections.phone = phone !== undefined ? phone : '';
+        selections.city = city !== undefined ? city : '';
+        selections.state = state !== undefined ? state : '';
         selections.message = message !== undefined ? message : '';
         selections.note = note !== undefined ? note : '';
         selections.color = color !== undefined ? color : '';
@@ -263,7 +303,7 @@ export default class WaitRequestEditor extends Component {
 
     render() {
         const { waitRequestID, selections, validations, formSubmitted } = this.state;
-        const { firstName, lastName, email, phone, color, message, note, expectedPurchaseDate } = selections;
+        const { firstName, lastName, email, phone, city, state, color, message, note, expectedPurchaseDate } = selections;
         return (
             <div className="card">
                 <form noValidate>
@@ -313,9 +353,32 @@ export default class WaitRequestEditor extends Component {
                         </div>
                         <div className="row">
                             <div className="col-sm-6">
+                                <div className="form-group">
+                                    <label htmlFor="city" className="form-label">City *</label>
+                                    <input type="text" name="city" id="city" placeholder="Enter city" className={`form-control ${this.getFormClass('city')}`} value={city} onChange={this.handleSetCity} />
+                                    {formSubmitted === true && validations.city && (
+                                        <small className="text-danger">{validations.city}</small>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="col-sm-6">
+                                <div className="form-group">
+                                    <label htmlFor="state" className="form-label">State *</label>
+                                    <select className={`form-control ${this.getFormClass('state')}`} value={state} onChange={this.handleSetState}>
+                                        <option value="">--Select State --</option>
+                                        {this.getStateOptions()}
+                                    </select>
+                                    {formSubmitted === true && validations.state && (
+                                        <small className="text-danger">{validations.state}</small>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-sm-6">
                                 <label htmlFor="color" className={`form-label`}>Color</label>
                                 <select className={`form-control`} name="color" id="color" value={color} onChange={this.handleSetColor}>
-                                    <option>--Select color for puppy--</option>
+                                    <option value="">--Select color for puppy--</option>
                                     {this.getColorOptions()}
                                 </select>
                             </div>

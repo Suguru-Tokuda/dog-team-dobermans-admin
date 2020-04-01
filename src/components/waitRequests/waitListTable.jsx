@@ -179,6 +179,8 @@ class WaitListTable extends Component {
                     <th className="pointer" onClick={() => this.sortTable('lastName')}>Last Name {this.getSortIcon('lastName')}</th>
                     <th className="pointer" onClick={() => this.sortTable('email')}>Email {this.getSortIcon('email')}</th>
                     <th className="pointer" onClick={() => this.sortTable('phone')}>Phone {this.getSortIcon('phone')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('city')}>City {this.getSortIcon('city')}</th>
+                    <th className="pointer" onClick={() => this.sortTable('state')}>State {this.getSortIcon('state')}</th>
                     <th>Puppy Name</th>
                     <th className="pointer" onClick={() => this.sortTable('color')}>Color {this.getSortIcon('color')}</th>
                     <th>Message</th>
@@ -214,6 +216,9 @@ class WaitListTable extends Component {
                     <td>{waitRequest.lastName}</td>
                     <td><a href={`mailto:${waitRequest.email}`}>{waitRequest.email}</a></td>
                     <td><a href={`tel:${waitRequest.phone}`}>{waitRequest.phone}</a></td>
+                    <td>{waitRequest.city && (waitRequest.city)}</td>
+                    <td>{waitRequest.state && (waitRequest.satte)}</td>
+                    <td></td>
                     <td>{waitRequest.puppyName && (waitRequest.puppyName)}</td>
                     <td>{(waitRequest.color !== undefined && waitRequest.color !== null && waitRequest.color !== '') ? waitRequest.color : 'No preference'}</td>
                     <td data-toggle="popover" data-content={waitRequest.message}>{UtilService.shortenStr(waitRequest.message, 10)}</td>
