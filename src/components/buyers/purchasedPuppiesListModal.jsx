@@ -50,6 +50,7 @@ class PurchasedPuppiesModal extends Component {
                 <tr>
                     {/* <th>PuppyID</th> */}
                     <th>Name</th>
+                    <th>Color</th>
                     <th>Date of Birth</th>
                     <th>Price</th>
                     <th>Paid Amount</th>
@@ -65,6 +66,7 @@ class PurchasedPuppiesModal extends Component {
                     <tr key={`puppy-${puppy.puppyID}`}>
                         {/* <td>{puppy.puppyID}</td> */}
                         <td>{puppy.name}</td>
+                        <td>{puppy.color}</td>
                         <td>{moment(puppy.dateOfBirth).format('MM/DD/YYYY')}</td>
                         <td>{`$${puppy.price}`}</td>
                         <td>{`$${puppy.paidAmount}`}</td>
