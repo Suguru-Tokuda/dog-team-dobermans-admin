@@ -217,8 +217,7 @@ class WaitListTable extends Component {
                     <td><a href={`mailto:${waitRequest.email}`}>{waitRequest.email}</a></td>
                     <td><a href={`tel:${waitRequest.phone}`}>{waitRequest.phone}</a></td>
                     <td>{waitRequest.city && (waitRequest.city)}</td>
-                    <td>{waitRequest.state && (waitRequest.satte)}</td>
-                    <td></td>
+                    <td>{waitRequest.state && (waitRequest.state)}</td>
                     <td>{waitRequest.puppyName && (waitRequest.puppyName)}</td>
                     <td>{(waitRequest.color !== undefined && waitRequest.color !== null && waitRequest.color !== '') ? waitRequest.color : 'No preference'}</td>
                     <td data-toggle="popover" data-content={waitRequest.message}>{UtilService.shortenStr(waitRequest.message, 10)}</td>
