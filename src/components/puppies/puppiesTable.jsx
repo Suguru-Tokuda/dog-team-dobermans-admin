@@ -17,7 +17,7 @@ class PuppiesTable extends Component {
             totalItems: 0
         },
         sortData: {
-            key: 'name',
+            key: 'dateOfBirth',
             orderAsc: false
         },
         gridSearch: '',
@@ -169,7 +169,7 @@ class PuppiesTable extends Component {
                         <td>{picture}</td>
                         <td>{puppy.color}</td>
                         <td>{`${puppy.type.substring(0, 1).toUpperCase()}${puppy.type.substring(1, puppy.type.length)}`}</td>
-                        <td>{puppy.paidAmount === 0 ? 'Unsold' : puppy.paidAmount !== puppy.price ? 'Partially sold' : 'Sold'}</td>
+                        <td>{puppy.paidAmount === 0 ? 'Available' : puppy.paidAmount !== puppy.price ? 'Pending' : 'Adopted'}</td>
                         <td>{puppy.buyer && (
                             `${puppy.buyer.firstName} ${puppy.buyer.lastName}`
                         )}</td>
