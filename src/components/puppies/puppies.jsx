@@ -2,13 +2,17 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import PuppiesTable from './puppiesTable';
 import PuppyDeleteConfModal from './puppyDeleteConfModal';
+import PuppyTransactionCancelationModal from './puppyTransactionCancelationModal';
 import PuppiesService from '../../services/puppiesService';
 import toastr from 'toastr';
+import $ from 'jquery';
 
 class Puppies extends Component {
     state = {
         puppyIDToDelete: '',
         puppyToDelete: {},
+        puppyIDToCancelTransaction: '',
+        puppyToCancelTransaction: {},
         showDeleteModal: false,
         puppies: [],
         viewOption: ''
@@ -89,10 +93,29 @@ class Puppies extends Component {
     }
 
     handleCancelTransactionBtnClicked = (puppyID) => {
+        const { puppies } = this.state;
+        let puppyToCancelTransaction;
+        puppies.forEach(puppy => {
+            if (puppy.puppyID === puppyID)
+                puppyToCancelTransaction = puppy;
+        });
+        this.setState({
+            puppyIDToCancelTransaction: puppyID,
+            puppyToCancelTransaction: puppyToCancelTransaction
+        });
+        $(document).ready(() => {
+            $('#puppyTransactionCancelationModal').modal('show');
+        })
+    }
+
+    handleDoCancelTransactionBtnClicked = () => {
+        const { puppyIDToCancelTransaction } = this.state;
         this.props.onShowLoading(true, 1);
-        PuppiesService.cancelTransaction(puppyID)
+        PuppiesService.cancelTransaction(puppyIDToCancelTransaction)
             .then(() => {
                 toastr.success('Successfully cancelled the transaction');
+                $('#puppyTransactionCancelationModal').modal('hide');
+                $('.modal-backdrop').remove();
                 this.getPuppies();
             })
             .catch(err => {
@@ -101,6 +124,15 @@ class Puppies extends Component {
             .finally(() => {
                 this.props.onDoneLoading(true, 1);
             });
+    }
+
+    handleTransactionCancelationCancelBtnClicked = () => {
+        this.setState({
+            puppyIDToCancelTransaction: '',
+            puppyToCancelTransaction: {}
+        });
+        $('#puppyTransactionCancelationModal').modal('hide');
+        $('.modal-backdrop').remove();
     }
 
     handleLiveBtnClicked = (puppyID) => {
@@ -136,26 +168,27 @@ class Puppies extends Component {
         });
         this.setState({
             puppyIDToDelete: puppyID,
-            puppyToDelete: puppyToDelete,
-            showDeleteModal: true
+            puppyToDelete: puppyToDelete
+        });
+        $(document).ready(() => {
+            $('#puppyDeleteConfModal').modal('show');
         });
     }
 
     handleDeleteCancelBtnClicked = () => {
         this.setState({
             puppyIDToDelete: '',
-            puppyToDelete: {},
-            showDeleteModal: false
+            puppyToDelete: {}
         });
+        $('#puppyDeleteConfModal').modal('hide');
+        $('.modal-backdrop').remove();
     }
 
     handleDoDeleteBtnClicked = async () => {
         const { puppyToDelete } = this.state;
         const pictures = puppyToDelete.pictures;
         this.props.onShowLoading(true, 1);
-        
         if (pictures.length > 0) {
-            
             pictures.forEach(async picture => {
                 try {
                     await PuppiesService.deletePicture(picture.reference);
@@ -165,12 +198,13 @@ class Puppies extends Component {
             });
         }
         PuppiesService.deletePuppy(puppyToDelete.puppyID)
-            .then(res => {
+            .then(() => {
                 toastr.success('Successfully deleted a puppy');
+                $('#puppyDeleteConfModal').modal('hide');
+                $('.modal-backdrop').remove();
                 this.setState({
                     puppyIDToDelete: '',
-                    puppyToDelete: {},
-                    showDeleteModal: false
+                    puppyToDelete: {}
                 });
                 this.getPuppies();
             })
@@ -183,7 +217,7 @@ class Puppies extends Component {
     }
 
     render() {
-        const { puppyIDToDelete, puppyToDelete, showDeleteModal } = this.state;
+        const { puppyIDToDelete, puppyToCancelTransaction, puppyToDelete, puppyIDToCancelTransaction, showDeleteModal } = this.state;
         const { authenticated } = this.props;
         if (authenticated === true) {
             return (
@@ -204,7 +238,13 @@ class Puppies extends Component {
                         showModal={showDeleteModal}
                         onCancelBtnClicked={this.handleDeleteCancelBtnClicked.bind(this)}
                         onDoDeleteBtnClicked={this.handleDoDeleteBtnClicked.bind(this)}
-                         />
+                    />
+                    <PuppyTransactionCancelationModal
+                        puppyID={puppyIDToCancelTransaction}
+                        puppyDetail={puppyToCancelTransaction}
+                        onCancelBtnClicked={this.handleTransactionCancelationCancelBtnClicked.bind(this)}
+                        onDoCancelTransactionBtnClicked={this.handleDoCancelTransactionBtnClicked.bind(this)}
+                    />
                 </React.Fragment>
             );
         } else {

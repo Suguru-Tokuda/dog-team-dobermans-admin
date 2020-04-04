@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import $ from 'jquery';
 
 class PuppyDeleteConfModal extends Component {
     state = {
         puppyID: '',
-        puppyDetail: {},
-        showModal: false
+        puppyDetail: {}
     };
 
     constructor(props) {
@@ -14,23 +12,11 @@ class PuppyDeleteConfModal extends Component {
         this.state.puppyDetail = props.puppyDetail;
     }
 
-    componentDidUpdate() {
-        if (this.state.showModal === true) {
-            if ($('#puppyDeleteConfModal').is(':visible') === false) {
-                $('#puppyDeleteConfModal').modal('show');
-            }
-        } else {
-            $('#puppyDeleteConfModal').modal('hide');
-            $('.modal-backdrop').remove();
-        }
-    }
-
     static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.puppyID !== prevState.puppyID || nextProps.showModal !== prevState.showModal) {
+        if (nextProps.puppyID !== prevState.puppyID) {
             return {
                 puppyID: nextProps.puppyID,
-                puppyDetail: nextProps.puppyDetail,
-                showModal: nextProps.showModal
+                puppyDetail: nextProps.puppyDetail
             };
         }
         return null;
