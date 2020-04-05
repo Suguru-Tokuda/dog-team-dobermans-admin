@@ -21,12 +21,16 @@ class Login extends Component {
             this.state.rememberMe = Cookies.get('rememberMe') === 'true' ? true : false;
         }
         if (this.state.rememberMe === true) {
-            if (Cookies.get('email') && Cookies.get('password')) {
-                this.state.email = Cookies.get('email');
-                const bytes = CryptoJS.AES.decrypt(Cookies.get('password'), key.PRIVATE_KEY);
-                this.state.password = bytes.toString(CryptoJS.enc.Utf8);
-            } else {
-                Cookies.remove('rememberMe');
+            try {
+                if (Cookies.get('email') && Cookies.get('password')) {
+                    this.state.email = Cookies.get('email');
+                    const bytes = CryptoJS.AES.decrypt(Cookies.get('password'), key.PRIVATE_KEY);
+                    this.state.password = bytes.toString(CryptoJS.enc.Utf8);
+                } else {
+                    Cookies.remove('rememberMe');
+                }
+            } catch (err) {
+                // console.log(err);
             }
         }
     }
