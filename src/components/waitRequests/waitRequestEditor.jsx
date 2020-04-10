@@ -230,11 +230,11 @@ export default class WaitRequestEditor extends Component {
         if (isValid === true) {
             if (waitRequestID === '') {
                 const createData = {
-                    firstName: firstName.trim(),
-                    lastName: lastName.trim(),
+                    firstName: `${firstName.trim().substring(0, 1).toUpperCase()}${firstName.trim().substring(1)}`,
+                    lastName: `${lastName.trim().substring(0, 1).toUpperCase()}${lastName.trim().substring(1)}`,
                     email: email.trim(),
                     phone: phone.trim(),
-                    city: city.trim(),
+                    city: `${selections.city.trim().substring(0, 1).toUpperCase()}${selections.city.trim().substring(1)}`,
                     state: state,
                     color: color.trim(),
                     expectedPurchaseDate: expectedPurchaseDate,

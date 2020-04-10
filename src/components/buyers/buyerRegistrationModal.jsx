@@ -287,15 +287,12 @@ class BuyerRegistrationModal extends Component {
         }
         if (isValid === true) {
             this.props.onShowLoading(true, 2);
-            selections.firstName = selections.firstName.trim();
-            selections.firstName = `${firstName.substring(0, 1).toUpperCase()}${firstName.substring(1)}`;
-            selections.lastName = selections.lastName.trim();
-            selections.lastName = `${lastName.substring(0, 1).toUpperCase()}${lastName.substring(1)}`;
+            selections.firstName = `${firstName.trim().substring(0, 1).toUpperCase()}${firstName.trim().substring(1)}`;
+            selections.lastName = `${lastName.trim().substring(0, 1).toUpperCase()}${lastName.trim().substring(1)}`;
             selections.email = selections.email.toLowerCase().trim();
             selections.phone = selections.phone.trim();
             selections.state = selections.state.trim();
-            selections.city = selections.city.trim();
-            selections.city = `${selections.city.substring(0, 1).toUpperCase()}${selections.city.substring(1)}`;
+            selections.city = `${selections.city.trim().substring(0, 1).toUpperCase()}${selections.city.trim().substring(1)}`;
             const { firstName, lastName, email, phone, city, state } = selections;
             const { puppyIDs } = this.state.buyerToUpdate;
             let emailAvailable = true;
