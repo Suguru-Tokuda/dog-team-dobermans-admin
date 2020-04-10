@@ -213,11 +213,14 @@ class BuyerRegistrationModal extends Component {
         }
         if (isValid === true) {
             selections.firstName = selections.firstName.trim();
+            selections.firstName = `${selections.firstName.substring(0, 1).toUpperCase()}${selections.firstName.substring(1)}`;
             selections.lastName = selections.lastName.trim();
+            selections.lastName = `${selections.lastName.substring(0, 1).toUpperCase()}${selections.lastName.substring(1)}`;
             selections.email = selections.email.toLowerCase().trim();
             selections.phone = selections.phone.trim();
             selections.state = selections.state.trim();
             selections.city = selections.city.trim();
+            selections.city = `${selections.city.substring(0, 1).toUpperCase()}${selections.city.substring(1)}`;
             let emailAvailable = false;
             this.props.onShowLoading(true, 1);
             try {
@@ -285,11 +288,14 @@ class BuyerRegistrationModal extends Component {
         if (isValid === true) {
             this.props.onShowLoading(true, 2);
             selections.firstName = selections.firstName.trim();
+            selections.firstName = `${firstName.substring(0, 1).toUpperCase()}${firstName.substring(1)}`;
             selections.lastName = selections.lastName.trim();
+            selections.lastName = `${lastName.substring(0, 1).toUpperCase()}${lastName.substring(1)}`;
             selections.email = selections.email.toLowerCase().trim();
             selections.phone = selections.phone.trim();
             selections.state = selections.state.trim();
             selections.city = selections.city.trim();
+            selections.city = `${selections.city.substring(0, 1).toUpperCase()}${selections.city.substring(1)}`;
             const { firstName, lastName, email, phone, city, state } = selections;
             const { puppyIDs } = this.state.buyerToUpdate;
             let emailAvailable = true;
