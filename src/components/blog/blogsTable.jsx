@@ -130,6 +130,8 @@ class BlogsTable extends Component {
         let sortIcon = '';
         if (accessor === this.state.sortData.key) {
             sortIcon = this.state.sortData.orderAsc === true ? <span className="fa fa-sort-asc" /> : <span className="fa fa-sort-desc" />;
+        } else if (this.state.sortData.key === '') {
+            sortIcon = <span className="fa fa-sort" />;
         }
         return sortIcon;
     }

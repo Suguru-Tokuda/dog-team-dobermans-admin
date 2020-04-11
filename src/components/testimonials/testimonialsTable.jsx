@@ -24,7 +24,7 @@ class TestimonialsTable extends Component {
             totalItems: 0
         },
         sortData: {
-            key: 'name',
+            key: 'created',
             orderAsc: false
         },
         checkAll: false,
@@ -152,6 +152,8 @@ class TestimonialsTable extends Component {
         let sortIcon = '';
         if (accessor === sortData.key) {
             sortIcon = sortData.orderAsc === true ? <span className="fa fa-sort-asc" /> : <span className="fa fa-sort-desc" />;
+        } else if (sortData.key === '') {
+            sortIcon = <span className="fa fa-sort" />;
         }
         return sortIcon;
     }

@@ -32,6 +32,7 @@ class Parents extends Component {
         this.props.onShowLoading(true, 1);
         ParentsService.getAllParents()
             .then(res => {
+                res.data.sort((a, b) => { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
                 this.setState({ parents: res.data });
             })
             .catch(err => {

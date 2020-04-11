@@ -38,7 +38,7 @@ class MissionStatements extends Component {
                 return (
                     <tr key={`missionStatement-${i}`}>
                         <td>{title}</td>
-                        <td><div data-toggle="popover" data-content={description}>{UtilService.shortenStr(description, 10)}</div></td>
+                        <td><span data-toggle="popover" data-content={description}>{UtilService.shortenStr(description, 10)}</span></td>
                         <td><img src={picture.url} className="img-fluid" alt={picture.reference} /></td>
                     </tr>
                 );

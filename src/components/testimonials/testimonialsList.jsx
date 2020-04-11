@@ -13,6 +13,7 @@ class TestimonialsList extends Component {
         this.props.onShowLoading(true, 1);
         TestimonialService.getAllTestimonials()
             .then(res => {
+                res.data.sort((a, b) => { return a.created > b.created ? -1 : a.created < b.created ? 1 : 0; })
                 this.setState({ testimonials: res.data });
             })
             .catch(() => {

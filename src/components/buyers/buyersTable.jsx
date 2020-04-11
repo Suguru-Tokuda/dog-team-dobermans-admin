@@ -115,6 +115,8 @@ class BuyersTable extends Component {
         let sortIcon = null;
         if (accessor === sortData.key) {
             sortIcon = sortData.orderAsc === true ? <span className="fa fa-sort-asc" /> : <span className="fa fa-sort-desc" />;
+        } else if (sortData.key === '') {
+            sortIcon = <span className="fa fa-sort" />;
         }
         return sortIcon;
     }
