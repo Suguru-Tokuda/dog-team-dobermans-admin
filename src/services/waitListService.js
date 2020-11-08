@@ -55,7 +55,7 @@ export default class WaitListService {
     static uploadPicture(imageFile) {
         return new Promise((resolve) => {
             const pictureID = UtilService.generateID(10);
-            const reference = `watList/${pictureID}`;
+            const reference = `waitList/${pictureID}`;
             const task = storage.ref(reference).put(imageFile);
             task.on('state_changed', 
             (snapshot) => {
