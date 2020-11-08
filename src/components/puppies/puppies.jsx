@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import PuppiesTable from './puppiesTable';
 import PuppyDeleteConfModal from './puppyDeleteConfModal';
@@ -20,7 +21,7 @@ class Puppies extends Component {
 
     constructor(props) {
         super(props);
-        const { authenticated } = props;
+        const { authenticated } = props.authenticated;
         if (authenticated === false) {
             props.history.push('/login');
         }
@@ -253,4 +254,9 @@ class Puppies extends Component {
     }
 }
 
-export default Puppies;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated
+  });
+
+export default connect(mapStateToProps)(Puppies);

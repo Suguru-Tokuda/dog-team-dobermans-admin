@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { auth } from '../../services/firebaseService';
 import { Checkbox } from 'react-ui-icheck';
 import toastr from 'toastr';
@@ -30,7 +31,7 @@ class Login extends Component {
                     Cookies.remove('rememberMe');
                 }
             } catch (err) {
-                // console.log(err);
+                console.log(err);
             }
         }
     }
@@ -43,7 +44,7 @@ class Login extends Component {
         this.setState({ password: e.target.value });
     }
 
-    handleLoginBtnClicked = () => {
+    handleLoginBtnClicked = async () => {
         this.setState({ formSubmitted: true });
         const { email, password, rememberMe } = this.state;
         if (email !== '' && password !== '') {
@@ -60,7 +61,8 @@ class Login extends Component {
                         Cookies.remove('password');
                         Cookies.remove('rememberMe');
                     }
-                    this.props.onLogin(true);
+
+                    this.props.login();
                     this.props.history.push('/');
                 })
                 .catch(err => {
@@ -140,4 +142,18 @@ class Login extends Component {
     }
 }
 
-export default Login;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated
+});
+
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

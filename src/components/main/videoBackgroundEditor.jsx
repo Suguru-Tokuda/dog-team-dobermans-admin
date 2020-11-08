@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import HomepageContentService from '../../services/homepageContentService';
 import toastr from 'toastr';
 import $ from 'jquery';
 
-export default class VideoBackgroundEditor extends Component {
+class VideoBackgroundEditor extends Component {
     state = {
         video: {},
         selections: {
@@ -276,4 +277,11 @@ export default class VideoBackgroundEditor extends Component {
         );
     }
 
-} 
+}
+
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated
+});
+
+export default connect(mapStateToProps)(VideoBackgroundEditor);

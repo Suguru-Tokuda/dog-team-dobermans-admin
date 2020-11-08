@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Route, Redirect } from 'react-router-dom';
 import PuppyDetail from './puppyDetail';
 import PuppyCreate from './puppyCreate';
@@ -35,4 +36,9 @@ class Puppy extends Component {
     }
 }
 
-export default Puppy;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated
+  });
+
+export default connect(mapStateToProps)(Puppy);

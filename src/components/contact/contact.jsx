@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Route, Redirect } from 'react-router-dom';
 import ContactUsDetail from './contactDetail';
 import ContactUsEditor from './contactEditor';
@@ -45,4 +46,9 @@ class Contact extends Component {
     }
 }
 
-export default Contact;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated
+});
+
+export default connect(mapStateToProps)(Contact);

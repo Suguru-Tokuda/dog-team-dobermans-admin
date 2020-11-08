@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import AboutDobermansEditorModal from './aboutDobermansEditorModal';
 import AboutDobermanService from '../../services/aboutDobermanService';
 import toastr from 'toastr';
@@ -64,4 +65,9 @@ class AboutDobermans extends Component {
 
 }
 
-export default AboutDobermans;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated
+});
+
+export default connect(mapStateToProps)(AboutDobermans);

@@ -1,5 +1,5 @@
-
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link, NavLink } from 'react-router-dom';
 import * as siteLogo from '../../assets/img/site_logo.PNG';
 
@@ -58,4 +58,9 @@ class AdminSidebar extends Component {
     }
 }
 
-export default AdminSidebar;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated
+});  
+
+export default connect(mapStateToProps)(AdminSidebar);

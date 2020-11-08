@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Route, Redirect } from 'react-router-dom';
 import HomepageContent from './homepageContent';
 
@@ -17,4 +18,9 @@ class Main extends Component {
     }
 }
 
-export default Main;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated
+});
+
+export default connect(mapStateToProps)(Main);

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import BuyersTable from './buyersTable';
 import BuyersService from '../../services/buyersService';
@@ -193,4 +194,9 @@ class Buyers extends Component {
   
 }
 
-export default Buyers;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated
+});
+
+export default connect(mapStateToProps)(Buyers);

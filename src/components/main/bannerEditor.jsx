@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import HomepageContentService from '../../services/homepageContentService';
 import toastr from 'toastr';
@@ -140,6 +141,7 @@ class BannerEditor extends Component {
     render() {
         const { title, description, bannerPicture, formSubmitted } = this.state;
         const { authenticated } = this.props;
+        
         if (authenticated === true) {
             return (
                 <React.Fragment>
@@ -197,4 +199,9 @@ class BannerEditor extends Component {
     }
 }
 
-export default BannerEditor;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated
+});
+
+export default connect(mapStateToProps)(BannerEditor);

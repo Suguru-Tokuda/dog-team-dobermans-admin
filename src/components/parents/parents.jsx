@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import ParentsTable from './parentsTable';
 import ParentsService from '../../services/parentsService';
@@ -194,4 +195,9 @@ class Parents extends Component {
     }
 }
 
-export default Parents;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated
+});
+
+export default connect(mapStateToProps)(Parents);

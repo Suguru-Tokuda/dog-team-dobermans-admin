@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { auth } from '../../services/firebaseService';
-import * as siteLogo from '../../assets/img/site_logo.PNG';
 
 class AdminHeader extends Component {
 
@@ -9,7 +8,7 @@ class AdminHeader extends Component {
         this.props.onShowLoading(true, 1);
         auth.signOut()
             .then(res => {
-                this.props.onSignOut(false);
+                this.props.logout();
             })
             .catch(err => {
                 console.log(err);
@@ -41,4 +40,18 @@ class AdminHeader extends Component {
     }
 }
 
-export default AdminHeader;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated
+});
+
+const mapDispatchToProps = dispatch => {
+    return {
+      login: () => dispatch({ type: 'SIGN_IN' }),
+      logout: () => dispatch({ type: 'SIGN_OUT' }),
+      setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+      unsetUser: () => dispatch({ type: 'UNSET_USER' })
+    };
+};
+  
+export default connect(mapStateToProps, mapDispatchToProps)(AdminHeader);

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import HomepageContentService from '../../services/homepageContentService';
 import SortablePictureLlist from '../miscellaneous/sortablePictureList';
@@ -7,7 +8,7 @@ import ImageDeleteConfModal from '../miscellaneous/imageDeleteConfModal';
 import toastr from 'toastr';
 import $ from 'jquery';
 
-export default class GalleryImageEditor extends Component {
+class GalleryImageEditor extends Component {
     state = {
         images: [],
         tempImageFile: null,
@@ -181,3 +182,10 @@ export default class GalleryImageEditor extends Component {
     }
     
 }
+
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated
+});
+
+export default connect(mapStateToProps)(GalleryImageEditor);

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Route, Redirect } from 'react-router-dom';
 import AboutUsHome from './aboutUsHome';
 import MissionStatementsEditor from './missionStatementsEditor';
@@ -31,4 +32,9 @@ class AboutUs extends Component {
     }
 }
 
-export default AboutUs;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated
+});
+
+export default connect(mapStateToProps)(AboutUs);

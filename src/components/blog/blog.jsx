@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Route, Redirect } from 'react-router-dom';
 import BlogList from './blogList';
 import BlogEditor from './blogEditor';
@@ -23,4 +24,9 @@ class Blog extends Component {
     }
 }
 
-export default Blog;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated
+});
+
+export default connect(mapStateToProps)(Blob);

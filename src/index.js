@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import allReducer from './reducers';
 import '@coreui/coreui/dist/css/coreui.min.css';
 import './css/coreui-dark.css';
 import 'toastr/build/toastr.min.css';
@@ -24,5 +27,10 @@ import '@coreui/coreui/dist/js/coreui.bundle';
 import 'toastr/build/toastr.min.js';
 import 'bootstrap/dist/js/bootstrap.min.js';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const store = createStore(
+    allReducer,
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
+
+ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('root'));
 serviceWorker.unregister();

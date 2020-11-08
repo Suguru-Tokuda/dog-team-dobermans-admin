@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import { Route, Redirect } from 'react-router-dom';
 import ParentDetail from './parentDetail';
 import ParentCreate from './parentCreate';
@@ -35,4 +36,9 @@ class Parent extends Component {
     }
 }
 
-export default Parent;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated
+});
+
+export default connect(mapStateToProps)(Parent);

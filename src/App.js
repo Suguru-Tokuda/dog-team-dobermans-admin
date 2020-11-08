@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { auth } from './services/firebaseService';
 import Spinner from 'react-spinkit';
@@ -23,13 +24,13 @@ import NotFound from './components/common/notFound';
 import $ from 'jquery';
 import VideoBackgroundEditor from './components/main/videoBackgroundEditor';
 import GalleryImageEditor from './components/main/galleryImageEditor';
+import * as uids from './allowedUIDs.json';
 
 class App extends Component {
 
   state = {
     isLoading: false,
     alertsService: null,
-    authenticated: false,
     authenticationChecked: false
   };
 
@@ -42,13 +43,18 @@ class App extends Component {
   componentDidMount() {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        this.setState({ 
-          authenticated: true,
-          user: user
-         });
+        const allowedUIDs = uids.allowedUIDs;
+        if (allowedUIDs.indexOf(user.uid) !== -1) {
+          this.props.login();
+          this.props.setUser(user);
+        } else {
+          this.props.logout();
+          this.props.unsetUser();
+        }
       } else {
-        this.setState({ authenticated: false });
-      }
+        this.props.logout();
+        this.props.unsetUser();
+    }
       this.setState({ authenticationChecked: true });
     });
   }
@@ -67,18 +73,6 @@ class App extends Component {
   doneLoading(override) {
     const isLoading = this.state.alertsService.doneLoading(override) !== 0;
     this.setState({ isLoading });
-  }
-
-  onLogin(isLoggedIn) {
-    if (isLoggedIn === true) {
-      this.setState({ authenticated: true });
-    }
-  }
-
-  onSignOut(isLoggedIn) {
-    if (isLoggedIn === false) {
-      this.setState({ authenticated: false });
-    }
   }
 
   getUIBlockerClass() {
@@ -102,14 +96,14 @@ class App extends Component {
         <div className={`app ${this.getUIBlockerClass()}`}>
           <Sidebar authenticated={authenticated} />
           <div className="c-wrapper">
-          <Header authenticated={authenticated} onSignOut={this.onSignOut.bind(this)} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />
+          <Header authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />
             <div className="c-body">
               <main className="c-main">
                 <div className="container-fluid">
                   {authenticationChecked === true && (
                     <Switch>
                         <Route path="/" exact render={(props) => <Main {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                        <Route path="/login" exact render={(props) => <Login {...props} authenticated={authenticated} onLogin={this.onLogin.bind(this)} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                        <Route path="/login" exact render={(props) => <Login {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                         <Route path="/banner" exact render={(props) => <BannerEditor {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                         <Route path="/background-vide-editor" exact render={(props) => <VideoBackgroundEditor {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
                         <Route path="/gallery-image-editor" exact render={(props) => <GalleryImageEditor {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
@@ -138,4 +132,18 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = state => ({
+  user: state.user,
+  authenticated: state.authenticated
+});
+
+const mapDispatchToProps = dispatch => {
+  return {
+    login: () => dispatch({ type: 'SIGN_IN' }),
+    logout: () => dispatch({ type: 'SIGN_OUT' }),
+    setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+    unsetUser: () => dispatch({ type: 'UNSET_USER' })
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
