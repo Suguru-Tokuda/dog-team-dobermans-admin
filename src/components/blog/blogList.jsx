@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import BlogsTable from './blogsTable';
 import BlogService from '../../services/blogService';
+import { connect } from 'react-redux';
 import $ from 'jquery';
 import toastr from 'toastr';
 
@@ -16,7 +17,7 @@ class BlogList extends Component {
     }
 
     getBlogs() {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         BlogService.getAllBlogs()
             .then(res => {
                 this.setState({ blogs: res.data });
@@ -26,7 +27,7 @@ class BlogList extends Component {
             })
             .finally(() => {
                 this.setState({ dataLoaded: true });
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -111,4 +112,22 @@ class BlogList extends Component {
     }
 }
 
-export default BlogList;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(BlogList);

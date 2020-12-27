@@ -33,7 +33,7 @@ class Puppies extends Component {
     }
 
     getPuppies = () => {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         PuppiesService.getAllPuppies()
             .then(res => {
                 this.setState({ puppies: res.data });
@@ -42,7 +42,7 @@ class Puppies extends Component {
                 toastr.error('There was an error in loading puppies data');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -111,7 +111,7 @@ class Puppies extends Component {
 
     handleDoCancelTransactionBtnClicked = () => {
         const { puppyIDToCancelTransaction } = this.state;
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         PuppiesService.cancelTransaction(puppyIDToCancelTransaction)
             .then(() => {
                 toastr.success('Successfully cancelled the transaction');
@@ -146,7 +146,7 @@ class Puppies extends Component {
             }
         });
         puppyToUpdate.live = !puppyToUpdate.live;
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         PuppiesService.updatePuppy(puppyID, puppyToUpdate)
             .then(() => {
                 puppies[index] = puppyToUpdate;
@@ -156,7 +156,7 @@ class Puppies extends Component {
                 toastr.error('There was an error in updating a puppy');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -188,7 +188,7 @@ class Puppies extends Component {
     handleDoDeleteBtnClicked = async () => {
         const { puppyToDelete } = this.state;
         const pictures = puppyToDelete.pictures;
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         if (pictures.length > 0) {
             pictures.forEach(async picture => {
                 try {
@@ -213,7 +213,7 @@ class Puppies extends Component {
                 toastr.error('There was an error in deleting a puppy');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -256,7 +256,20 @@ class Puppies extends Component {
 
 const mapStateToProps = state => ({
     user: state.user,
-    authenticated: state.authenticated
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
   });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
 
-export default connect(mapStateToProps)(Puppies);
+export default connect(mapStateToProps, mapDispatchToProps)(Puppies);

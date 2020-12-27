@@ -47,8 +47,14 @@ class Login extends Component {
     handleLoginBtnClicked = async () => {
         this.setState({ formSubmitted: true });
         const { email, password, rememberMe } = this.state;
+
+        if (email.toLowerCase() !== 'suguru.tokuda@gmail.com' && email.toLowerCase() !== 'omegarlj@yahoo.com') {
+            toastr.error('You are not allowed to login to the system');
+            return;
+        }
+
         if (email !== '' && password !== '') {
-            this.props.onShowLoading(true, 1);
+            this.props.showLoading({ reset: true, count: 1 });
             auth.signInWithEmailAndPassword(email, password)
                 .then(() => {
                     if (rememberMe === true) {
@@ -70,7 +76,7 @@ class Login extends Component {
                     toastr.error(`Email and password don't match. Try again.`);
                 })
                 .finally(() => {
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                 });
         }
     }
@@ -152,7 +158,10 @@ const mapDispatchToProps = dispatch => {
         login: () => dispatch({ type: 'SIGN_IN' }),
         logout: () => dispatch({ type: 'SIGN_OUT' }),
         setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
-        unsetUser: () => dispatch({ type: 'UNSET_USER' })
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
     };
 };
 

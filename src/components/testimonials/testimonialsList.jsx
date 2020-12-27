@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import TestimonialsTable from './testimonialsTable';
 import TestimonialService from '../../services/testimonialService';
 import toastr from 'toastr';
@@ -10,7 +11,7 @@ class TestimonialsList extends Component {
     };
 
     componentDidMount() {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         TestimonialService.getAllTestimonials()
             .then(res => {
                 res.data.sort((a, b) => { return a.created > b.created ? -1 : a.created < b.created ? 1 : 0; })
@@ -20,7 +21,7 @@ class TestimonialsList extends Component {
                 toastr.error('There was an error in loading testimonials data');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
                 this.setState({ loaded: true });
             });
     }
@@ -45,7 +46,7 @@ class TestimonialsList extends Component {
     }
 
     handleUpdateBtnClicked = async (testimonials) => {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         try {
             testimonials.forEach(async (testimonial) => {
                 const testimonialID = testimonial.testimonialID;
@@ -69,12 +70,12 @@ class TestimonialsList extends Component {
             toastr.error('There was an error in updating testimonial(s)'); 
             console.log(err);
         } finally {
-            this.props.onDoneLoading();
+            this.props.doneLoading({ reset: true });
         }
     }
 
     handleDeleteBtnClicked = (testimonialIDs) => {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         TestimonialService.deleteTestimonials(testimonialIDs)
             .then(async () => {
                 setTimeout(async () => {
@@ -93,7 +94,7 @@ class TestimonialsList extends Component {
                 toastr.error('There was an error in deleting testimonials');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -115,4 +116,22 @@ class TestimonialsList extends Component {
     }
 }
 
-export default TestimonialsList;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TestimonialsList);

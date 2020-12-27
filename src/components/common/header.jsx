@@ -5,7 +5,7 @@ import { auth } from '../../services/firebaseService';
 class AdminHeader extends Component {
 
     handleSignoutClicked = () => {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         auth.signOut()
             .then(res => {
                 this.props.logout();
@@ -14,7 +14,7 @@ class AdminHeader extends Component {
                 console.log(err);
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -42,16 +42,20 @@ class AdminHeader extends Component {
 
 const mapStateToProps = state => ({
     user: state.user,
-    authenticated: state.authenticated
-});
-
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
 const mapDispatchToProps = dispatch => {
     return {
-      login: () => dispatch({ type: 'SIGN_IN' }),
-      logout: () => dispatch({ type: 'SIGN_OUT' }),
-      setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
-      unsetUser: () => dispatch({ type: 'UNSET_USER' })
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
     };
 };
-  
+
 export default connect(mapStateToProps, mapDispatchToProps)(AdminHeader);

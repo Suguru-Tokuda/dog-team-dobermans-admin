@@ -10,9 +10,9 @@ class Testimonials extends Component {
         if (authenticated === true) {
             return (
                 <React.Fragment>
-                    <Route path="/testimonials/editor/:testimonialID" render={(props) => <TestimonialEditor {...props} authenticated={authenticated} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-                    <Route path="/testimonials/editor" exact render={(props) => <TestimonialEditor {...props} authenticated={authenticated} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-                    <Route path="/testimonials" exact render={(props) => <TestimonialsList {...props} authenticated={authenticated} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                    <Route path="/testimonials/editor/:testimonialID" render={(props) => <TestimonialEditor {...props} authenticated={authenticated}  />} />
+                    <Route path="/testimonials/editor" exact render={(props) => <TestimonialEditor {...props} authenticated={authenticated}  />} />
+                    <Route path="/testimonials" exact render={(props) => <TestimonialsList {...props} authenticated={authenticated}  />} />
                 </React.Fragment>
             );
         } else {
@@ -23,7 +23,20 @@ class Testimonials extends Component {
 
 const mapStateToProps = state => ({
     user: state.user,
-    authenticated: state.authenticated
-});
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
 
-export default connect(mapStateToProps)(Testimonials);
+export default connect(mapStateToProps, mapDispatchToProps)(Testimonials);

@@ -29,7 +29,7 @@ class AboutDobermans extends Component {
     }
 
     handleUpdateData = () => {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         AboutDobermanService.getAboutDobermans()
             .then(res => {
                 this.setState({ aboutDobermans: res.data })
@@ -39,7 +39,7 @@ class AboutDobermans extends Component {
                 toastr.error('There was an error in loading about dobermans data');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -58,7 +58,7 @@ class AboutDobermans extends Component {
                         <button className="btn btn-primary" onClick={this.handleEditBtnClicked}>Edit</button>
                     </div>
                 </div>
-                <AboutDobermansEditorModal {...this.props} body={aboutDobermans} onUpdateData={this.handleUpdateData} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                <AboutDobermansEditorModal {...this.props} body={aboutDobermans} onUpdateData={this.handleUpdateData} />
             </React.Fragment>
         );
     }
@@ -67,7 +67,20 @@ class AboutDobermans extends Component {
 
 const mapStateToProps = state => ({
     user: state.user,
-    authenticated: state.authenticated
-});
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
 
-export default connect(mapStateToProps)(AboutDobermans);
+export default connect(mapStateToProps, mapDispatchToProps)(AboutDobermans);

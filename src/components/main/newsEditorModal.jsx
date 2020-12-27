@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import ReactQuill, { Quill } from 'react-quill';
 import ImageResize from 'quill-image-resize-module';
 import { ImageDrop } from 'quill-image-drop-module';
@@ -67,7 +68,7 @@ class NewsEditorModal extends Component {
         this.setState({ formSubmitted: true });
         const { newsBody, originalBody } = this.state;
         let newsBodyToSend = newsBody;
-        this.props.onShowLoading(false, 1);
+        this.props.showLoading({ reset: false, count: 1 });
         const regex = /\<img (.*?)>/g;
         const regexForSrc = /src="(.*?)"/;
         let result;
@@ -125,7 +126,7 @@ class NewsEditorModal extends Component {
                 toastr.error('There was an error in updating the news data');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -167,4 +168,22 @@ class NewsEditorModal extends Component {
 
 }
 
-export default NewsEditorModal;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewsEditorModal);

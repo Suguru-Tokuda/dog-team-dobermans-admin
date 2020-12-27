@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
 import ParentUpdateSelection from './parentUpdateSelection';
 import ParentCreateForm from './parentInitialForm';
@@ -27,12 +28,30 @@ class ParentUpdate extends Component {
         const { parentID } = this.state;
         return (
             <React.Fragment>
-                <Route path={`${url}/:parentID`} exact render={(props) => <ParentUpdateSelection {...props} url={url} parentID={parentID} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-                <Route path={`${url}/profile/:parentID`} render={(props) => <ParentCreateForm {...props} parentID={parentID} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} onCancelBtnClicked={this.handleCancelClicked} />} />
-                <Route path={`${url}/pictures/:parentID`} render={(props) => <ParentPictureForm {...props} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                <Route path={`${url}/:parentID`} exact render={(props) => <ParentUpdateSelection {...props} url={url} parentID={parentID}  />} />
+                <Route path={`${url}/profile/:parentID`} render={(props) => <ParentCreateForm {...props} parentID={parentID} url={url}  onCancelBtnClicked={this.handleCancelClicked} />} />
+                <Route path={`${url}/pictures/:parentID`} render={(props) => <ParentPictureForm {...props} url={url}  />} />
             </React.Fragment>
         );
     }
 }
 
-export default ParentUpdate;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ParentUpdate);

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import VideoBackground from './videoBackground';
-import News from './news';
+import { connect } from 'react-redux';
 import Banner from './banner';
 import GalleryImages from './galleryImages';
 import HomepageContentsService from '../../services/homepageContentService';
@@ -20,7 +20,7 @@ class HomepageContent extends Component {
     }
 
     handleUpdateData = () => {
-        this.props.onShowLoading(false, 1);
+        this.props.showLoading({ reset: false, count: 1 });
         HomepageContentsService.getHomePageInfo()
             .then(res => {
                 if (typeof res.data.backgroundVideo !== 'undefined') {
@@ -44,7 +44,7 @@ class HomepageContent extends Component {
                 toastr.error('There was an error in downloading home page content data');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -52,13 +52,31 @@ class HomepageContent extends Component {
         const { video, news, banner, galleryImages } = this.state;
         return (
             <React.Fragment>
-                <VideoBackground {...this.props} video={video} onUpdateData={this.handleUpdateData} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
-                <GalleryImages {...this.props} images={galleryImages} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
-                {/* <News {...this.props} news={news} onUpdateData={this.handleUpdateData} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} /> */}
-                <Banner {...this.props} banner={banner} onUpdateData={this.handleUpdateData} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                <VideoBackground {...this.props} video={video} onUpdateData={this.handleUpdateData}  />
+                <GalleryImages {...this.props} images={galleryImages}  />
+                {/* <News {...this.props} news={news} onUpdateData={this.handleUpdateData}  /> */}
+                <Banner {...this.props} banner={banner} onUpdateData={this.handleUpdateData}  />
             </React.Fragment>
         );
     }
 }
 
-export default HomepageContent;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomepageContent);

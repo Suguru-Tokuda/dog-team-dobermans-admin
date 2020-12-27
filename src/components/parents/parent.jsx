@@ -25,9 +25,9 @@ class Parent extends Component {
             if (authenticated === true) {
                 return (
                     <Fragment>
-                        <Route path={`${url}/view/:parentID`} render={(props) => <ParentDetail {...props} url={url} showBackBtn={true} onBackBtnClicked={this.handleBackBtn} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-                        <Route path={`${url}/create`} render={(props) => <ParentCreate {...props} url={`${url}/create`} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-                        <Route path={`${url}/update/:parentID`} render={(props) => <ParentUpdate {...props} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                        <Route path={`${url}/view/:parentID`} render={(props) => <ParentDetail {...props} url={url} showBackBtn={true} onBackBtnClicked={this.handleBackBtn}  />} />
+                        <Route path={`${url}/create`} render={(props) => <ParentCreate {...props} url={`${url}/create`}  />} />
+                        <Route path={`${url}/update/:parentID`} render={(props) => <ParentUpdate {...props} url={url}  />} />
                     </Fragment>
                 );
             } else {
@@ -38,7 +38,20 @@ class Parent extends Component {
 
 const mapStateToProps = state => ({
     user: state.user,
-    authenticated: state.authenticated
-});
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
 
-export default connect(mapStateToProps)(Parent);
+export default connect(mapStateToProps, mapDispatchToProps)(Parent);

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PuppyDetail from './puppyDetail';
 
@@ -30,12 +31,28 @@ class PuppyUpdateSelection extends Component {
                 </div>
                 <PuppyDetail 
                     puppyID={puppyID} 
-                    onShowLoading={this.props.onShowLoading.bind(this)} 
-                    onDoneLoading={this.props.onDoneLoading.bind(this)} 
                     hideButtons={true} />
             </React.Fragment>
         );
     }
 }
 
-export default PuppyUpdateSelection;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PuppyUpdateSelection);

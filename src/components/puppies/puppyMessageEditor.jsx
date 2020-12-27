@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import ReactQuill, { Quill } from 'react-quill';
 import ImageResize from 'quill-image-resize-module';
 import { ImageDrop } from 'quill-image-drop-module';
@@ -9,14 +10,14 @@ import toastr from 'toastr';
 Quill.register('modules/imageResize', ImageResize);
 Quill.register('modules/imageDrop', ImageDrop);
 
-export default class PuppyMessageEditor extends Component {
+class PuppyMessageEditor extends Component {
     state = {
         messageBody: '',
         originalBody: '',
     };
 
     componentDidMount() {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         HomepageContentService.getHomePageInfo()
             .then(res => {
                 console.log(res);
@@ -30,7 +31,7 @@ export default class PuppyMessageEditor extends Component {
                 toastr.error('There was an error in loading the message');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -66,7 +67,7 @@ export default class PuppyMessageEditor extends Component {
         this.setState({ formSubmitted: true });
         const { messageBody, originalBody } = this.state;
         let messageBodyToSend = messageBody;
-        this.props.onShowLoading(false, 1);
+        this.props.showLoading({ reset: false, count: 1 });
         const regex = /\<img (.*?)>/g;
         const regexForSrc = /src="(.*?)"/;
         let result;
@@ -124,7 +125,7 @@ export default class PuppyMessageEditor extends Component {
                 toastr.error('There was an error in updating the unavailable message.');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -158,3 +159,23 @@ export default class PuppyMessageEditor extends Component {
     }
 
 }
+
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PuppyMessageEditor);

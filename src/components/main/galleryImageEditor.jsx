@@ -17,7 +17,7 @@ class GalleryImageEditor extends Component {
     };
 
     componentDidMount() {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         HomepageContentService.getHomePageInfo()
             .then(res => {
                 if (res.data.galleryImages) {
@@ -29,7 +29,7 @@ class GalleryImageEditor extends Component {
                 toastr.error('There was an error in loading gallery images data.');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -79,7 +79,7 @@ class GalleryImageEditor extends Component {
     }
 
     handleFinishImageCropping = async (newFile) => {
-        this.props.onShowLoading(false, 1);
+        this.props.showLoading({ reset: false, count: 1 });
         // upload a picture and get { reference, url }
         let newPicture;
         try {
@@ -101,7 +101,7 @@ class GalleryImageEditor extends Component {
                     toastr.error('There was an error in uploading a file');
                 })
                 .finally(() => {
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                 });
         }
     }
@@ -123,7 +123,7 @@ class GalleryImageEditor extends Component {
                     toastr.error('There was an error in deleting a picture');
                 })
                 .finally(() => {
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                 });
         } catch (err) {
             toastr.error('There was an error in deleting a picture');
@@ -167,8 +167,6 @@ class GalleryImageEditor extends Component {
                     imageFile={tempImageFile}
                     onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
                     handleResetTempPictureFile={this.handleResetTempImageFile}
-                    onShowLoading={this.props.onShowLoading.bind(this)} 
-                    onDoneLoading={this.props.onDoneLoading.bind(this)}
                     aspectRatio={4/3}
                 />
                 <ImageDeleteConfModal
@@ -185,7 +183,20 @@ class GalleryImageEditor extends Component {
 
 const mapStateToProps = state => ({
     user: state.user,
-    authenticated: state.authenticated
-});
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
 
-export default connect(mapStateToProps)(GalleryImageEditor);
+export default connect(mapStateToProps, mapDispatchToProps)(GalleryImageEditor);

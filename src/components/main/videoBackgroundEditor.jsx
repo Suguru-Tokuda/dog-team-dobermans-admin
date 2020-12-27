@@ -19,7 +19,7 @@ class VideoBackgroundEditor extends Component {
     };
 
     componentDidMount() {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         HomepageContentService.getHomePageInfo()
             .then(res => {
                 const backgroundVideo = res.data.backgroundVideo;
@@ -47,7 +47,7 @@ class VideoBackgroundEditor extends Component {
                 toastr.error('There was an error in loading background video information');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -163,7 +163,7 @@ class VideoBackgroundEditor extends Component {
         });
         this.setState({ validations });
         if (isValid === true) {
-            this.props.onShowLoading(true, 1);
+            this.props.showLoading({ reset: true, count: 1 });
             let videoToSend;
             if (selections.tempVideoFile !== null) {
                 if (typeof video.reference !== 'undefined') {
@@ -177,7 +177,7 @@ class VideoBackgroundEditor extends Component {
                     videoToSend = await HomepageContentService.uploadVideo(selections.tempVideoFile);
                 } catch (err) {
                     toastr.error('There was an error in uploading a video');
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                     return;
                 }
             } else {
@@ -193,7 +193,7 @@ class VideoBackgroundEditor extends Component {
                     toastr.error('There was an error in uploading a video.');
                 })
                 .finally(() => {
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                 });
         }
     }
@@ -281,7 +281,20 @@ class VideoBackgroundEditor extends Component {
 
 const mapStateToProps = state => ({
     user: state.user,
-    authenticated: state.authenticated
-});
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
 
-export default connect(mapStateToProps)(VideoBackgroundEditor);
+export default connect(mapStateToProps, mapDispatchToProps)(VideoBackgroundEditor);

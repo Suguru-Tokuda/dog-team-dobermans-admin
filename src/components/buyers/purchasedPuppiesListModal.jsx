@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import PuppiesService from '../../services/puppiesService';
 import $ from 'jquery';
 import moment from 'moment';
@@ -17,7 +17,7 @@ class PurchasedPuppiesModal extends Component {
         const { updateData, buyerID } = this.state;
         if (updateData === true && buyerID !== undefined) {
             this.setState({ updateData: false });
-            this.props.onShowLoading(true, 1);
+            this.props.showLoading({ reset: true, count: 1 });
             PuppiesService.getPuppiesForBuyerID(buyerID)
                 .then(res => {
                     this.setState({ puppies: res.data });
@@ -27,7 +27,7 @@ class PurchasedPuppiesModal extends Component {
                     toastr.error('There was an error in loading puppies data');
                 })
                 .finally(() => {
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                 });
         }
     }
@@ -125,4 +125,22 @@ class PurchasedPuppiesModal extends Component {
 
 }
 
-export default PurchasedPuppiesModal;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PurchasedPuppiesModal);

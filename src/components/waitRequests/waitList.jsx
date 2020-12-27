@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import WaitListTable from './waitListTable';
 import WaitListService from '../../services/waitListService';
 import toastr from 'toastr';
@@ -22,7 +23,7 @@ class WaitList extends Component {
 
     componentDidMount() {
         if (this.props.authenticated === true) {
-            this.props.onShowLoading(true, 1);
+            this.props.showLoading({ reset: true, count: 1 });
             WaitListService.getWaitList()
                 .then(res => {
                     this.setState({ waitRequests: res.data });
@@ -31,7 +32,7 @@ class WaitList extends Component {
                     toastr.error('There was an error in loading wait list data');
                 })
                 .finally(() => {
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                     this.setState({ loaded: true });
                 });
         }
@@ -58,7 +59,7 @@ class WaitList extends Component {
 
     handleDeleteBtnClicked = (waitRequestIDs) => {
         if (waitRequestIDs.length > 0) { 
-            this.props.onShowLoading(true, 1);
+            this.props.showLoading({ reset: true, count: 1 });
             WaitListService.deleteWaitRequests(waitRequestIDs)
                 .then(async () => {
                     const successMessage = waitRequestIDs.length > 1 ? `Successfully deleted ${waitRequestIDs.length} requests` : 'Successfully deleted one request';
@@ -72,13 +73,13 @@ class WaitList extends Component {
                     toastr.error('There was an error ')
                 })
                 .finally(() => {
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                 });
         }
     }
 
     handleSendEmailBtnClicked = async (waitRequestIDs, subject, body) => {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         const regex = /\<img (.*?)>/g;
         let result;
         const files = [];
@@ -129,7 +130,7 @@ class WaitList extends Component {
                 toastr.error('There was an error in sending email');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -151,4 +152,22 @@ class WaitList extends Component {
     }
 }
 
-export default WaitList;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(WaitList);

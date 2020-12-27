@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import toastr from 'toastr';
 import $ from 'jquery';
+import { connect } from 'react-redux';
 import BuyersService from '../../services/buyersService';
 import ConstantsService from '../../services/constantsService';
 import ValidationService from '../../services/validationService';
@@ -222,7 +223,7 @@ class BuyerRegistrationModal extends Component {
             selections.city = selections.city.trim();
             selections.city = `${selections.city.substring(0, 1).toUpperCase()}${selections.city.substring(1)}`;
             let emailAvailable = false;
-            this.props.onShowLoading(true, 1);
+            this.props.showLoading({ reset: true, count: 1 });
             try {
                 const res = await BuyersService.checkEmailAvailability(selections.email);
                 emailAvailable = res.data;
@@ -232,7 +233,7 @@ class BuyerRegistrationModal extends Component {
                 toastr.error('There was an error in checking email availability.');
             }
             if (emailAvailable === true) {
-                this.props.onShowLoading(true, 1);
+                this.props.showLoading({ reset: true, count: 1 });
                 setTimeout(() => {
                     BuyersService.createBuyer(selections.firstName, selections.lastName, selections.email, selections.phone, selections.state, selections.city)
                         .then(res => {
@@ -286,7 +287,7 @@ class BuyerRegistrationModal extends Component {
             }
         }
         if (isValid === true) {
-            this.props.onShowLoading(true, 2);
+            this.props.showLoading({ reset: true, count: 2 });
             selections.firstName = `${firstName.trim().substring(0, 1).toUpperCase()}${firstName.trim().substring(1)}`;
             selections.lastName = `${lastName.trim().substring(0, 1).toUpperCase()}${lastName.trim().substring(1)}`;
             selections.email = selections.email.toLowerCase().trim();
@@ -302,7 +303,7 @@ class BuyerRegistrationModal extends Component {
                 if (emailAvailable === false)
                     validations.email = 'Email taken already.';
                 if (emailAvailable === true) {
-                    this.props.onShowLoading(true, 1);
+                    this.props.showLoading({ reset: true, count: 1 });
                 } else {
                     this.props.onDoneLoading(true);
                 }
@@ -422,4 +423,22 @@ class BuyerRegistrationModal extends Component {
     }
 }
 
-export default BuyerRegistrationModal;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(BuyerRegistrationModal);

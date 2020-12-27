@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import ParentsService from '../../services/parentsService';
 import toastr from 'toastr';
 
@@ -93,7 +94,7 @@ class ParentConfirmation extends Component {
         const data = this.state.initialParams;
         const pictures = this.state.pictures;
         let pictureLinks = [];
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         if (pictures.length > 0) {
             for (let i = 0, max = pictures.length; i < max; i++) {
                 const url = await ParentsService.uploadPicture(pictures[i]);
@@ -115,7 +116,7 @@ class ParentConfirmation extends Component {
                 toastr.error('There was an error in creating a puppy');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
                 this.props.history.push('/parents');
             });
     }
@@ -147,4 +148,22 @@ class ParentConfirmation extends Component {
     }
 }
 
-export default ParentConfirmation;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ParentConfirmation);

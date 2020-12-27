@@ -30,7 +30,7 @@ class Parents extends Component {
     }
 
     loadParents() {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         ParentsService.getAllParents()
             .then(res => {
                 res.data.sort((a, b) => { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
@@ -40,7 +40,7 @@ class Parents extends Component {
                 toastr.error('There was an error in loading parents data');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -95,7 +95,7 @@ class Parents extends Component {
         });
         parentToUpdate.live = !parentToUpdate.live;
         delete parentToUpdate.parentID;
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         ParentsService.updateParent(parentID, parentToUpdate)
             .then(() => {
                 parentToUpdate.parentID = parentID;
@@ -106,7 +106,7 @@ class Parents extends Component {
                 toastr.error('There was an error in update a parent');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -135,7 +135,7 @@ class Parents extends Component {
     handleDoDeleteBtnClicked = async () => {
         const { parentToDelete } = this.state;
         const pictures = parentToDelete.pictures;
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         if (pictures.length > 0) {
             pictures.forEach(async picture => {
                 try { 
@@ -160,7 +160,7 @@ class Parents extends Component {
                 toastr.error('There was an error in deleting a parent');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }   
 
@@ -197,7 +197,20 @@ class Parents extends Component {
 
 const mapStateToProps = state => ({
     user: state.user,
-    authenticated: state.authenticated
-});
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
 
-export default connect(mapStateToProps)(Parents);
+export default connect(mapStateToProps, mapDispatchToProps)(Parents);

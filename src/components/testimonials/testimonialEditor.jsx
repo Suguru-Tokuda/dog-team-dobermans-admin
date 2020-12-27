@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import ImageCropModal from '../miscellaneous/imageCropModal';
 import TestimonialService from '../../services/testimonialService';
 import ValidationService from '../../services/validationService';
 import toastr from 'toastr';
 import $ from 'jquery';
 
-export default class TestimonialEditor extends Component {
+class TestimonialEditor extends Component {
     state = {
         testimonialID: '',
         testimonialData: {},
@@ -38,7 +39,7 @@ export default class TestimonialEditor extends Component {
     componentDidMount() {
         const { testimonialID } = this.state;
         if (testimonialID !== '') {
-            this.props.onShowLoading(true, 1);
+            this.props.showLoading({ reset: true, count: 1 });
             TestimonialService.getTestimonial(testimonialID)
                 .then(res => {
                     if (typeof res.data !== 'object') {
@@ -68,7 +69,7 @@ export default class TestimonialEditor extends Component {
                     toastr.error('There was an error in loading testimonial data');
                 })
                 .finally(() => {
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                 });
         }
     }
@@ -206,7 +207,7 @@ export default class TestimonialEditor extends Component {
         if (isValid === true) { 
             const { firstName, lastName, dogName, email, message, picture } = selections;
             let image = null;
-            this.props.onShowLoading(true, 1);
+            this.props.showLoading({ reset: true, count: 1 });
             if (picture !== null) {
                 image = await TestimonialService.uploadPicture(picture, dogName);
             }
@@ -230,7 +231,7 @@ export default class TestimonialEditor extends Component {
                     console.log(err);
                 })
                 .finally(() => {
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                 });
         } else {
             this.setState({ validations });
@@ -266,7 +267,7 @@ export default class TestimonialEditor extends Component {
         this.setState({ validations });
         if (isValid === true) {
             const { firstName, lastName, dogName, email, message, picture } = selections;
-            this.props.onShowLoading(true, 1);
+            this.props.showLoading({ reset: true, count: 1 });
             let image;
             if (typeof picture !== 'undefined' && picture !== null && typeof picture.reference === 'undefined') {
                 try {
@@ -292,7 +293,7 @@ export default class TestimonialEditor extends Component {
                 image = null;
             }
             if (testimonialID === '') {
-                this.props.onShowLoading(true, 1);
+                this.props.showLoading({ reset: true, count: 1 });
                 TestimonialService.createTestimonial(firstName, lastName, dogName, email, message, image, new Date())
                     .then(() => {
                         toastr.success('New testimonial created.');
@@ -303,7 +304,7 @@ export default class TestimonialEditor extends Component {
                         toastr.error('There was an error in creating a testimonial.');
                     })
                     .finally(() => {
-                        this.props.onDoneLoading();
+                        this.props.doneLoading({ reset: true });
                     });
             } else {
                 const updateData = testimonialData;
@@ -316,7 +317,7 @@ export default class TestimonialEditor extends Component {
                     updateData.picture = image;
                 }
                 delete updateData.testimonialID;
-                this.props.onShowLoading(true, 1);
+                this.props.showLoading({ reset: true, count: 1 });
                 TestimonialService.updateTestimonial(testimonialID, updateData)
                     .then(() => {
                         toastr.success('Updated a testimonial.');
@@ -327,7 +328,7 @@ export default class TestimonialEditor extends Component {
                         toastr.error('There was an error in updating a testimonial.');
                     })
                     .finally(() => {
-                        this.props.onDoneLoading();
+                        this.props.doneLoading({ reset: true });
                     });
             }
         }
@@ -444,11 +445,29 @@ export default class TestimonialEditor extends Component {
                     imageFile={tempImageFile}
                     onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
                     handleResetTempPictureFile={this.handleResetTempPictureFile}
-                    onShowLoading={this.props.onShowLoading.bind(this)} 
-                    onDoneLoading={this.props.onDoneLoading.bind(this)}
                     aspectRatio={1}
                 />
             </React.Fragment>
         );
     }
 }
+
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TestimonialEditor);

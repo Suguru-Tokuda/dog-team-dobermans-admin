@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import WaitRequestMessenger from './waitRequestMessenger';
 import WaitRequestMessage from './waitRequestMessage';
 import WaitListService from '../../services/waitListService';
@@ -15,7 +16,7 @@ class WaitRequestDetail extends Component {
 
         this.state.waitRequestID = props.match.params.waitRequestID;
 
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
 
         WaitListService.getWaitRequest(this.state.waitRequestID)
             .then(res => {
@@ -25,7 +26,7 @@ class WaitRequestDetail extends Component {
 
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
 
         // API call to get the puppy request details and messages associated to the ID.
@@ -114,11 +115,29 @@ class WaitRequestDetail extends Component {
         return (
             <div className="container">
                 { this.renderRequestDetail() }
-                <WaitRequestMessenger {...this.props} waitRequestID={waitRequestID} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                <WaitRequestMessenger {...this.props} waitRequestID={waitRequestID}  />
                 { this.renderExistingMessages() }
             </div>
         );
     }
 }
 
-export default WaitRequestDetail;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(WaitRequestDetail);
