@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import waitListService from '../../services/waitListService';
+import toastr from 'toastr';
 
 class WaitRequestMessenger extends Component {
     state = {
-        waitRequestID: 0,
+        waitRequestID: '',
+        userID: '',
         messageBody: ''
     };
 
@@ -10,11 +14,33 @@ class WaitRequestMessenger extends Component {
         super(props);
 
         this.state.waitRequestID = props.waitRequestID;
+        if (props.userID)
+            this.state.userID = props.userID;
+    }
+
+    componentDidUpdate() {
+        if (this.props.userID !== this.state.userID) {
+            this.setState({ userID: this.props.userID });
+        }
     }
 
     handleSendMessageClicked = () => {
-        // TODO: API call to send a message.
-        console.log('handleSendMessageClicked');
+        const { messageBody, waitRequestID, userID } = this.state;
+
+        if (messageBody && waitRequestID && userID) {
+            this.props.showLoading({ reset: false, count: 1 });
+
+            waitListService.sendWaitRequestMessage(undefined, userID, waitRequestID, messageBody)
+                .then(res => {
+                    this.props.onMessageSent(res.data);
+                })
+                .catch(err => {
+                    toastr.error('There was an error in sending a message.');
+                })
+                .finally(() => {
+                    this.props.doneLoading({ reset: true });
+                })
+        }
     }
 
     renderTextEditor = () => {
@@ -68,4 +94,22 @@ class WaitRequestMessenger extends Component {
     }
 }
 
-export default WaitRequestMessenger;
+const mapStateToProps = state => ({
+  user: state.user,
+  authenticated: state.authenticated,
+  loadCount: state.loadCount
+});
+
+const mapDispatchToProps = dispatch => {
+  return {
+    login: () => dispatch({ type: 'SIGN_IN' }),
+    logout: () => dispatch({ type: 'SIGN_OUT' }),
+    setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+    unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+    getUser: () => dispatch({ type: 'GET_USER' }),
+    showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+    doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(WaitRequestMessenger);
