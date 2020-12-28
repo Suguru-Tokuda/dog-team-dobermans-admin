@@ -10,6 +10,7 @@ class WaitRequestMessage extends Component {
         super(props);
 
         this.state.message = props.message;
+        this.state.waitRequest = props.waitRequest;
     }
 
     render() {
@@ -18,12 +19,17 @@ class WaitRequestMessage extends Component {
         return (
             <div style={{ padding: '20px' }}>
                 <div className="row">
-                    <div class="col-6">
-                        From: { message.senderName }
+                    <div className="col-6">
+                        {message.senderID === this.state.waitRequest.userID && (
+                            <span>From: { this.state.waitRequest.firstName } {this.state.waitRequest.lastName }</span>
+                        )}
+                        {message.senderID === 'sSJ0mWxDjtaTuFsolvKskzDY4GI3' && (
+                            <span>From: Bob Johnson</span>
+                        )}
                     </div>
-                    <div class="col-6">
-                        <div class="float-right">
-                            { message.postDate.toString() }
+                    <div className="col-6">
+                        <div className="float-right">
+                            { message.sentDate.toString() }
                         </div>
                     </div>
                 </div>
@@ -34,7 +40,7 @@ class WaitRequestMessage extends Component {
                             value={ message.messageBody }
                             rows="7"
                             style={{ resize: 'none' }}
-                            readonly>
+                            readOnly>
                         </textarea>
                     </div>
                 </div>
