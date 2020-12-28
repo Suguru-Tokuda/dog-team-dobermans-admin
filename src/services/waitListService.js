@@ -14,7 +14,8 @@ export default class WaitListService {
     }
 
     static getWaitList() {
-        return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}`);
+        const recipientID = 'sSJ0mWxDjtaTuFsolvKskzDY4GI3';
+        return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}&recipientID=${recipientID}`);
     }
 
     static waitRequest(data) {
@@ -31,6 +32,23 @@ export default class WaitListService {
 
     static updateWaitRequests(waitRequests) {
         return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, waitRequests);
+    }
+
+    static sendWaitRequestMessage(senderID = 'sSJ0mWxDjtaTuFsolvKskzDY4GI3', recipientID, waitRequestID, messageBody) {
+        const data = {
+            waitRequestID: waitRequestID,
+            senderID: senderID,
+            recipientID: recipientID,
+            messageBody: messageBody,
+            isBreeder: true,
+            read: false
+        };
+
+        return axios.post(`${this.getServiceBase()}/messages?key=${api.API_KEY}`, data);
+    }
+
+    static getWaitRequestMessages(waitRequestID) {
+        return axios.get(`${this.getServiceBase()}/messages?key=${api.API_KEY}&waitRequestID=${waitRequestID}`);
     }
 
     static deleteWaitRequests(waitRequestIDs) {
