@@ -44,13 +44,15 @@ class App extends Component {
     auth.onAuthStateChanged((user) => {
       if (user) {
         const allowedUIDs = uids.allowedUIDs;
-        if (allowedUIDs.indexOf(user.uid) !== -1) {
-          this.props.login();
-          this.props.setUser(user);
-        } else {
-          this.props.logout();
-          this.props.unsetUser();
-        }
+        this.props.login();
+        this.props.setUser(user);
+        // if (allowedUIDs.indexOf(user.uid) !== -1) {
+          // this.props.login();
+          // this.props.setUser(user);
+        // } else {
+        //   this.props.logout();
+        //   this.props.unsetUser();
+        // }
       } else {
         this.props.logout();
         this.props.unsetUser();
@@ -80,34 +82,35 @@ class App extends Component {
   }
 
   render() {
-    const { authenticated, authenticationChecked } = this.state;
+    const { authenticationChecked } = this.state;
+    const { authenticated } = this.props;
     return (
       <BrowserRouter>
         <div className={`app ${this.getUIBlockerClass()}`}>
-          <Sidebar authenticated={authenticated} />
+          <Sidebar />
           <div className="c-wrapper">
-          <Header authenticated={authenticated} />
+          <Header />
             <div className="c-body">
               <main className="c-main">
                 <div className="container-fluid">
                   {authenticationChecked === true && (
                     <Switch>
-                        <Route path="/" exact render={(props) => <Main {...props} authenticated={authenticated} />} />
-                        <Route path="/login" exact render={(props) => <Login {...props} authenticated={authenticated} />} />
-                        <Route path="/banner" exact render={(props) => <BannerEditor {...props} authenticated={authenticated} />} />
-                        <Route path="/background-vide-editor" exact render={(props) => <VideoBackgroundEditor {...props} authenticated={authenticated} />} />
-                        <Route path="/gallery-image-editor" exact render={(props) => <GalleryImageEditor {...props} authenticated={authenticated} />} />
-                        <Route path="/puppy" render={(props) => <Puppy url="/puppy" {...props} authenticated={authenticated} />} />
-                        <Route path="/puppies" exact render={(props) => <Puppies {...props} authenticated={authenticated} />} />
-                        <Route path="/parent" render={(props) => <Parent url="/parent" {...props} authenticated={authenticated} />} />
-                        <Route path="/parents" exact render={(props) => <Parents {...props} authenticated={authenticated} />} />
-                        <Route path="/buyers" exact render={(props) => <Buyers {...props} authenticated={authenticated} />} />
-                        <Route path="/testimonials" render={(props) => <Testimonials {...props} authenticated={authenticated} />} />
-                        <Route path="/wait-list" render={(props) => <WaitRequests {...props} authenticated={authenticated} />} />
-                        <Route path="/about-dobermans" exact render={(props) => <AboutDobermans {...props} authenticated={authenticated} />} />
-                        <Route path="/about-us" render={(props) => <AboutUs {...props} authenticated={authenticated} url="/about-us" />} />
-                        <Route path="/blog" render={(props) => <Blog {...props} authenticated={authenticated} />} />
-                        <Route path="/contact" render={(props) => <Contact url="/contact" {...props} authenticated={authenticated} />} />
+                        <Route path="/" exact render={(props) => <Main {...props} />} />
+                        <Route path="/login" exact render={(props) => <Login {...props} />} />
+                        <Route path="/banner" exact render={(props) => <BannerEditor {...props} />} />
+                        <Route path="/background-vide-editor" exact render={(props) => <VideoBackgroundEditor {...props} />} />
+                        <Route path="/gallery-image-editor" exact render={(props) => <GalleryImageEditor {...props} />} />
+                        <Route path="/puppy" render={(props) => <Puppy url="/puppy" {...props} />} />
+                        <Route path="/puppies" exact render={(props) => <Puppies {...props} />} />
+                        <Route path="/parent" render={(props) => <Parent url="/parent" {...props} />} />
+                        <Route path="/parents" exact render={(props) => <Parents {...props} />} />
+                        <Route path="/buyers" exact render={(props) => <Buyers {...props} />} />
+                        <Route path="/testimonials" render={(props) => <Testimonials {...props} />} />
+                        <Route path="/wait-list" render={(props) => <WaitRequests {...props} />} />
+                        <Route path="/about-dobermans" exact render={(props) => <AboutDobermans {...props} />} />
+                        <Route path="/about-us" render={(props) => <AboutUs {...props} url="/about-us" />} />
+                        <Route path="/blog" render={(props) => <Blog {...props} />} />
+                        <Route path="/contact" render={(props) => <Contact url="/contact" {...props} />} />
                         <Route render={(props) => <NotFound {...props} />} />
                     </Switch>
                   )}
