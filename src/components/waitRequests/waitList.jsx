@@ -60,6 +60,7 @@ class WaitList extends Component {
     handleDeleteBtnClicked = (waitRequestIDs) => {
         if (waitRequestIDs.length > 0) { 
             this.props.showLoading({ reset: true, count: 1 });
+
             WaitListService.deleteWaitRequests(waitRequestIDs)
                 .then(async () => {
                     const successMessage = waitRequestIDs.length > 1 ? `Successfully deleted ${waitRequestIDs.length} requests` : 'Successfully deleted one request';
