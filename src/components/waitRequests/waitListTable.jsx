@@ -226,7 +226,10 @@ class WaitListTable extends Component {
                     <td>{waitRequest.expectedPurchaseDate === undefined || waitRequest.expectedPurchaseDate === null ? '' : moment(waitRequest.expectedPurchaseDate).format('MM/DD/YYYY')}</td>
                     <td>{waitRequest.notified === undefined || waitRequest.notified === null ? 'N/A' : moment(waitRequest.notified).format('MM/DD/YYYY hh:mm:ss')}</td>
                     <td style={{ whiteSpace: 'nowrap'}}>
-                        <Link type="button" className="btn btn-sm btn-success" to={`/wait-list/${waitRequest.waitRequestID}`}><i className="fab fa-facebook-messenger"></i> Messages</Link>
+                        {waitRequest.userRegistrationCompleted && (
+                            <Link type="button" className="btn btn-sm btn-success" to={`/wait-list/${waitRequest.waitRequestID}`}><i className="fab fa-facebook-messenger"></i> Messages</Link>
+
+                        )}
                         <Link type="button" className="btn btn-sm btn-success ml-1" to={`/wait-list/editor/${waitRequest.waitRequestID}`}><i className="fa fa-edit"></i> Edit</Link>
                     </td>
                 </tr>
@@ -393,10 +396,12 @@ class WaitListTable extends Component {
     handleDeleteBtnClicked = () => {
         const waitRequestIDs = [];
         const { tableData } = this.state;
+
         tableData.forEach(waitRequest => {
             if (waitRequest.selected === true)
                 waitRequestIDs.push(waitRequest.waitRequestID);
         });
+
         if (waitRequestIDs.length > 0)
             this.props.onDeleteBtnClicked(waitRequestIDs);
     }
