@@ -38,7 +38,7 @@ class GalleryImageEditor extends Component {
         let pictureCards, pictureAddCard;
         if (Object.keys(this.state.images).length > 0) {
             images = this.state.images;
-            console.log(images);
+
             if (typeof images !== 'undefined' && images.length > 0) {
                 pictureCards = <SortablePictureLlist 
                                 pictures={images} 
@@ -87,7 +87,7 @@ class GalleryImageEditor extends Component {
         } catch (err) {
             toastr.error('There was an error in uploading a file');
         }
-        console.log(newPicture);
+
         if (typeof newPicture !== 'undefined') {
             // push the new picture reference
             const { images } = this.state;
