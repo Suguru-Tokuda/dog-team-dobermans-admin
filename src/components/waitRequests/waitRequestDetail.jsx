@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import WaitRequestMessenger from './waitRequestMessenger';
 import WaitRequestMessage from './waitRequestMessage';
 import WaitListService from '../../services/waitListService';
+import toastr from 'toastr';
 
 class WaitRequestDetail extends Component {
     state = {
@@ -17,19 +18,30 @@ class WaitRequestDetail extends Component {
         this.state.waitRequestID = props.match.params.waitRequestID;
 
         this.props.showLoading({ reset: true, count: 1 });
+        const { waitRequestID } = this.state;
 
-        WaitListService.getWaitRequest(this.state.waitRequestID)
-            .then(res => {
-                this.setState({ waitRequest: res.data });
-            })
-            .catch(err => {
+        Promise.all([
+            WaitListService.getWaitRequest(waitRequestID),
+            WaitListService.getWaitRequestMessages(waitRequestID)
+        ])
+        .then(res => {
 
-            })
-            .finally(() => {
-                this.props.doneLoading({ reset: true });
-            });
+            const waitRequest = res[0].data;
+            const messages = res[1].data;
 
-        // API call to get the puppy request details and messages associated to the ID.
+            this.state.waitRequest = waitRequest;
+            this.state.messages = messages;
+        })
+        .catch((err) => {
+            console.log(err);
+            toastr.error('There was an error on loading wait request data')
+        })
+        .finally(() => {
+            this.props.doneLoading({ reset: false });
+
+
+
+        });
     }
 
     renderRequestDetail = () => {
@@ -47,6 +59,12 @@ class WaitRequestDetail extends Component {
                                 <label className="col-xs-12 col-sm-4 col-md-2 col-lg-2">Request Receive</label>
                                 <div className="col-xs-12 col-sm-8 col-md-10 col-lg-10">
                                     { waitRequest.created }
+                                </div>
+                            </div>
+                            <div className="form-group row">
+                                <label className="col-xs-12 col-sm-4 col-md-2 col-lg-2">UserID</label>
+                                <div className="col-xs-12 col-sm-8 col-md-10 col-lg-10">
+                                    { waitRequest.userID }
                                 </div>
                             </div>
                             <div className="form-group row">
@@ -103,19 +121,40 @@ class WaitRequestDetail extends Component {
 
         if (messages.length > 0) {
             return messages.map(message => {
-                return <WaitRequestMessage message={message} />;
+                return <WaitRequestMessage {...this.props} 
+                                           key={message.messageID} 
+                                           message={message} 
+                                           waitRequest={this.state.waitRequest}
+                        />;
             });
         }
     }
 
+    onMessageSent = (newMessage) => {
+        let { messages } = this.state;
+
+        messages.push(newMessage);
+
+        messages = messages.sort((messageA, messageB) => {
+            return messageA.sentDate > messageB.sentDate ? -1 : messageA.sentDate < messageB.sentDate ? 1 : 0;
+        });
+
+        this.setState({ messages });
+    }
+
 
     render() {
-        const { waitRequestID } = this.state;
+        const { waitRequestID, waitRequest } = this.state;
+        const { userID } = waitRequest;
 
         return (
             <div className="container">
                 { this.renderRequestDetail() }
-                <WaitRequestMessenger {...this.props} waitRequestID={waitRequestID}  />
+                <WaitRequestMessenger {...this.props} 
+                                      waitRequestID={waitRequestID} 
+                                      userID={userID}
+                                      onMessageSent={this.onMessageSent.bind(this)}
+                />
                 { this.renderExistingMessages() }
             </div>
         );
