@@ -220,6 +220,7 @@ class Puppies extends Component {
     render() {
         const { puppyIDToDelete, puppyToCancelTransaction, puppyToDelete, puppyIDToCancelTransaction, showDeleteModal } = this.state;
         const { authenticated } = this.props;
+
         if (authenticated === true) {
             return (
                 <React.Fragment>
