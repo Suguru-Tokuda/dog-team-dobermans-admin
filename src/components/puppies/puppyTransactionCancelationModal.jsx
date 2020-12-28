@@ -14,7 +14,6 @@ class TransactionCancelationModal extends Component {
 
     static getDerivedStateFromProps(nextProps, prevState) {
         if (nextProps.puppyID !== prevState.puppyID) {
-            console.log(nextProps);
             return {
                 puppyID: nextProps.puppyID,
                 puppyDetail: nextProps.puppyDetail
