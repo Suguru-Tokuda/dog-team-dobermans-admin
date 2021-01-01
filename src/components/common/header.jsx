@@ -1,8 +1,50 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { auth } from '../../services/firebaseService';
+import Messages from './messages';
+import waitListService from '../../services/waitListService';
+import toastr from 'toastr';
+import moment from 'moment';
 
 class AdminHeader extends Component {
+    state = {
+        messages: [],
+        lastLoadedTime: null
+    };
+
+    componentDidUpdate(props) {
+        const { lastLoadedTime } = this.state;
+
+        if (this.props.location.pahname !== props.location.pathname && this.props.authenticated) {
+            let loadMessages = false;
+            if (lastLoadedTime === null) {
+                loadMessages = true;
+            } else {
+                // get time diff
+                const now = moment.now();
+                const lastLoadedTimeInMoment = moment(this.state.lastLoadedTime);
+
+                const timeDiff = moment(now).diff(lastLoadedTimeInMoment, 'seconds');
+
+                if (parseInt(timeDiff) >= 1) {
+                    loadMessages = true;
+                }
+            }
+
+            if (loadMessages) {
+                waitListService.getUnreadMessagesByUserID(undefined, 5)
+                    .then(res => {
+                        this.setState({ 
+                            messages: res.data,
+                            lastLoadedTime: new Date()
+                        });
+                    })
+                    .catch(err => {
+                        toastr.error('There was an error in loading messages.');
+                    });
+            }
+        }
+    }
 
     handleSignoutClicked = () => {
         this.props.showLoading({ reset: true, count: 1 });
@@ -29,6 +71,7 @@ class AdminHeader extends Component {
                     <i className="fas fa-bars"></i>
                 </button>
                 <ul className="ml-auto c-header-nav mr-5">
+                    <Messages messages={this.state.messages} />
                     {authenticated === true && (
                         <li className="c-header-nav-item">
                             <a className="c-header-nav-link" href="/" onClick={this.handleSignoutClicked}>Sign out</a>
