@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import WaitRequestMessenger from './waitRequestMessenger';
 import WaitRequestMessage from './waitRequestMessage';
+import ConstantsService from '../../services/constantsService';
 import WaitListService from '../../services/waitListService';
 import toastr from 'toastr';
 
@@ -24,13 +26,30 @@ class WaitRequestDetail extends Component {
             WaitListService.getWaitRequest(waitRequestID),
             WaitListService.getWaitRequestMessages(waitRequestID)
         ])
-        .then(res => {
+        .then(async res => {
 
             const waitRequest = res[0].data;
             const messages = res[1].data;
 
             this.state.waitRequest = waitRequest;
             this.state.messages = messages;
+
+            if (messages.length > 0) {
+                const messageIDsMarkAsRead = [];
+
+                messages.forEach(message => {
+                    if (message.recipientID === ConstantsService.getBreederID() && !message.read)
+                        messageIDsMarkAsRead.push(message.messageID)
+                });
+                        
+                if (messageIDsMarkAsRead.length > 0) {
+                    try {
+                        await WaitListService.markMessageAsRead(messageIDsMarkAsRead);
+                    } catch (err) {
+                        console.log(err);
+                    }
+                }
+            }
         })
         .catch((err) => {
             console.log(err);
@@ -38,9 +57,6 @@ class WaitRequestDetail extends Component {
         })
         .finally(() => {
             this.props.doneLoading({ reset: false });
-
-
-
         });
     }
 
@@ -146,10 +162,20 @@ class WaitRequestDetail extends Component {
     render() {
         const { waitRequestID, waitRequest } = this.state;
         const { userID } = waitRequest;
+        let prevPathname;
+
+        if (this.props.location.state && this.props.location.state) {
+            prevPathname = this.props.location.state;
+        }
 
         return (
             <div className="container">
                 { this.renderRequestDetail() }
+                <div className="row">
+                    <div className="col-12">
+                        <Link className="btn btn-primary" to={prevPathname ? prevPathname : '/wait-list' }>Back</Link>
+                    </div>
+                </div>
                 <WaitRequestMessenger {...this.props} 
                                       waitRequestID={waitRequestID} 
                                       userID={userID}
