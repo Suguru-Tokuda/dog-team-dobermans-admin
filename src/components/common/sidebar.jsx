@@ -39,6 +39,9 @@ class AdminSidebar extends Component {
                             <NavLink className="c-sidebar-nav-link" activeClassName="c-active" to="/wait-list">Wait List</NavLink>
                         </li>
                         <li className="c-sidebar-nav-item">
+                            <NavLink className="c-sidebar-nav-link" activeClassName="c-active" to="/messages">Messages</NavLink>
+                        </li>
+                        <li className="c-sidebar-nav-item">
                             <NavLink className="c-sidebar-nav-link" activeClassName="c-active" to="/about-dobermans">About Dobermans</NavLink>
                         </li>
                         <li className="c-sidebar-nav-item">
