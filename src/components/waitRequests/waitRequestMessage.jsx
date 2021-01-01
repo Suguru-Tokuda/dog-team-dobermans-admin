@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ConstantsService from '../../services/constantsService';
 
 class WaitRequestMessage extends Component {
 
@@ -23,7 +24,7 @@ class WaitRequestMessage extends Component {
                         {message.senderID === this.state.waitRequest.userID && (
                             <span>From: { this.state.waitRequest.firstName } {this.state.waitRequest.lastName }</span>
                         )}
-                        {message.senderID === 'sSJ0mWxDjtaTuFsolvKskzDY4GI3' && (
+                        {message.senderID === ConstantsService.getBreederID() && (
                             <span>From: Bob Johnson</span>
                         )}
                     </div>
