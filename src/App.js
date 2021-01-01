@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { auth } from './services/firebaseService';
 import Spinner from 'react-spinkit';
-import AlertsService from './services/alertsService';
 import Header from './components/common/header';
 import Sidebar from './components/common/sidebar';
 import Login from './components/common/login';
@@ -16,6 +15,7 @@ import Parents from './components/parents/parents';
 import Buyers from './components/buyers/buyers';
 import Testimonials from './components/testimonials/testimonials';
 import WaitRequests from './components/waitRequests/waitRequests';
+import Messages from './components/messages/messages';
 import AboutDobermans from './components/aboutDobermans/aboutDobermans';
 import AboutUs from './components/aboutUs/aboutUs';
 import Blog from './components/blog/blog';
@@ -30,15 +30,8 @@ class App extends Component {
 
   state = {
     isLoading: false,
-    alertsService: null,
     authenticationChecked: false
   };
-
-  constructor(props) {
-    super(props);
-    this.state.alertsService = new AlertsService();
-
-  }
 
   componentDidMount() {
     auth.onAuthStateChanged((user) => {
@@ -61,7 +54,7 @@ class App extends Component {
     });
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(props) {
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
     });
@@ -84,12 +77,13 @@ class App extends Component {
   render() {
     const { authenticationChecked } = this.state;
     const { authenticated } = this.props;
+
     return (
       <BrowserRouter>
         <div className={`app ${this.getUIBlockerClass()}`}>
-          <Sidebar />
+          <Route render={(props) => <Sidebar {...props} /> }/>
           <div className="c-wrapper">
-          <Header />
+            <Route render={(props) => <Header {...props} /> }/>
             <div className="c-body">
               <main className="c-main">
                 <div className="container-fluid">
@@ -107,6 +101,7 @@ class App extends Component {
                         <Route path="/buyers" exact render={(props) => <Buyers {...props} />} />
                         <Route path="/testimonials" render={(props) => <Testimonials {...props} />} />
                         <Route path="/wait-list" render={(props) => <WaitRequests {...props} />} />
+                        <Route path="/messages" render={(props) => <Messages {...props} />} />
                         <Route path="/about-dobermans" exact render={(props) => <AboutDobermans {...props} />} />
                         <Route path="/about-us" render={(props) => <AboutUs {...props} url="/about-us" />} />
                         <Route path="/blog" render={(props) => <Blog {...props} />} />
