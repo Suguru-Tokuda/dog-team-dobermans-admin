@@ -9,6 +9,13 @@
           "dogteamdobermans-admin"
         ]
       }
+    },
+    "dogteamdobermansdev": {
+      "hosting": {
+        "admin-dev": [
+          "dogteamdobermans-admin-dev"
+        ]
+      }
     }
   }
 }

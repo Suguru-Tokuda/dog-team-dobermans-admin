@@ -26,7 +26,14 @@ class WaitList extends Component {
             this.props.showLoading({ reset: true, count: 1 });
             WaitListService.getWaitList()
                 .then(res => {
-                    this.setState({ waitRequests: res.data });
+                    const waitRequests = [];
+                    res.data.map(request => {
+                        if (request.statusID === 1 || request.statusID === undefined) {
+                            waitRequests.push(request);
+                        }
+                    });
+
+                    this.setState({ waitRequests });
                 })
                 .catch(() => {
                     toastr.error('There was an error in loading wait list data');
@@ -67,7 +74,14 @@ class WaitList extends Component {
                     toastr.success(successMessage);
                     setTimeout(async () => {
                         const res = await WaitListService.getWaitList();
-                        this.setState({ waitRequests: res.data });
+                        const waitRequests = [];
+                        res.data.map(request => {
+                            if (request.statusID === 1 || request.statusID === undefined) {
+                                waitRequests.push(request);
+                            }
+                        });    
+
+                        this.setState({ waitRequests });
                     }, 100);
                 })
                 .catch(() => {
