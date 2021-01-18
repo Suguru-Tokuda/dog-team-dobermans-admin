@@ -251,4 +251,8 @@ export default class ConstantsService {
     static getDobermanColors() {
         return ["Black and Tan", "Red", "Blue", "Fawn", "Black (Melanistic)"];
     }
+
+    static getBreederID() {
+        return 'sSJ0mWxDjtaTuFsolvKskzDY4GI3';
+    }
 }

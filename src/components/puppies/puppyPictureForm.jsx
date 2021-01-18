@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import ImageCropModal from '../miscellaneous/imageCropModal';
 import $ from 'jquery';
 
@@ -146,8 +147,6 @@ class PuppyPictureForm extends Component {
                     imageFile={tempPictureFile}
                     onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
                     handleResetTempPictureFile={this.handleResetTempPictureFile}
-                    onShowLoading={this.props.onShowLoading.bind(this)} 
-                    onDoneLoading={this.props.onDoneLoading.bind(this)}
                     aspectRatio={1}
                 />
             </React.Fragment>
@@ -155,4 +154,22 @@ class PuppyPictureForm extends Component {
     }
 }
 
-export default PuppyPictureForm;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PuppyPictureForm);

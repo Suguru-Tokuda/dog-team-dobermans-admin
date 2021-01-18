@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import ReactQuill, { Quill } from 'react-quill';
 import ImageResize from 'quill-image-resize-module';
 import { ImageDrop } from 'quill-image-drop-module';
@@ -71,7 +72,9 @@ class AboutDobermansEditorModal extends Component {
         this.setState({ formSubmitted: true });
         const { body, originalBody } = this.state;
         let bodyToSend = body;
-        this.props.onShowLoading(false, 1);
+
+        this.props.showLoading({ reset: false, count: 1 });
+
         const regex = /\<img (.*?)>/g;
         const regexForSrc = /src="(.*?)"/;
         let result;
@@ -131,7 +134,7 @@ class AboutDobermansEditorModal extends Component {
                 toastr.error('There was an error in updating the About Dobermans');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
 
             });
     }
@@ -179,4 +182,22 @@ class AboutDobermansEditorModal extends Component {
 
 }
 
-export default AboutDobermansEditorModal;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AboutDobermansEditorModal);

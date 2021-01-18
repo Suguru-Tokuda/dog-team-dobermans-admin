@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import AboutUsService from '../../services/aboutUsService';
 import { Link } from 'react-router-dom';
 import toastr from 'toastr';
@@ -16,7 +17,7 @@ class MissionStatementsEditor extends Component {
     };
 
     componentDidMount() {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         AboutUsService.getAboutUs()
             .then(res => {
                 if (typeof res.data.missionStatements !== 'undefined') {
@@ -33,7 +34,7 @@ class MissionStatementsEditor extends Component {
                 toastr.error('There was an error in loading missionStatements data');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -183,7 +184,7 @@ class MissionStatementsEditor extends Component {
         });
         this.setState({ missionStatements });
         if (valid === true) {
-            this.props.onShowLoading(true, 1);
+            this.props.showLoading({ reset: true, count: 1 });
             for (let i = 0, max = missionStatements.length; i < max; i++) {
                 const missionStatement = missionStatements[i];
                 if (typeof missionStatement.picture.reference === 'undefined') {
@@ -222,7 +223,7 @@ class MissionStatementsEditor extends Component {
                     toastr.error('There was an error in updating missionStatements');
                 })
                 .finally(() => {
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                 })
         }
     }
@@ -258,8 +259,6 @@ class MissionStatementsEditor extends Component {
                     imageFile={tempPictureFile}
                     onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
                     handleResetTempPictureFile={this.handleResetTempPictureFile}
-                    onShowLoading={this.props.onShowLoading.bind(this)} 
-                    onDoneLoading={this.props.onDoneLoading.bind(this)}
                     aspectRatio={16/9}
                 />
             </React.Fragment>
@@ -267,4 +266,22 @@ class MissionStatementsEditor extends Component {
     }
 }
 
-export default MissionStatementsEditor;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(MissionStatementsEditor);

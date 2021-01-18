@@ -1,21 +1,62 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { auth } from '../../services/firebaseService';
-import * as siteLogo from '../../assets/img/site_logo.PNG';
+import Messages from './messages';
+import waitListService from '../../services/waitListService';
+import toastr from 'toastr';
+import moment from 'moment';
 
 class AdminHeader extends Component {
+    state = {
+        messages: [],
+        lastLoadedTime: null
+    };
+
+    componentDidUpdate(props) {
+        const { lastLoadedTime } = this.state;
+
+        if (this.props.location.pahname !== props.location.pathname && this.props.authenticated) {
+            let loadMessages = false;
+            if (lastLoadedTime === null) {
+                loadMessages = true;
+            } else {
+                // get time diff
+                const now = moment.now();
+                const lastLoadedTimeInMoment = moment(this.state.lastLoadedTime);
+
+                const timeDiff = moment(now).diff(lastLoadedTimeInMoment, 'seconds');
+
+                if (parseInt(timeDiff) >= 1) {
+                    loadMessages = true;
+                }
+            }
+
+            if (loadMessages) {
+                waitListService.getUnreadMessagesByUserID(undefined, 5)
+                    .then(res => {
+                        this.setState({ 
+                            messages: res.data,
+                            lastLoadedTime: new Date()
+                        });
+                    })
+                    .catch(err => {
+                        toastr.error('There was an error in loading messages.');
+                    });
+            }
+        }
+    }
 
     handleSignoutClicked = () => {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         auth.signOut()
             .then(res => {
-                this.props.onSignOut(false);
+                this.props.logout();
             })
             .catch(err => {
                 console.log(err);
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -30,6 +71,7 @@ class AdminHeader extends Component {
                     <i className="fas fa-bars"></i>
                 </button>
                 <ul className="ml-auto c-header-nav mr-5">
+                    <Messages messages={this.state.messages} />
                     {authenticated === true && (
                         <li className="c-header-nav-item">
                             <a className="c-header-nav-link" href="/" onClick={this.handleSignoutClicked}>Sign out</a>
@@ -41,4 +83,22 @@ class AdminHeader extends Component {
     }
 }
 
-export default AdminHeader;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AdminHeader);

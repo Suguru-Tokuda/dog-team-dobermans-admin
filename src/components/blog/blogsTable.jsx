@@ -171,8 +171,8 @@ class BlogsTable extends Component {
                         <td>{moment(blog.created).format('MM/DD/YYYY hh:mm:ss')}</td>
                         <td style={{ whiteSpace: 'nowrap'}}>
                             <button className="btn btn-sm btn-primary" onClick={() => this.props.onViewBtnClicked(blog.blogID)}>View</button>
-                            <button className="btn btn-sm btn-success ml-2" onClick={() => this.props.onUpdateBtnClicked(blog.blogID)}>Update</button>
-                            <button className="btn btn-sm btn-danger ml-2" onClick={() => this.props.onDeleteBtnClicked(blog.blogID)}>Delete</button>
+                            {/* <button className="btn btn-sm btn-success ml-2" onClick={() => this.props.onUpdateBtnClicked(blog.blogID)}>Update</button>
+                            <button className="btn btn-sm btn-danger ml-2" onClick={() => this.props.onDeleteBtnClicked(blog.blogID)}>Delete</button> */}
                         </td>
                     </tr>
                 )

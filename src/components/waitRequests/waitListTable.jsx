@@ -186,7 +186,7 @@ class WaitListTable extends Component {
                     <th>Message</th>
                     <th>Note</th>
                     <th className="pointer" onClick={() => this.sortTable('created')}>Created {this.getSortIcon('created')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('expectedPurchaseDate')}>Expected Purchase {this.getSortIcon('expectedPurchaseDate')}</th>
+                    {/* <th className="pointer" onClick={() => this.sortTable('expectedPurchaseDate')}>Expected Purchase {this.getSortIcon('expectedPurchaseDate')}</th> */}
                     <th className="pointer" onClick={() => this.sortTable('notified')}>Last Notified {this.getSortIcon('notified')}</th>
                     <th>Actions</th>
                 </tr>
@@ -223,10 +223,14 @@ class WaitListTable extends Component {
                     <td data-toggle="popover" data-content={waitRequest.message}>{UtilService.shortenStr(waitRequest.message, 10)}</td>
                     <td data-toggle="popover" data-content={waitRequest.note}>{UtilService.shortenStr(waitRequest.note, 10)}</td>
                     <td>{waitRequest.created === undefined ? '' : moment(waitRequest.created).format('MM/DD/YYYY hh:mm:ss')}</td>
-                    <td>{waitRequest.expectedPurchaseDate === undefined || waitRequest.expectedPurchaseDate === null ? '' : moment(waitRequest.expectedPurchaseDate).format('MM/DD/YYYY')}</td>
+                    {/* <td>{waitRequest.expectedPurchaseDate === undefined || waitRequest.expectedPurchaseDate === null ? '' : moment(waitRequest.expectedPurchaseDate).format('MM/DD/YYYY')}</td> */}
                     <td>{waitRequest.notified === undefined || waitRequest.notified === null ? 'N/A' : moment(waitRequest.notified).format('MM/DD/YYYY hh:mm:ss')}</td>
                     <td style={{ whiteSpace: 'nowrap'}}>
-                        <Link type="button" className="btn btn-sm btn-success" to={`/wait-list/editor/${waitRequest.waitRequestID}`}><i className="fa fa-edit"></i> Edit</Link>
+                        {waitRequest.userRegistrationCompleted && (
+                            <Link type="button" className="btn btn-sm btn-success" to={`/wait-list/${waitRequest.waitRequestID}`}><i className="fab fa-facebook-messenger"></i> Messages</Link>
+
+                        )}
+                        <Link type="button" className="btn btn-sm btn-success ml-1" to={`/wait-list/editor/${waitRequest.waitRequestID}`}><i className="fa fa-edit"></i> Edit</Link>
                     </td>
                 </tr>
             );
@@ -392,10 +396,12 @@ class WaitListTable extends Component {
     handleDeleteBtnClicked = () => {
         const waitRequestIDs = [];
         const { tableData } = this.state;
+
         tableData.forEach(waitRequest => {
             if (waitRequest.selected === true)
                 waitRequestIDs.push(waitRequest.waitRequestID);
         });
+
         if (waitRequestIDs.length > 0)
             this.props.onDeleteBtnClicked(waitRequestIDs);
     }
@@ -431,14 +437,14 @@ class WaitListTable extends Component {
                                     <Link className="btn btn-success" to="/wait-list/editor">Create</Link>
                                     <button className="btn btn-primary ml-2" disabled={buttonDisabled} onClick={this.handleNotifyBtnClicked}>Notify</button>
                                     <button className="btn btn-danger ml-2" disabled={buttonDisabled} onClick={this.handleDeleteBtnClicked}>Delete</button>
-                                    <span className="ml-2" data-toggle="tooltip" data-placement="top" title="Filter Wait List for 2 months before and after the selected date">
+                                    {/* <span className="ml-2" data-toggle="tooltip" data-placement="top" title="Filter Wait List for 2 months before and after the selected date">
                                         <Checkbox checkboxClass="icheckbox_square-blue" increaseArea="-100%" checked={filterForExpectedPurchaseDate} onChange={this.handleFilterForExpectedPurchaseDateChanged} label=" Filter for Expected Purchase Date" />
                                     </span>
                                     {filterForExpectedPurchaseDate === true && (
                                         <span className="ml-2">
                                             <DatePicker className="form-control" selected={expectedPurchaseDateToSearch} onChange={this.handleSetExpectedPurchaseDate} />
                                         </span>
-                                    )}
+                                    )} */}
                                 </div>
                                 <div className="col-2">
                                     <div className="float-right">

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
+import { connect } from 'react-redux';
 import PuppyUpdateSelection from './puppyUpdateSelection';
 import PuppyCreateForm from './puppyInitialForm';
 import PuppyPictureUpdateForm from './puppyPictureUpdateForm';
@@ -21,7 +22,7 @@ class PuppyUpdate extends Component {
     }
 
     componentDidMount() {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         ParentsService.getAllParents()
             .then(res => {
                 if (res.data.length > 0) {
@@ -54,7 +55,7 @@ class PuppyUpdate extends Component {
                 toastr.error('There was an error in fetching parents data');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -68,12 +69,30 @@ class PuppyUpdate extends Component {
         const { puppyID, dads, moms } = this.state;
         return (
             <React.Fragment>
-                <Route path={`${url}/:puppyID`} exact render={(props) => <PuppyUpdateSelection {...props} url={url} puppyID={puppyID} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
-                <Route path={`${url}/profile/:puppyID`} render={(props) => <PuppyCreateForm {...props} url={url} puppyID={puppyID} dads={dads} moms={moms} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} onCancelBtnClicked={this.handleCancleClicked} />} />
-                <Route path={`${url}/pictures/:puppyID`} render={(props) => <PuppyPictureUpdateForm {...props} url={url} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />} />
+                <Route path={`${url}/:puppyID`} exact render={(props) => <PuppyUpdateSelection {...props} url={url} puppyID={puppyID}  />} />
+                <Route path={`${url}/profile/:puppyID`} render={(props) => <PuppyCreateForm {...props} url={url} puppyID={puppyID} dads={dads} moms={moms}  onCancelBtnClicked={this.handleCancleClicked} />} />
+                <Route path={`${url}/pictures/:puppyID`} render={(props) => <PuppyPictureUpdateForm {...props} url={url}  />} />
             </React.Fragment>
         );
     }
 }
 
-export default PuppyUpdate;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PuppyUpdate);

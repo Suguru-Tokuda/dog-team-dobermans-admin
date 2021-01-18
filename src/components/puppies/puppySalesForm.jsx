@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import PuppyDetail from './puppyDetail';
 import BuyerDetail from '../buyers/buyerDetail';
 import BuyerLookupModal from '../buyers/buerLookupModal';
@@ -25,7 +26,7 @@ class PuppySalesForm extends Component {
 
     componentDidMount() {
         const { puppyID } = this.state;
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         PuppiesService.getPuppy(puppyID)
             .then(res => {
                 this.setState({ puppyDetail: res.data });
@@ -37,7 +38,7 @@ class PuppySalesForm extends Component {
                 toastr.error('There was an error in loading puppy data');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             })
     }
 
@@ -76,7 +77,7 @@ class PuppySalesForm extends Component {
             puppyDetail.soldDate = new Date();
             puppyDetail.paidAmount = paymentAmount;
             puppyDetail.buyerID = buyerID;
-            this.props.onShowLoading(true, 1);
+            this.props.showLoading({ reset: true, count: 1 });
             PuppiesService.processTransaction(puppyDetail.puppyID, buyerID, paymentAmount)
                 .then(() => {
                     toastr.success('Successfully updated the puppy data');
@@ -86,7 +87,7 @@ class PuppySalesForm extends Component {
                     toastr.error('There was an error in updating puppy data');
                 })
                 .finally(() => {
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                 });
         }
     }
@@ -137,8 +138,7 @@ class PuppySalesForm extends Component {
                             hideButtons={true} 
                             puppyDetail={puppyDetail} 
                             loadDetail={true}
-                            onShowLoading={this.props.onShowLoading.bind(this)} 
-                            onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                            />
                         )}
                     </div>
                     {(buyerID !== '' && buyerID !== null) && (
@@ -146,8 +146,7 @@ class PuppySalesForm extends Component {
                             <BuyerDetail 
                                 buyerID={buyerID} 
                                 showBackBtn={false}
-                                onShowLoading={this.props.onShowLoading.bind(this)} 
-                                onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                                />
                             <div className="card">
                                 <div className="card-body">
                                     <div className="row form-group">
@@ -188,11 +187,29 @@ class PuppySalesForm extends Component {
                         </div>
                     )}
                 </div>
-                <BuyerLookupModal showModal={showLookupModal} onBuyerSelected={this.handleBuerSelected.bind(this)} onShowBuyerRegistrationModal={this.handleShowBuyerRegistrationModal} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
-                <BuyerRegistrationModal showModal={showRegisterBuyerModal} onBuyerSelected={this.handleBuerSelected.bind(this)} onShowLoading={this.props.onShowLoading.bind(this)} onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                <BuyerLookupModal showModal={showLookupModal} onBuyerSelected={this.handleBuerSelected.bind(this)} onShowBuyerRegistrationModal={this.handleShowBuyerRegistrationModal}  />
+                <BuyerRegistrationModal showModal={showRegisterBuyerModal} onBuyerSelected={this.handleBuerSelected.bind(this)}  />
             </React.Fragment>
         );
     }
 }
 
-export default PuppySalesForm;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PuppySalesForm);

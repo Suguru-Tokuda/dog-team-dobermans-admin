@@ -144,7 +144,7 @@ class BuyersTable extends Component {
             </thead>
         );
         let tbody;
-        if (displayedData.length > 0) {
+        if (displayedData && displayedData.length > 0) {
             const rows = displayedData.map(buyer => {
                 return (
                     <tr key={`buyer-${buyer.buyerID}`}>
@@ -158,13 +158,13 @@ class BuyersTable extends Component {
                         <td>{buyer.hasPartialPayment === true ? 'True' : 'False'}</td>
                         <td>
                             <div style={{ whiteSpace: 'nowrap' }}>
-                                {buyer.puppyIDs.length > 0 && (
+                                {buyer.puppyIDs && buyer.puppyIDs.length > 0 && (
                                     <button type="button" className="btn btn-sm btn-success ml-1" onClick={() => this.props.onSeePurchasedPuppiesBtnClicked(buyer.buyerID, JSON.stringify(buyer))}><i className="fas fas fa-dog"></i> Purchased Dogs</button>
                                 )}
-                                <button type="button" className="btn btn-sm btn-primary ml-1" onClick={() => this.props.onUpdateBtnClicked(buyer.buyerID)}><i className="fa fa-edit"></i> Update</button>
-                                {buyer.puppyIDs.length === 0 && (
+                                {/* <button type="button" className="btn btn-sm btn-primary ml-1" onClick={() => this.props.onUpdateBtnClicked(buyer.buyerID)}><i className="fa fa-edit"></i> Update</button>
+                                {buyer.puppyIDs && buyer.puppyIDs.length === 0 && (
                                     <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(buyer.buyerID)}><i className="fa fa-close"></i> Delete</button>
-                                )}
+                                )} */}
                             </div>
                         </td>
                     </tr>

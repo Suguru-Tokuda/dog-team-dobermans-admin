@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import HomepageContentService from '../../services/homepageContentService';
 import toastr from 'toastr';
@@ -17,7 +18,7 @@ class BannerEditor extends Component {
     };
 
     componentDidMount() {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         HomepageContentService.getHomePageInfo()
             .then(res => {
                 if (res.data.banner !== undefined) {
@@ -36,7 +37,7 @@ class BannerEditor extends Component {
                 toastr.error('There was an error in loading banner data');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -98,7 +99,7 @@ class BannerEditor extends Component {
         e.preventDefault();
         this.setState({ formSubmitted: true });
         const { originalBanner, title, description, bannerPicture } = this.state;
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         const compressionOptions = {
             maxSizeMB: 1,
             maxWidthOrHeight: 1280,
@@ -133,13 +134,14 @@ class BannerEditor extends Component {
                 console.log(err);
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
     render() {
         const { title, description, bannerPicture, formSubmitted } = this.state;
         const { authenticated } = this.props;
+        
         if (authenticated === true) {
             return (
                 <React.Fragment>
@@ -197,4 +199,22 @@ class BannerEditor extends Component {
     }
 }
 
-export default BannerEditor;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(BannerEditor);

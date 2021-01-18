@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import AboutUsService from '../../services/aboutUsService';
 import toastr from 'toastr';
 import $ from 'jquery';
@@ -16,7 +17,7 @@ class OurTeamEditor extends Component {
     };
     
     componentDidMount() {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         AboutUsService.getAboutUs()
             .then(res => {
                 let ourTeam;
@@ -40,7 +41,7 @@ class OurTeamEditor extends Component {
                 toastr.error('There was an error in loading our team data');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -210,7 +211,7 @@ class OurTeamEditor extends Component {
         });
         this.setState({ ourTeam });
         if (valid === true) {
-            this.props.onShowLoading(true, 1);
+            this.props.showLoading({ reset: true, count: 1 });
             for (let i = 0, max = ourTeam.length; i < max; i++) {
                 const member = ourTeam[i];
                 if (typeof member.picture.reference === 'undefined') {
@@ -249,7 +250,7 @@ class OurTeamEditor extends Component {
                     toastr.error('There was an error in updating our team');
                 })
                 .finally(() => {
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                 });
         }
     }
@@ -285,8 +286,6 @@ class OurTeamEditor extends Component {
                     imageFile={tempPictureFile}
                     onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
                     handleResetTempPictureFile={this.handleResetTempPictureFile}
-                    onShowLoading={this.props.onShowLoading.bind(this)} 
-                    onDoneLoading={this.props.onDoneLoading.bind(this)}
                     aspectRatio={1}
                 />
             </React.Fragment>
@@ -294,4 +293,22 @@ class OurTeamEditor extends Component {
     }
 }
 
-export default OurTeamEditor;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(OurTeamEditor);

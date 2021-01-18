@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import ImageResize from 'quill-image-resize-module';
 import { ImageDrop } from 'quill-image-drop-module';
 import BlogService from '../../services/blogService';
@@ -42,7 +43,7 @@ class BlogEditor extends Component {
     }
 
     loadBlog = (blogID) => {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         BlogService.getBlog(blogID)
             .then(res => {
                 this.setState({
@@ -59,7 +60,7 @@ class BlogEditor extends Component {
                 this.props.history.push('/blog')
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             })
     }
 
@@ -187,7 +188,9 @@ class BlogEditor extends Component {
         this.setState({ validations });
         if (isValid === true) {
             let messageToSend = message;
-            this.props.onShowLoading(false, 1);
+
+            this.props.showLoading({ reset: false, count: 1 });
+
             const regex = /\<img (.*?)>/g;
             const regexForSrc = /src="(.*?)"/;
             let result;
@@ -265,7 +268,7 @@ class BlogEditor extends Component {
                         if (tempPictureURL !== null) {
                             URL.revokeObjectURL(tempPictureURL);
                         }
-                        this.props.onDoneLoading();
+                        this.props.doneLoading({ reset: true });
                     });
             } else if (action === 'update') {
                 BlogService.updateBlog(blogID, author, title, messageToSend, thumbnailPictureToSend)
@@ -281,7 +284,7 @@ class BlogEditor extends Component {
                         if (tempPictureURL !== null) {
                             URL.revokeObjectURL(tempPictureURL);
                         }
-                        this.props.onDoneLoading();
+                        this.props.doneLoading({ reset: true });
                     });
             }
         }
@@ -289,7 +292,7 @@ class BlogEditor extends Component {
 
     handleDeleteClicked = async () => {
         const { blogID, originalBlog } = this.state;
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         // delete the thumbnail
         if (typeof originalBlog.thumbnail.reference !== 'undefined') {
             try {
@@ -321,7 +324,7 @@ class BlogEditor extends Component {
                 toastr.error('There was an error in deleting a blog.');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -408,4 +411,22 @@ class BlogEditor extends Component {
 
 }
 
-export default BlogEditor;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(BlogEditor);

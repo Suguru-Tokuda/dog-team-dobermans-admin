@@ -7,7 +7,6 @@ class DeleteTestimonialsModa extends Component {
 
     static getDerivedStateFromProps(nextProps, prevState) {
         if (JSON.stringify(nextProps.testimonials) !== JSON.stringify(prevState.testimonials)) {
-            console.log('updating');
             return { testimonials: nextProps.testimonials };
         }
         return null;

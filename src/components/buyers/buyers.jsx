@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import BuyersTable from './buyersTable';
 import BuyersService from '../../services/buyersService';
@@ -33,16 +34,17 @@ class Buyers extends Component {
     }
 
     getBuyers= () => {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
+
         BuyersService.getBuyers()
             .then(res => {
                 this.setState({ buyers: res.data });
             })
-            .catch(() => {
+            .catch((err) => {
                 toastr.error('There was an error in loading buyers data');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -54,18 +56,19 @@ class Buyers extends Component {
                         <h3>Buyers</h3>
                     </div>
                 </div>
-                <div className="row form-group mt-2">
+                {/* <div className="row form-group mt-2">
                     <div className="col-xs-4 col-sm-4 col-md-3 col-lg-2">
                         <button type="button" data-target="#buyerRegistrationModal" data-toggle="modal" className="btn btn-primary">Create New Buyer</button>
                     </div>
-                </div>
+                </div> */}
             </React.Fragment>
         )
     }
 
     getBuyersTable() {
         const { buyers } = this.state;
-        if (buyers.length > 0) {
+
+        if (buyers && buyers.length > 0) {
             return (
                 <BuyersTable
                  buyers={buyers}
@@ -112,7 +115,7 @@ class Buyers extends Component {
 
     handleDoDeleteBtnClicked = () => {
         const { buyerToDelete } = this.state;
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         BuyersService.deleteBuyer(buyerToDelete.buyerID)
             .then(() => {
                 this.setState({
@@ -128,7 +131,7 @@ class Buyers extends Component {
                 toastr.error('There was an error in deleting a buyer');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -169,8 +172,7 @@ class Buyers extends Component {
                      buyerToUpdate={buyerToUpdate}
                      onBuyerSelected={this.handleBuyerCreated.bind(this)}
                      onBuyerUpdated={this.handleBuyerUpdated}
-                     onShowLoading={this.props.onShowLoading.bind(this)} 
-                     onDoneLoading={this.props.onDoneLoading.bind(this)} />
+                     />
                     <BuyerDeleteConfModal
                      buyerID={buyerIDToDelete}
                      buyerToDelete={buyerToDelete}
@@ -181,8 +183,6 @@ class Buyers extends Component {
                         {...this.props}
                         buyerID={selectedBuyerIDForPurchasedPuppies}
                         buyerDetail={selectedBuyerForPurchasedPuppies}
-                        onShowLoading={this.props.onShowLoading.bind(this)}
-                        onDoneLoading={this.props.onDoneLoading.bind(this)}
                     />
                 </React.Fragment>
             );
@@ -193,4 +193,22 @@ class Buyers extends Component {
   
 }
 
-export default Buyers;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Buyers);

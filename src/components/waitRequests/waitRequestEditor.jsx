@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import toastr from 'toastr';
 import WaitListService from '../../services/waitListService';
@@ -6,7 +7,7 @@ import ValidationService from '../../services/validationService';
 import ConstantsService from '../../services/constantsService';
 import DatePicker from 'react-datepicker';
 
-export default class WaitRequestEditor extends Component {
+class WaitRequestEditor extends Component {
     
     state = {
         waitRequestID: '',
@@ -41,7 +42,7 @@ export default class WaitRequestEditor extends Component {
     componentDidMount() {
         const { waitRequestID } = this.state;
         if (waitRequestID !== '') {
-            this.props.onShowLoading(true, 1);
+            this.props.showLoading({ reset: true, count: 1 });
             WaitListService.getWaitRequest(waitRequestID)
                 .then(res => {
                     const { selections } = this.state;
@@ -63,7 +64,7 @@ export default class WaitRequestEditor extends Component {
                     toastr.error('There was an error in loading wait request data');
                 })
                 .finally(() => {
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                 });
         }
     }
@@ -243,7 +244,7 @@ export default class WaitRequestEditor extends Component {
                     created: new Date(),
                     notified: null
                 };
-                this.props.onShowLoading(true, 1);
+                this.props.showLoading({ reset: true, count: 1 });
                 WaitListService.createWaitRequest(createData)
                     .then(() => {
                         toastr.success('New wait request created.');
@@ -254,7 +255,7 @@ export default class WaitRequestEditor extends Component {
                         toastr.error('There was an erorr in creating a wait request');
                     })
                     .finally(() => {
-                        this.props.onDoneLoading();
+                        this.props.doneLoading({ reset: true });
                     });
             } else {
                 const updateData = waitRequestData;
@@ -268,7 +269,7 @@ export default class WaitRequestEditor extends Component {
                 updateData.expectedPurchaseDate = expectedPurchaseDate;
                 updateData.message = message.trim();
                 updateData.note = note.trim();
-                this.props.onShowLoading(true, 1);
+                this.props.showLoading({ reset: true, count: 1 });
                 WaitListService.updateWaitRequest(waitRequestID, updateData)
                     .then(() => {
                         toastr.success('Updated a wait request');
@@ -279,7 +280,7 @@ export default class WaitRequestEditor extends Component {
                         toastr.error('There was an error in updating a wait request');
                     })
                     .finally(() => {
-                        this.props.onDoneLoading();
+                        this.props.doneLoading({ reset: true });
                     });
             }
         }
@@ -425,3 +426,23 @@ export default class WaitRequestEditor extends Component {
         )
     }
 }
+
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(WaitRequestEditor);

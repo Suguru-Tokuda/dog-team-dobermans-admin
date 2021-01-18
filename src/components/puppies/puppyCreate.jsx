@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
+import { connect } from 'react-redux';
 import PuppyInitialForm from './puppyInitialForm';
 import PuppyPictureForm from './puppyPictureForm';
 import PuppyConfirmation from './puppyConfirmation';
@@ -24,7 +25,7 @@ class PuppyCreate extends Component {
     }
 
     componentDidMount() {
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         ParentsService.getAllParents()
             .then(res => {
                 if (res.data.length > 0) {
@@ -57,7 +58,7 @@ class PuppyCreate extends Component {
                 toastr.error('There was an error in fetching parents data');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
                 this.setState({ dadtaLoaded: true });
             });
     }
@@ -92,8 +93,7 @@ class PuppyCreate extends Component {
                                             moms={moms}
                                             onToPictureBtnClicked={this.handleNextBtnClicked.bind(this)} 
                                             onCancelBtnClicked={this.handleCancelClicked} 
-                                            onShowLoading={this.props.onShowLoading.bind(this)} 
-                                            onDoneLoading={this.props.onDoneLoading.bind(this)} />}
+                                            />}
                     />
                     <Route 
                         path={`${url}/pictures`} 
@@ -101,8 +101,7 @@ class PuppyCreate extends Component {
                                             onToConfirmBtnClicked={this.handleConfBtnClicked.bind(this)} 
                                             initialParams={this.state.initialParams} 
                                             pictures={this.state.pictures}
-                                            onShowLoading={this.props.onShowLoading.bind(this)} 
-                                            onDoneLoading={this.props.onDoneLoading.bind(this)} />} 
+                                            />} 
                     />
                     <Route 
                         path={`${url}/confirmation`} 
@@ -113,8 +112,6 @@ class PuppyCreate extends Component {
                                                 pictures={this.state.pictures} 
                                                 onCancelBtnClicked={this.handleCancelClicked} 
                                                 puppyID={this.state.puppyID} 
-                                                onShowLoading={this.props.onShowLoading.bind(this)} 
-                                                onDoneLoading={this.props.onDoneLoading.bind(this)} 
                     />} />
                 </React.Fragment>
             );
@@ -124,4 +121,22 @@ class PuppyCreate extends Component {
     }
 }
 
-export default PuppyCreate;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PuppyCreate);

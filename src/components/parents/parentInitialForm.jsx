@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import ConstantsService from '../../services/constantsService';
 import DatePicker from 'react-datepicker';
 import ParentsService from '../../services/parentsService';
@@ -46,7 +47,7 @@ class ParentInitialForm extends Component {
     componentDidMount() {
         const { parentID, selections } = this.state;
         if (typeof this.props.initialParams === 'undefined') {
-            this.props.onShowLoading(true, 1);
+            this.props.showLoading({ reset: true, count: 1 });
             ParentsService.getParent(parentID)
                 .then(res => {
                     const parentDetail = res.data;
@@ -63,7 +64,7 @@ class ParentInitialForm extends Component {
                     toastr.error('There was an error in loading parent detail');
                 })
                 .finally(() => {
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                 });
         }
     }
@@ -236,7 +237,7 @@ class ParentInitialForm extends Component {
             parentToUpdate.name = parentToUpdate.name.trim();
             parentToUpdate.description = parentToUpdate.description.trim();
             parentToUpdate.weight = parseFloat(parentToUpdate.weight);
-            this.props.onShowLoading(true, 1);
+            this.props.showLoading({ reset: true, count: 1 });
             ParentsService.updateParent(parentID, parentToUpdate)
                 .then(() => {
                     toastr.success('Profile updated');
@@ -246,7 +247,7 @@ class ParentInitialForm extends Component {
                     toastr.error('There was an error in updating parent data');
                 })
                 .finally(() => {
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                 });
         }
     }
@@ -330,4 +331,22 @@ class ParentInitialForm extends Component {
     
 }
 
-export default ParentInitialForm;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ParentInitialForm);

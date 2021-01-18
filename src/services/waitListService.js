@@ -1,4 +1,5 @@
 import SessionInfoService from './sessionInfoService';
+import ConstantsService from './constantsService';
 import UtilService from './utilService';
 import * as api from '../api.json';
 import axios from 'axios';
@@ -14,7 +15,8 @@ export default class WaitListService {
     }
 
     static getWaitList() {
-        return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}`);
+        const recipientID = ConstantsService.getBreederID();
+        return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}&recipientID=${recipientID}`);
     }
 
     static waitRequest(data) {
@@ -31,6 +33,39 @@ export default class WaitListService {
 
     static updateWaitRequests(waitRequests) {
         return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, waitRequests);
+    }
+
+    static getMessagesByUserID(userID = ConstantsService.getBreederID(), limit) {
+        return axios.get(`${this.getServiceBase()}/messages/getByUserID?key=${api.API_KEY}&userID=${userID}&limit=${limit}`)
+    }
+
+    static getUnreadMessagesByUserID(userID = ConstantsService.getBreederID(), limit) {
+        return axios.get(`${this.getServiceBase()}/messages/getUnreadMessagesByUserID?key=${api.API_KEY}&userID=${userID}&limit=${limit}`)
+    }
+
+    static getMessagesGroupedByWaitRequest() {
+        return axios.get(`${this.getServiceBase()}/messages/byWaitRequest?key=${api.API_KEY}`);
+    }
+
+    static sendWaitRequestMessage(senderID = ConstantsService.getBreederID(), recipientID, waitRequestID, messageBody) {
+        const data = {
+            waitRequestID: waitRequestID,
+            senderID: senderID,
+            recipientID: recipientID,
+            messageBody: messageBody,
+            isBreeder: true,
+            read: false
+        };
+
+        return axios.post(`${this.getServiceBase()}/messages?key=${api.API_KEY}`, data);
+    }
+
+    static getWaitRequestMessages(waitRequestID) {
+        return axios.get(`${this.getServiceBase()}/messages?key=${api.API_KEY}&waitRequestID=${waitRequestID}`);
+    }
+
+    static getNewMessages(waitRequestID, recipientID = 'sSJ0mWxDjtaTuFsolvKskzDY4GI3') {
+        return axios.get(`${this.getServiceBase()}/messages?key=${api.API_KEY}&waitRequestID=${waitRequestID}&recipientID=${recipientID}&onlyUnread=true`);
     }
 
     static deleteWaitRequests(waitRequestIDs) {
@@ -51,7 +86,15 @@ export default class WaitListService {
         };
         return axios.post(`${this.getServiceBase()}/notify?key=${api.API_KEY}`, data);
     }
-    
+
+    static markMessageAsRead(messageIDs) {
+        const data = {
+            messageIDs: messageIDs
+        };
+
+        return axios.post(`${this.getServiceBase()}/messages/markAsRead?key=${api.API_KEY}`, data);
+    }
+
     static uploadPicture(imageFile) {
         return new Promise((resolve) => {
             const pictureID = UtilService.generateID(10);

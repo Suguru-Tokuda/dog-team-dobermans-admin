@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { auth } from './services/firebaseService';
 import Spinner from 'react-spinkit';
-import AlertsService from './services/alertsService';
 import Header from './components/common/header';
 import Sidebar from './components/common/sidebar';
 import Login from './components/common/login';
@@ -15,6 +15,7 @@ import Parents from './components/parents/parents';
 import Buyers from './components/buyers/buyers';
 import Testimonials from './components/testimonials/testimonials';
 import WaitRequests from './components/waitRequests/waitRequests';
+import Messages from './components/messages/messages';
 import AboutDobermans from './components/aboutDobermans/aboutDobermans';
 import AboutUs from './components/aboutUs/aboutUs';
 import Blog from './components/blog/blog';
@@ -23,70 +24,48 @@ import NotFound from './components/common/notFound';
 import $ from 'jquery';
 import VideoBackgroundEditor from './components/main/videoBackgroundEditor';
 import GalleryImageEditor from './components/main/galleryImageEditor';
+import * as uids from './allowedUIDs.json';
 
 class App extends Component {
 
   state = {
     isLoading: false,
-    alertsService: null,
-    authenticated: false,
     authenticationChecked: false
   };
-
-  constructor(props) {
-    super(props);
-    this.state.alertsService = new AlertsService();
-
-  }
 
   componentDidMount() {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        this.setState({ 
-          authenticated: true,
-          user: user
-         });
+        const allowedUIDs = uids.allowedUIDs;
+        this.props.login();
+        this.props.setUser(user);
+        // if (allowedUIDs.indexOf(user.uid) !== -1) {
+          // this.props.login();
+          // this.props.setUser(user);
+        // } else {
+        //   this.props.logout();
+        //   this.props.unsetUser();
+        // }
       } else {
-        this.setState({ authenticated: false });
-      }
+        this.props.logout();
+        this.props.unsetUser();
+    }
       this.setState({ authenticationChecked: true });
     });
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(props) {
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
     });
   }
-  
-  showLoading(resetCount, count) {
-    const isLoading = this.state.alertsService.showLoading(resetCount, count) !== 0;
-    this.setState({ isLoading });
-  }
-
-  doneLoading(override) {
-    const isLoading = this.state.alertsService.doneLoading(override) !== 0;
-    this.setState({ isLoading });
-  }
-
-  onLogin(isLoggedIn) {
-    if (isLoggedIn === true) {
-      this.setState({ authenticated: true });
-    }
-  }
-
-  onSignOut(isLoggedIn) {
-    if (isLoggedIn === false) {
-      this.setState({ authenticated: false });
-    }
-  }
 
   getUIBlockerClass() {
-    return (this.state.isLoading === true ? 'block-screen' : '');
+    return (this.props.loadCount > 0 ? 'block-screen' : '');
   }
 
   getSpinner = () => {
-    if (this.state.isLoading === true) {
+    if (this.props.loadCount > 0) {
       return (
         <div className="centered">
           <Spinner name="line-scale" />
@@ -96,34 +75,37 @@ class App extends Component {
   }
 
   render() {
-    const { authenticated, authenticationChecked } = this.state;
+    const { authenticationChecked } = this.state;
+    const { authenticated } = this.props;
+
     return (
       <BrowserRouter>
         <div className={`app ${this.getUIBlockerClass()}`}>
-          <Sidebar authenticated={authenticated} />
+          <Route render={(props) => <Sidebar {...props} /> }/>
           <div className="c-wrapper">
-          <Header authenticated={authenticated} onSignOut={this.onSignOut.bind(this)} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />
+            <Route render={(props) => <Header {...props} /> }/>
             <div className="c-body">
               <main className="c-main">
                 <div className="container-fluid">
                   {authenticationChecked === true && (
                     <Switch>
-                        <Route path="/" exact render={(props) => <Main {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                        <Route path="/login" exact render={(props) => <Login {...props} authenticated={authenticated} onLogin={this.onLogin.bind(this)} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                        <Route path="/banner" exact render={(props) => <BannerEditor {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                        <Route path="/background-vide-editor" exact render={(props) => <VideoBackgroundEditor {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                        <Route path="/gallery-image-editor" exact render={(props) => <GalleryImageEditor {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                        <Route path="/puppy" render={(props) => <Puppy url="/puppy" {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                        <Route path="/puppies" exact render={(props) => <Puppies {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                        <Route path="/parent" render={(props) => <Parent url="/parent" {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                        <Route path="/parents" exact render={(props) => <Parents {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                        <Route path="/buyers" exact render={(props) => <Buyers {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                        <Route path="/testimonials" render={(props) => <Testimonials {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                        <Route path="/wait-list" render={(props) => <WaitRequests {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                        <Route path="/about-dobermans" exact render={(props) => <AboutDobermans {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                        <Route path="/about-us" render={(props) => <AboutUs {...props} authenticated={authenticated} url="/about-us" onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                        <Route path="/blog" render={(props) => <Blog {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
-                        <Route path="/contact" render={(props) => <Contact url="/contact" {...props} authenticated={authenticated} onShowLoading={this.showLoading.bind(this)} onDoneLoading={this.doneLoading.bind(this)} />} />
+                        <Route path="/" exact render={(props) => <Main {...props} />} />
+                        <Route path="/login" exact render={(props) => <Login {...props} />} />
+                        <Route path="/banner" exact render={(props) => <BannerEditor {...props} />} />
+                        <Route path="/background-vide-editor" exact render={(props) => <VideoBackgroundEditor {...props} />} />
+                        <Route path="/gallery-image-editor" exact render={(props) => <GalleryImageEditor {...props} />} />
+                        <Route path="/puppy" render={(props) => <Puppy url="/puppy" {...props} />} />
+                        <Route path="/puppies" exact render={(props) => <Puppies {...props} />} />
+                        <Route path="/parent" render={(props) => <Parent url="/parent" {...props} />} />
+                        <Route path="/parents" exact render={(props) => <Parents {...props} />} />
+                        <Route path="/buyers" exact render={(props) => <Buyers {...props} />} />
+                        <Route path="/testimonials" render={(props) => <Testimonials {...props} />} />
+                        <Route path="/wait-list" render={(props) => <WaitRequests {...props} />} />
+                        <Route path="/messages" render={(props) => <Messages {...props} />} />
+                        <Route path="/about-dobermans" exact render={(props) => <AboutDobermans {...props} />} />
+                        <Route path="/about-us" render={(props) => <AboutUs {...props} url="/about-us" />} />
+                        <Route path="/blog" render={(props) => <Blog {...props} />} />
+                        <Route path="/contact" render={(props) => <Contact url="/contact" {...props} />} />
                         <Route render={(props) => <NotFound {...props} />} />
                     </Switch>
                   )}
@@ -138,4 +120,22 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = state => ({
+  user: state.user,
+  authenticated: state.authenticated,
+  loadCount: state.loadCount
+});
+
+const mapDispatchToProps = dispatch => {
+  return {
+    login: () => dispatch({ type: 'SIGN_IN' }),
+    logout: () => dispatch({ type: 'SIGN_OUT' }),
+    setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+    unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+    getUser: () => dispatch({ type: 'GET_USER' }),
+    showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+    doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

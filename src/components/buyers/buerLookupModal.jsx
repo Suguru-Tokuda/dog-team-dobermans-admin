@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import BuyersService from '../../services/buyersService';
 import toastr from 'toastr';
+import { connect } from 'react-redux';
 import $ from 'jquery';
 
 class BuyerLookupModal extends Component {
@@ -39,7 +40,7 @@ class BuyerLookupModal extends Component {
         let keywordToSend = searchKeyword.trim();
         keywordToSend = keywordToSend.replace(' ', '+');
         if (keywordToSend.length > 0) {
-            this.props.onShowLoading(true, 1);
+            this.props.showLoading({ reset: true, count: 1 });
             BuyersService.searchForBuyers(keywordToSend)
                 .then(res => {
                     this.setState({ buyers: res.data });
@@ -49,7 +50,7 @@ class BuyerLookupModal extends Component {
                     toastr.error('There was an error in searching for buyers');
                 })
                 .finally(() => {
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                 });
         } else {
             toastr.error('Enter keyword to search');
@@ -129,4 +130,22 @@ class BuyerLookupModal extends Component {
     }
 }
 
-export default BuyerLookupModal;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(BuyerLookupModal);

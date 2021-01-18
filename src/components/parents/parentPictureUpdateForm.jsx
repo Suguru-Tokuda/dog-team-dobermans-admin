@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import ParentsService from '../../services/parentsService';
 import SortablePictureList from '../miscellaneous/sortablePictureList';
@@ -24,7 +25,7 @@ class ParentPictureUpdateForm extends Component {
 
     componentDidMount() {
         const { parentID } = this.state;
-        this.props.onShowLoading(true, 1);
+        this.props.showLoading({ reset: true, count: 1 });
         ParentsService.getParent(parentID)
             .then(res => {
                 this.setState({ parentDetail: res.data });
@@ -33,7 +34,7 @@ class ParentPictureUpdateForm extends Component {
                 toastr.error('There was an error in loading parent data');
             })
             .finally(() => {
-                this.props.onDoneLoading();
+                this.props.doneLoading({ reset: true });
             });
     }
 
@@ -86,7 +87,7 @@ class ParentPictureUpdateForm extends Component {
 
     handleFinishImageCropping = async (newFile) => {
         const { parentID, parentDetail } = this.state;
-        this.props.onShowLoading(false, 1);
+        this.props.showLoading({ reset: false, count: 1 });
         // upload a picture and get { reference, url }
         let newPicture;
         try {
@@ -106,7 +107,7 @@ class ParentPictureUpdateForm extends Component {
                     toastr.error('There was an error in uploading a file');
                 })
                 .finally(() => {
-                    this.props.onDoneLoading();
+                    this.props.doneLoading({ reset: true });
                 });
         }
     }
@@ -170,8 +171,6 @@ class ParentPictureUpdateForm extends Component {
                     imageFile={tempPictureFile}
                     onFinishImageCropping={this.handleFinishImageCropping.bind(this)}
                     handleResetTempPictureFile={this.handleResetTempPictureFile}
-                    onShowLoading={this.props.onShowLoading.bind(this)} 
-                    onDoneLoading={this.props.onDoneLoading.bind(this)}
                     aspectRatio={1}
                 />
                 <ImageDeleteConfModal
@@ -185,4 +184,22 @@ class ParentPictureUpdateForm extends Component {
     }
 }
 
-export default ParentPictureUpdateForm;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+  });
+  
+const mapDispatchToProps = dispatch => {
+    return {
+        login: () => dispatch({ type: 'SIGN_IN' }),
+        logout: () => dispatch({ type: 'SIGN_OUT' }),
+        setUser: (user) => dispatch({ type: 'SET_USER', user: user }),
+        unsetUser: () => dispatch({ type: 'UNSET_USER' }),
+        getUser: () => dispatch({ type: 'GET_USER' }),
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ParentPictureUpdateForm);
