@@ -27,21 +27,25 @@ class Messages extends Component {
         const { messages } = this.state;
 
         if (messages.length > 0) {
-            const retVal = messages.map(message => {
-                const { sender } = message;
-                const messageBody = `${message.messageBody}                                                                            `;
+            const retVal = [];
 
-                return (
-                    <Link key={message.messageID} className="dropdown-item" to={`/wait-list/${message.waitRequestID}`}>
-                        <div className="message">
-                            <div>
-                                <small className="text-muted">{ `${sender.firstName} ${sender.lastName}`}</small>
-                                <small className="text-muted float-right mt-1">{ moment(message.sentDate).format('MM/DD/YYYY hh:mm:ss')}</small>
+            messages.forEach(message => {
+                if (message.firstName) {
+                    const { sender } = message;
+                    const messageBody = `${message.messageBody}`;
+
+                    retVal.push(
+                        <Link key={message.messageID} className="dropdown-item" to={`/wait-list/${message.waitRequestID}`}>
+                            <div className="message">
+                                <div>
+                                    <small className="text-muted">{ `${sender.firstName} ${sender.lastName}`}</small>
+                                    <small className="text-muted float-right mt-1">{ moment(message.sentDate).format('MM/DD/YYYY hh:mm:ss')}</small>
+                                </div>
+                                <div className="small text-truncate message-dropdown">{messageBody}</div>
                             </div>
-                            <div className="small text-truncate message-dropdown">{messageBody}</div>
-                        </div>
-                    </Link>
-                );
+                        </Link>
+                    );
+                }
             });
 
             return retVal;

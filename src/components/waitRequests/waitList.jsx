@@ -35,7 +35,8 @@ class WaitList extends Component {
 
                     this.setState({ waitRequests });
                 })
-                .catch(() => {
+                .catch((err) => {
+                    console.log(err);
                     toastr.error('There was an error in loading wait list data');
                 })
                 .finally(() => {

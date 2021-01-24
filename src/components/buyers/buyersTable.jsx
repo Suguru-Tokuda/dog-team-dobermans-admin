@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React, { Component } from 'react';
 import SortService from '../../services/sortService';
 import Pagination from '../miscellaneous/pagination';
@@ -134,6 +135,8 @@ class BuyersTable extends Component {
                     <th className="pointer" onClick={() => this.sortTable('city')}>City {this.getSortIcon('city')}</th>
                     <th className="pointer" onClick={() => this.sortTable('state')}>State {this.getSortIcon('state')}</th>
                     <th className="pointer" onClick={() => this.sortTable('hasPartialPayment')}>Has Partial Payment {this.getSortIcon('hasPartialPayment')}</th>
+                    <th>User Type</th>
+                    <th className="pointer" onClick={() => this.sortTable('createdDate')}>Create Date {this.getSortIcon('createDate')}</th>
                     <th>Action</th>
                 </tr>
                 <tr>
@@ -143,7 +146,9 @@ class BuyersTable extends Component {
                 </tr>
             </thead>
         );
+
         let tbody;
+        
         if (displayedData && displayedData.length > 0) {
             const rows = displayedData.map(buyer => {
                 return (
@@ -156,6 +161,12 @@ class BuyersTable extends Component {
                         <td>{buyer.city}</td>
                         <td>{buyer.state}</td>
                         <td>{buyer.hasPartialPayment === true ? 'True' : 'False'}</td>
+                        <td>{(buyer.userType) && (
+                            `${buyer.userType.substring(0, 1).toUpperCase()}${buyer.userType.substring(1, buyer.userType.length).toLowerCase()}`
+                        )}</td>
+                        <td>{buyer.createDate && (
+                            moment(buyer.createDate).format('MMM DD, YYYY')
+                        )}</td>
                         <td>
                             <div style={{ whiteSpace: 'nowrap' }}>
                                 {buyer.puppyIDs && buyer.puppyIDs.length > 0 && (
