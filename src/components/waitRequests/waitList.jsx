@@ -24,13 +24,18 @@ class WaitList extends Component {
     componentDidMount() {
         if (this.props.authenticated === true) {
             this.props.showLoading({ reset: true, count: 1 });
+
             WaitListService.getWaitList()
                 .then(res => {
-                    const waitRequests = [];
+                    let waitRequests = [];
                     res.data.map(request => {
                         if (request.statusID === 1 || request.statusID === undefined) {
                             waitRequests.push(request);
                         }
+                    });
+
+                    waitRequests = waitRequests.sort((a, b) => {
+                        return a.created > b.created ? -1 : a.created < b.created ? 1 : 0;
                     });
 
                     this.setState({ waitRequests });
@@ -75,12 +80,16 @@ class WaitList extends Component {
                     toastr.success(successMessage);
                     setTimeout(async () => {
                         const res = await WaitListService.getWaitList();
-                        const waitRequests = [];
+                        let waitRequests = [];
                         res.data.map(request => {
                             if (request.statusID === 1 || request.statusID === undefined) {
                                 waitRequests.push(request);
                             }
-                        });    
+                        });
+
+                        waitRequests = waitRequests.sort((a, b) => {
+                            return a.created > b.created ? -1 : a.created < b.created ? 1 : 0;
+                        });
 
                         this.setState({ waitRequests });
                     }, 100);
