@@ -30,7 +30,7 @@ class AdminSidebar extends Component {
                             <NavLink className="c-sidebar-nav-link" activeClassName="c-active" to="/parents">Parents</NavLink>
                         </li>
                         <li className="c-sidebar-nav-item">
-                            <NavLink className="c-sidebar-nav-link" activeClassName="c-active" to="/buyers">Buyers</NavLink>
+                            <NavLink className="c-sidebar-nav-link" activeClassName="c-active" to="/customers">Customers</NavLink>
                         </li>
                         <li className="c-sidebar-nav-item">
                             <NavLink className="c-sidebar-nav-link" activeClassName="c-active" to="/testimonials">Testimonials</NavLink>

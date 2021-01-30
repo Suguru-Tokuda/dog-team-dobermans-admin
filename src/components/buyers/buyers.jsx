@@ -53,7 +53,7 @@ class Buyers extends Component {
             <React.Fragment>
                 <div className="row">
                     <div className="col-12">
-                        <h3>Buyers</h3>
+                        <h3>Customers</h3>
                     </div>
                 </div>
                 {/* <div className="row form-group mt-2">
@@ -107,7 +107,7 @@ class Buyers extends Component {
         $('#buyerDeleteConfModal').modal('show');
     }
 
-    hanldeDeleteCancelBtnClicked = () => {
+    handleDeleteCancelBtnClicked = () => {
         this.setState({ buyerToDelete: {} });
         $('#buyerDeleteConfModal').modal('hide');
         $('.modal-backdrop').remove();
@@ -176,7 +176,7 @@ class Buyers extends Component {
                     <BuyerDeleteConfModal
                      buyerID={buyerIDToDelete}
                      buyerToDelete={buyerToDelete}
-                     onDeleteCancelBtnClicked={this.hanldeDeleteCancelBtnClicked}
+                     onDeleteCancelBtnClicked={this.handleDeleteCancelBtnClicked}
                      onDoDeleteBtnClicked={this.handleDoDeleteBtnClicked}
                     />
                     <PurchasedPuppiesListModal

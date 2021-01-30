@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Checkbox } from 'react-ui-icheck';
-import DatePicker from 'react-datepicker';
 import SortService from '../../services/sortService';
 import UtilService from '../../services/utilService';
 import Pagination from '../miscellaneous/pagination';
@@ -214,7 +213,7 @@ class WaitListTable extends Component {
                     <td>{waitRequest.puppyID && (<Link to={`/puppy/view/${waitRequest.puppyID}`}>{waitRequest.puppyID}</Link>)}</td>
                     <td>{waitRequest.firstName}</td>
                     <td>{waitRequest.lastName}</td>
-                    <td><a href={`mailto:${waitRequest.email}`}>{waitRequest.email}</a></td>
+                    <td>{waitRequest.email}</td>
                     <td><a href={`tel:${waitRequest.phone}`}>{waitRequest.phone}</a></td>
                     <td>{waitRequest.city && (waitRequest.city)}</td>
                     <td>{waitRequest.state && (waitRequest.state)}</td>
@@ -226,9 +225,8 @@ class WaitListTable extends Component {
                     {/* <td>{waitRequest.expectedPurchaseDate === undefined || waitRequest.expectedPurchaseDate === null ? '' : moment(waitRequest.expectedPurchaseDate).format('MM/DD/YYYY')}</td> */}
                     <td>{waitRequest.notified === undefined || waitRequest.notified === null ? 'N/A' : moment(waitRequest.notified).format('MM/DD/YYYY hh:mm:ss')}</td>
                     <td style={{ whiteSpace: 'nowrap'}}>
-                        {waitRequest.userRegistrationCompleted && (
+                        {waitRequest.userID && (
                             <Link type="button" className="btn btn-sm btn-success" to={`/wait-list/${waitRequest.waitRequestID}`}><i className="fab fa-facebook-messenger"></i> Messages</Link>
-
                         )}
                         <Link type="button" className="btn btn-sm btn-success ml-1" to={`/wait-list/editor/${waitRequest.waitRequestID}`}><i className="fa fa-edit"></i> Edit</Link>
                     </td>
@@ -360,17 +358,17 @@ class WaitListTable extends Component {
             retVal = tableData.filter(waitRequest => {
                 let foundCount = 0;
                 searchKeywords.forEach(searchKeyword => {
-                    if (waitRequest.firstName.toLowerCase().indexOf(searchKeyword) !== -1)
+                    if (waitRequest.firstName && waitRequest.firstName.toLowerCase().indexOf(searchKeyword) !== -1)
                         foundCount++;
-                    if (waitRequest.lastName.toLowerCase().indexOf(searchKeyword) !== -1)
+                    if (waitRequest.lastName && waitRequest.lastName.toLowerCase().indexOf(searchKeyword) !== -1)
                         foundCount++;
-                    if (waitRequest.email.toLowerCase().indexOf(searchKeyword) !== -1)
+                    if (waitRequest.email && waitRequest.email.toLowerCase().indexOf(searchKeyword) !== -1)
                         foundCount++;
-                    if (waitRequest.color.toLowerCase().indexOf(searchKeyword) !== -1)
+                    if (waitRequest.color && waitRequest.color.toLowerCase().indexOf(searchKeyword) !== -1)
                         foundCount++;
-                    if (waitRequest.message.toLowerCase().indexOf(searchKeyword) !== -1)
+                    if (waitRequest.message && waitRequest.message.toLowerCase().indexOf(searchKeyword) !== -1)
                         foundCount++;
-                    if (waitRequest.phone.indexOf(searchKeyword) !== -1)
+                    if (waitRequest.phone && waitRequest.phone.indexOf(searchKeyword) !== -1)
                         foundCount++;
                 });
                 return foundCount > 0;

@@ -2,12 +2,14 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import SortService from '../../services/sortService';
 import Pagination from '../miscellaneous/pagination';
+import { Checkbox } from 'react-ui-icheck';
 
 class BuyersTable extends Component {
     state = {
         tableData: [],
         filteredData: [],
         displayedData: [],
+        showPurchasedCustomers: true,
         paginationInfo: {
             currentPage: 1,
             startIndex: 0,
@@ -29,21 +31,28 @@ class BuyersTable extends Component {
         super(props);
         this.state.tableData = props.buyers;
         this.state.filteredData = JSON.parse(JSON.stringify(props.buyers));
+        this.state.filteredData = this.filterForPurchasedCustomers(this.state.filteredData, this.state.showPurchasedCustomers);
         this.state.paginationInfo.totalItems = props.totalItems;
     }
 
     componentDidUpdate(props) {
-        const { tableData, paginationInfo, gridSearch, updateDisplayedData } = this.state;
+        const { tableData, paginationInfo, gridSearch, updateDisplayedData, showPurchasedCustomers } = this.state;
         if (JSON.stringify(tableData) !== JSON.stringify(props.buyers) || props.totalItems !== paginationInfo.totalItems) {
             let filteredData;
+
             if (gridSearch !== '') {
                 const searchKeywords = gridSearch.toLowerCase().trim().split(' ');
                 filteredData = this.filterForKeywords(props.buyers, searchKeywords);
             } else {
                 filteredData = JSON.parse(JSON.stringify(props.buyers));
             }
+
+            if (showPurchasedCustomers)
+                filteredData = this.filterForPurchasedCustomers(filteredData, showPurchasedCustomers);
+
             if (props.totalItems !== paginationInfo.totalItems)
                 paginationInfo.totalItems = props.totalItems;
+
             this.setState({
                 tableData: props.buyers,
                 filteredData: filteredData,
@@ -157,8 +166,8 @@ class BuyersTable extends Component {
                         <td>{buyer.buyerID}</td>
                         <td>{buyer.firstName}</td>
                         <td>{buyer.lastName}</td>
-                        <td><a href={`mailto:${buyer.email}`}>{buyer.email}</a></td>
-                        <td><a href={`tel:${buyer.email}`}>{buyer.phone}</a></td>
+                        <td>{buyer.email}</td>
+                        <td><a href={`tel:${buyer.phone}`}>{buyer.phone}</a></td>
                         <td>{buyer.city}</td>
                         <td>{buyer.state}</td>
                         <td>{buyer.hasPartialPayment === true ? 'True' : 'False'}</td>
@@ -198,7 +207,7 @@ class BuyersTable extends Component {
     }
 
     handleGridSearch = (input) => {
-        this.processGridSearch(input.target.value);
+        this.processFiltering(input.target.value, this.state.showPurchasedCustomers);
         this.setState({ gridSearch: input.target.value });
     }
 
@@ -208,9 +217,23 @@ class BuyersTable extends Component {
         this.setState({ paginationInfo: paginationInfo });
     }
 
-    processGridSearch = (inputStr) => {
+    processFiltering = (inputStr, showPurchasedCustomers) => {
         const { tableData, paginationInfo } = this.state;
+        let filteredData = tableData;
+
+        filteredData = this.processGridSearch(tableData, inputStr);
+        filteredData = this.filterForPurchasedCustomers(filteredData, showPurchasedCustomers);
+
+        const updateDisplayedData = true;
+
+        paginationInfo.totalItems = filteredData.length;
+
+        this.setState({ filteredData, paginationInfo, updateDisplayedData });
+    }
+
+    processGridSearch = (tableData, inputStr) => {
         let filteredData;
+
         if (inputStr !== '') {
             const searchKeywords = inputStr.toLowerCase().trim().split(' ');
             const uniqueKeywords = [];
@@ -222,9 +245,8 @@ class BuyersTable extends Component {
         } else {
             filteredData = tableData;
         }
-        paginationInfo.totalItems = filteredData.length;
-        const updateDisplayedData = true;
-        this.setState({ filteredData, paginationInfo, updateDisplayedData });
+
+        return filteredData;
     }
 
     filterForKeywords(tableData, searchKeywords) {
@@ -254,13 +276,47 @@ class BuyersTable extends Component {
         return retVal;
     }
 
+    filterForPurchasedCustomers(tableData, showPurchasedCustomers) {
+        let filteredData;
+
+        if (showPurchasedCustomers) {
+            filteredData = tableData.filter(buyer => {
+                if (buyer.puppyIDs && buyer.puppyIDs.length > 0)
+                    return true;
+                else
+                    return false;
+            });
+        } else {
+            filteredData = tableData;
+        }
+
+        return filteredData;
+    }
+
+    handleShowPurchasedCustomersChanged = () => {
+        this.setState({
+            showPurchasedCustomers: !this.state.showPurchasedCustomers
+        });
+
+        this.processFiltering(this.state.gridSearch, !this.state.showPurchasedCustomers);
+    }
+
     render() {
+        const { showPurchasedCustomers } = this.state;
+
         return (
             <div className="animated fadeIn">
                 <div className="row">
                     <div className="col-12">
                         <div className="row">
-                            <div className="col-12">
+                            <div className="col-6">
+                                <Checkbox checkboxClass="icheckbox_square-blue"
+                                        checked={showPurchasedCustomers}
+                                        onChange={() => this.handleShowPurchasedCustomersChanged()}
+                                        label=" Show Only Purchased Customers"
+                                />
+                            </div>
+                            <div className="col-6">
                                 <div className="float-right">
                                     {this.getPageSizeOptions()}
                                 </div>

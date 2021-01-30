@@ -98,7 +98,7 @@ class App extends Component {
                         <Route path="/puppies" exact render={(props) => <Puppies {...props} />} />
                         <Route path="/parent" render={(props) => <Parent url="/parent" {...props} />} />
                         <Route path="/parents" exact render={(props) => <Parents {...props} />} />
-                        <Route path="/buyers" exact render={(props) => <Buyers {...props} />} />
+                        <Route path="/customers" exact render={(props) => <Buyers {...props} />} />
                         <Route path="/testimonials" render={(props) => <Testimonials {...props} />} />
                         <Route path="/wait-list" render={(props) => <WaitRequests {...props} />} />
                         <Route path="/messages" render={(props) => <Messages {...props} />} />
