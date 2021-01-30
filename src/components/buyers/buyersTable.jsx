@@ -144,9 +144,7 @@ class BuyersTable extends Component {
                     <th className="pointer" onClick={() => this.sortTable('city')}>City {this.getSortIcon('city')}</th>
                     <th className="pointer" onClick={() => this.sortTable('state')}>State {this.getSortIcon('state')}</th>
                     <th className="pointer" onClick={() => this.sortTable('hasPartialPayment')}>Has Partial Payment {this.getSortIcon('hasPartialPayment')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('userType')}>User Type {this.getSortIcon('userType')}</th>
                     <th className="pointer" onClick={() => this.sortTable('createDate')}>Create Date {this.getSortIcon('createDate')}</th>
-                    <th className="pointer" onClick={() => this.sortTable('emailVerified')}>Email Verified {this.getSortIcon('emailVerified')}</th>
                     <th>Action</th>
                 </tr>
                 <tr>
@@ -171,14 +169,8 @@ class BuyersTable extends Component {
                         <td>{buyer.city}</td>
                         <td>{buyer.state}</td>
                         <td>{buyer.hasPartialPayment === true ? 'True' : 'False'}</td>
-                        <td>{(buyer.userType) && (
-                            `${buyer.userType.substring(0, 1).toUpperCase()}${buyer.userType.substring(1, buyer.userType.length).toLowerCase()}`
-                        )}</td>
                         <td>{buyer.createDate && (
                             moment(buyer.createDate).format('MMM DD, YYYY')
-                        )}</td>
-                        <td>{buyer.emailVerified !== undefined && (
-                            buyer.emailVerified
                         )}</td>
                         <td>
                             <div style={{ whiteSpace: 'nowrap' }}>
