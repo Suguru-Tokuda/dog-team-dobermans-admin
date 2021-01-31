@@ -69,7 +69,11 @@ class Login extends Component {
                     }
 
                     this.props.login();
-                    this.props.history.push('/');
+
+                    if (this.props.location.state && this.props.location.state.prevURL)
+                        this.props.history.push(this.props.location.state.prevURL);
+                    else
+                        this.props.history.push('/');
                 })
                 .catch(err => {
                     console.log(err);

@@ -18,7 +18,12 @@ class WaitRequests extends Component {
                 </React.Fragment>
             );
         } else {
-            return <Redirect to="/login" />;
+            return <Redirect to={{
+                pathname: '/login',
+                state: {
+                    prevURL: this.props.location.pathname
+                }
+            }} />
         }
     }
 }

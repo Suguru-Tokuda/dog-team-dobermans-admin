@@ -28,7 +28,7 @@ firebase.initializeApp(firebaseConfig);
 const storage = firebase.storage();
 const auth = firebase.auth();
 
-auth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
     .then(() => {
     })
     .catch(err => {
