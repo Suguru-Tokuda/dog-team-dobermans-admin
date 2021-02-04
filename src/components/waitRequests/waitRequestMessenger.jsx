@@ -33,6 +33,8 @@ class WaitRequestMessenger extends Component {
             waitListService.sendWaitRequestMessage(undefined, userID, waitRequestID, messageBody)
                 .then(res => {
                     this.props.onMessageSent(res.data);
+
+                    this.setState({ messageBody: '' });
                 })
                 .catch(err => {
                     toastr.error('There was an error in sending a message.');
