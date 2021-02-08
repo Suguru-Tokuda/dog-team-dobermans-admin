@@ -37,6 +37,7 @@ class WaitRequestMessenger extends Component {
                     this.setState({ messageBody: '' });
                 })
                 .catch(err => {
+                    console.log(err);
                     toastr.error('There was an error in sending a message.');
                 })
                 .finally(() => {
