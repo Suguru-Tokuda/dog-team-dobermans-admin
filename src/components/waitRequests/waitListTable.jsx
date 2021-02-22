@@ -182,7 +182,8 @@ class WaitListTable extends Component {
                     <th className="pointer" onClick={() => this.sortTable('state')}>State {this.getSortIcon('state')}</th>
                     <th>Puppy Name</th>
                     <th className="pointer" onClick={() => this.sortTable('color')}>Color {this.getSortIcon('color')}</th>
-                    <th>Message</th>
+                    <th>Original Request Message</th>
+                    <th>Last Message</th>
                     <th>Note</th>
                     <th className="pointer" onClick={() => this.sortTable('created')}>Created {this.getSortIcon('created')}</th>
                     {/* <th className="pointer" onClick={() => this.sortTable('expectedPurchaseDate')}>Expected Purchase {this.getSortIcon('expectedPurchaseDate')}</th> */}
@@ -220,15 +221,29 @@ class WaitListTable extends Component {
                     <td>{waitRequest.puppyName && (waitRequest.puppyName)}</td>
                     <td>{(waitRequest.color !== undefined && waitRequest.color !== null && waitRequest.color !== '') ? waitRequest.color : 'No preference'}</td>
                     <td data-toggle="popover" data-content={waitRequest.message}>{UtilService.shortenStr(waitRequest.message, 10)}</td>
+                    {(waitRequest.lastMessageFromUser && (
+                        <td data-toggle="popover" data-content={waitRequest.lastMessageFromUser.messageBody}>{UtilService.shortenStr(waitRequest.lastMessageFromUser.messageBody, 10)}</td>    
+                    ))}
+                    {(!waitRequest.lastMessageFromUser && (
+                        <td></td>
+                    ))}
                     <td data-toggle="popover" data-content={waitRequest.note}>{UtilService.shortenStr(waitRequest.note, 10)}</td>
                     <td>{waitRequest.created === undefined ? '' : moment(waitRequest.created).format('MM/DD/YYYY hh:mm:ss')}</td>
                     {/* <td>{waitRequest.expectedPurchaseDate === undefined || waitRequest.expectedPurchaseDate === null ? '' : moment(waitRequest.expectedPurchaseDate).format('MM/DD/YYYY')}</td> */}
                     <td>{waitRequest.notified === undefined || waitRequest.notified === null ? 'N/A' : moment(waitRequest.notified).format('MM/DD/YYYY hh:mm:ss')}</td>
                     <td style={{ whiteSpace: 'nowrap'}}>
                         {waitRequest.userID && (
-                            <Link type="button" className="btn btn-sm btn-success" to={`/wait-list/${waitRequest.waitRequestID}`}><i className="fab fa-facebook-messenger"></i> Messages</Link>
+                            <Link type="button" className="btn btn-sm btn-success" to={`/wait-list/${waitRequest.waitRequestID}`}>
+                                <i className="fab fa-facebook-messenger"></i>&nbsp;
+                                Messages&nbsp;
+                                {waitRequest.numberOfUnreadMessages > 0 && (
+                                    <span className="badge badge-pill badge-success">{ waitRequest.numberOfUnreadMessages }</span>
+                                )}
+                            </Link>
                         )}
-                        <Link type="button" className="btn btn-sm btn-success ml-1" to={`/wait-list/editor/${waitRequest.waitRequestID}`}><i className="fa fa-edit"></i> Edit</Link>
+                        <Link type="button" className="btn btn-sm btn-success ml-1" to={`/wait-list/editor/${waitRequest.waitRequestID}`}>
+                            <i className="fa fa-edit"></i>&nbs;Edit
+                        </Link>
                     </td>
                 </tr>
             );

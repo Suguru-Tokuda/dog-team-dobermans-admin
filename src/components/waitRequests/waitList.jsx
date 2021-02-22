@@ -108,6 +108,7 @@ class WaitList extends Component {
         const regex = /\<img (.*?)>/g;
         let result;
         const files = [];
+
         while ((result = regex.exec(body)) !== null) {
             const regexForSrc = /src="(.*?)"/;
             const dataURI = regexForSrc.exec(result[1])[1];
@@ -133,7 +134,9 @@ class WaitList extends Component {
                     });
             }
         }
+
         let counter = 0;
+
         body = body.replace(/\<img (.*?)>/g, (imageTag => {
             const regexForSrc = /src="(.*?)"/;
             const src = regexForSrc.exec(imageTag)[1];
@@ -143,6 +146,7 @@ class WaitList extends Component {
             counter++;
             return imageTag;
         }));
+
         WaitListService.notify(waitRequestIDs, subject, body)
             .then(async () => {
                 toastr.success('Email sent');

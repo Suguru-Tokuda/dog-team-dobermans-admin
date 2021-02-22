@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ConstantsService from '../../services/constantsService';
+import moment from 'moment';
 
 class WaitRequestMessage extends Component {
 
@@ -30,7 +31,7 @@ class WaitRequestMessage extends Component {
                     </div>
                     <div className="col-6">
                         <div className="float-right">
-                            { message.sentDate.toString() }
+                            { moment(new Date(message.sentDate.toString())).format('MM/DD/YYYY hh:mm:ss') }
                         </div>
                     </div>
                 </div>
@@ -43,6 +44,18 @@ class WaitRequestMessage extends Component {
                             style={{ resize: 'none' }}
                             readOnly>
                         </textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div className="col-12">
+                        <div className="float-right">
+                            {(message.senderID === ConstantsService.getBreederID() && message.read) && (
+                                <span className="text-muted">Read</span>
+                            )}
+                            {(message.senderID === ConstantsService.getBreederID() && !message.read) && (
+                                <span className="text-muted">Sent</span>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
