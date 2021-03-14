@@ -233,9 +233,13 @@ class WaitListTable extends Component {
                     <td>{waitRequest.notified === undefined || waitRequest.notified === null ? 'N/A' : moment(waitRequest.notified).format('MM/DD/YYYY hh:mm:ss')}</td>
                     <td style={{ whiteSpace: 'nowrap'}}>
                         {waitRequest.userID && (
-                            <Link type="button" className="btn btn-sm btn-success" to={`/wait-list/${waitRequest.waitRequestID}`}>
+                            <Link type="button" className="btn btn-sm btn-success" to={`/wait-list/${waitRequest.waitRequestID}`} style={{ width: '140px' }}>
                                 <i className="fab fa-facebook-messenger"></i>&nbsp;
                                 Messages&nbsp;
+                                {waitRequest.hasUnRepliedMessage === true && (
+                                    <span className="bade badge-pill badge-success" data-toggle="tooltip" data-placement="top" title="Your Turn">
+                                    <i className="fas fa-exclamation" style={{ fontSize: '10px' }}></i></span>
+                                )}
                                 {waitRequest.numberOfUnreadMessages > 0 && (
                                     <span className="badge badge-pill badge-success">{ waitRequest.numberOfUnreadMessages }</span>
                                 )}
