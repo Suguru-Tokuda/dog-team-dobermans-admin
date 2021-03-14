@@ -242,7 +242,7 @@ class WaitListTable extends Component {
                             </Link>
                         )}
                         <Link type="button" className="btn btn-sm btn-success ml-1" to={`/wait-list/editor/${waitRequest.waitRequestID}`}>
-                            <i className="fa fa-edit"></i>&nbs;Edit
+                            <i className="fa fa-edit"></i>&nbsp;Edit
                         </Link>
                     </td>
                 </tr>
