@@ -68,7 +68,7 @@ class App extends Component {
     if (this.props.loadCount > 0) {
       return (
         <div className="centered">
-          <Spinner name="line-scale" />
+          <Spinner name="line-spin-fade-loader" />
         </div>
       );
     }
@@ -109,11 +109,11 @@ class App extends Component {
                         <Route render={(props) => <NotFound {...props} />} />
                     </Switch>
                   )}
-                  {this.getSpinner()}
                 </div>
               </main>
             </div>
           </div>
+          {this.getSpinner()}
         </div>
       </BrowserRouter>
     );
