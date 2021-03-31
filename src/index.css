@@ -22,6 +22,14 @@ input[type="file"] {
   z-index: 1000;
 }
 
+.login-window {
+  position: absolute;
+  top: 50%;
+  left: 55%;
+  width: 100%;
+  transform: translate(-50%, -55%);
+}
+
 .block-screen {
   pointer-events: none;
   opacity: 0.4;

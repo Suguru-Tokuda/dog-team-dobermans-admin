@@ -1,6 +1,7 @@
 {
   "projects": {
-    "default": "dogteamdobermans"
+    "default": "dogteamdobermans",
+    "dev": "dogteamdobermansdev"
   },
   "targets": {
     "dogteamdobermans": {
