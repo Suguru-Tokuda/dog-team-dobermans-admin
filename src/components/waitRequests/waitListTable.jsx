@@ -116,6 +116,14 @@ class WaitListTable extends Component {
         });
     }
 
+    getPopoverContentForLastMessageFromUser = (waitRequest) => {
+        if (waitRequest.lastMessageFromUser && waitRequest.lastMessageFromUser.messageBody) {
+            return waitRequest.lastMessageFromUser.messageBody;
+        } else {
+            return null;
+        }
+    }
+
     sortTable = (accessor) => {
         const { filteredData, sortData, paginationInfo } = this.state;
         const tableData = SortService.sortDisplayedData(filteredData, accessor, sortData, paginationInfo.startIndex, paginationInfo.endIndex);
@@ -221,12 +229,7 @@ class WaitListTable extends Component {
                     <td>{waitRequest.puppyName && (waitRequest.puppyName)}</td>
                     <td>{(waitRequest.color !== undefined && waitRequest.color !== null && waitRequest.color !== '') ? waitRequest.color : 'No preference'}</td>
                     <td data-toggle="popover" data-content={waitRequest.message}>{UtilService.shortenStr(waitRequest.message, 10)}</td>
-                    {(waitRequest.lastMessageFromUser && (
-                        <td data-toggle="popover" data-content={waitRequest.lastMessageFromUser.messageBody}>{UtilService.shortenStr(waitRequest.lastMessageFromUser.messageBody, 10)}</td>    
-                    ))}
-                    {(!waitRequest.lastMessageFromUser && (
-                        <td></td>
-                    ))}
+                    <td data-toggle="popover" data-content={this.getPopoverContentForLastMessageFromUser(waitRequest)}>{UtilService.shortenStr(this.getPopoverContentForLastMessageFromUser(waitRequest), 10)}</td>    
                     <td data-toggle="popover" data-content={waitRequest.note}>{UtilService.shortenStr(waitRequest.note, 10)}</td>
                     <td>{waitRequest.created === undefined ? '' : moment(waitRequest.created).format('MM/DD/YYYY hh:mm:ss')}</td>
                     {/* <td>{waitRequest.expectedPurchaseDate === undefined || waitRequest.expectedPurchaseDate === null ? '' : moment(waitRequest.expectedPurchaseDate).format('MM/DD/YYYY')}</td> */}
