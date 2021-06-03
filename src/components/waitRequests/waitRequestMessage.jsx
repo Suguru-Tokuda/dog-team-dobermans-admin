@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ConstantsService from '../../services/constantsService';
 import moment from 'moment';
+import $ from 'jquery';
 
 class WaitRequestMessage extends Component {
 
@@ -17,6 +18,7 @@ class WaitRequestMessage extends Component {
 
     render() {
         const { message } = this.state;
+        message.messageBody = $('<textarea />').html(message.messageBody).text();
 
         return (
             <div style={{ padding: '20px' }}>

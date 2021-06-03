@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PaginationButtons from './paginationButtons';
 import moment from 'moment';
+import $ from 'jquery';
 
 class MessageTable extends Component {
 
@@ -17,17 +18,22 @@ class MessageTable extends Component {
             pageSize: 10,
             totalItems: 0
         },
-        updateDisplaedData: false
+        updateDisplayData: false
     };
 
     constructor(props) {
         super(props);
-        this.state.messages = props.messages;
+        this.state.messages = props.messages.map(msg => {
+            msg.messageBody = $('<textarea />').html(msg.messageBody).text();
+
+            return msg;
+        });
+
         this.state.paginationInfo.totalItems = props.messages.length;
     }
 
     componentDidUpdate(props) {
-        const { messages, paginationInfo, updateDisplaedData } = this.state;
+        const { messages, paginationInfo, updateDisplayData } = this.state;
 
         if (JSON.stringify(props.messages) !== JSON.stringify(messages)) {
             let filteredMessages;
@@ -46,8 +52,8 @@ class MessageTable extends Component {
             });
         }
 
-        if (updateDisplaedData === true) {
-            this.setState({ updateDisplaedData: false });
+        if (updateDisplayData === true) {
+            this.setState({ updateDisplayData: false });
             this.updateDisplayedData(paginationInfo.currentPage, paginationInfo.startIndex, paginationInfo.endIndex);
         }
     }
@@ -99,7 +105,7 @@ class MessageTable extends Component {
                             </div>
                             <div className="row">
                                 <div className="col-12 c-message-body">
-                                { message.messageBody }
+                                    <div dangerouslySetInnerHTML={{ __html: message.messageBody }}></div>
                                 </div>
                             </div>
                         </div>
