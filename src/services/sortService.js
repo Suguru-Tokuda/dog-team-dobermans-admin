@@ -121,7 +121,6 @@ export default class SortService {
                 value = '';
                 break;
             default:
-                value = '';
                 break;
         }
 
