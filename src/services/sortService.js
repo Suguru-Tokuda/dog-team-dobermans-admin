@@ -81,7 +81,7 @@ export default class SortService {
     
                 while (rightVal < pivot) {
                     right--;
-                    rightVal = this.getValue(array, key, left);
+                    rightVal = this.getValue(array, key, right);
                 }
             }
 
@@ -139,9 +139,10 @@ export default class SortService {
             orderAsc = sortData.orderAsc;
             orderAsc = !orderAsc;
         } else {
-            orderAsc = false;
+            orderAsc = true;
         }
-        const tableData = this.sortArray(arr, key, orderAsc);
+        // const tableData = this.quickSort(arr, key, orderAsc);
+        const tableData = this.quickSort(arr, key, !orderAsc);
         let displayedData;
         if (startIndex !== endIndex) {
             displayedData = arr.slice(startIndex, endIndex + 1);
