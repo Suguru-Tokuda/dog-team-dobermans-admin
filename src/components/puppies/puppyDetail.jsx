@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import PuppiesService from '../../services/puppiesService';
-import ParentsService from '../../services/parentsService';
+import PuppyService from '../../services/puppyService';
+import ParentService from '../../services/parentService';
 import toastr from 'toastr';
 import moment from 'moment';
 
@@ -35,8 +35,8 @@ class PuppyDetail extends Component {
             this.props.showLoading({ reset: true, count: 1 });
             try {
                 const [puppyData, parents] = await Promise.all([
-                    PuppiesService.getPuppy(this.state.puppyID),
-                    ParentsService.getAllParents()
+                    PuppyService.getPuppy(this.state.puppyID),
+                    ParentService.getAllParents()
                 ]);
                 const dads = [];
                 const moms = [];

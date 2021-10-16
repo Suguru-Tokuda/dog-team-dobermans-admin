@@ -1,16 +1,15 @@
 import SessionInfoService from './sessionInfoService';
 import UtilService from './utilService';
-import * as api from '../api.json';
 import axios from 'axios';
 import { storage } from './firebaseService';
 
 export default class HomepageContentService {
     static getServiceBase() {
-        return `${SessionInfoService.getBaseUrlForAPI()}homepageContents`;
+        return `${SessionInfoService.getBaseUrlForAPI()}api/homepageContents`;
     }
 
     static getHomePageInfo() {
-        return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}`);
+        return axios.get(`${this.getServiceBase()}`);
     }
 
     static updateBackgroundVideo(title, description, url, reference) {
@@ -22,14 +21,14 @@ export default class HomepageContentService {
                 reference: reference
             }
         };
-        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
+        return axios.put(`${this.getServiceBase()}`, data);
     }
 
     static updateNews(newsBody) {
         const data = {
             news: newsBody
         };
-        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
+        return axios.put(`${this.getServiceBase()}`, data);
     }
 
     static updateBanner(title, description, picture) {
@@ -40,21 +39,21 @@ export default class HomepageContentService {
                 picture: picture
             }
         };
-        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
+        return axios.put(`${this.getServiceBase()}`, data);
     }
 
     static updatePuppyMessage(message) {
         const data = {
             puppyMessage: message
         };
-        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
+        return axios.put(`${this.getServiceBase()}`, data);
     }
 
     static updateGalleryImages(galleryImages) {
         const data = {
             galleryImages: galleryImages
         };
-        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
+        return axios.put(`${this.getServiceBase()}`, data);
     }
 
     static uploadVideo(videoFile) {

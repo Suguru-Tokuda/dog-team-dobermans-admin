@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import WaitRequestMessenger from './waitRequestMessenger';
 import WaitRequestMessage from './waitRequestMessage';
 import ConstantsService from '../../services/constantsService';
-import WaitListService from '../../services/waitListService';
+import WaitlistService from '../../services/waitlistService';
 import toastr from 'toastr';
 
 class WaitRequestDetail extends Component {
@@ -23,8 +23,8 @@ class WaitRequestDetail extends Component {
         const { waitRequestID } = this.state;
 
         Promise.all([
-            WaitListService.getWaitRequest(waitRequestID),
-            WaitListService.getWaitRequestMessages(waitRequestID)
+            WaitlistService.getWaitRequest(waitRequestID),
+            WaitlistService.getWaitRequestMessages(waitRequestID)
         ])
         .then(async res => {
 
@@ -44,7 +44,7 @@ class WaitRequestDetail extends Component {
                         
                 if (messageIDsMarkAsRead.length > 0) {
                     try {
-                        await WaitListService.markMessageAsRead(messageIDsMarkAsRead);
+                        await WaitlistService.markMessageAsRead(messageIDsMarkAsRead);
                     } catch (err) {
                         console.log(err);
                     }

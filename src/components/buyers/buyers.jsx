@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import BuyersTable from './buyersTable';
-import BuyersService from '../../services/buyersService';
+import UserService from '../../services/userService';
 import BuyerRegistrationModal from './buyerRegistrationModal';
 import BuyerDeleteConfModal from './buyerDeleteConfModal';
 import PurchasedPuppiesListModal from './purchasedPuppiesListModal';
@@ -30,13 +30,13 @@ class Buyers extends Component {
     
     componentDidMount() {
         if (this.props.authenticated === true)
-            this.getBuyers();
+            this.getUsers();
     }
 
-    getBuyers= () => {
+    getUsers= () => {
         this.props.showLoading({ reset: true, count: 1 });
 
-        BuyersService.getBuyers()
+        UserService.getUsers()
             .then(res => {
                 this.setState({ buyers: res.data });
             })
@@ -116,7 +116,7 @@ class Buyers extends Component {
     handleDoDeleteBtnClicked = () => {
         const { buyerToDelete } = this.state;
         this.props.showLoading({ reset: true, count: 1 });
-        BuyersService.deleteBuyer(buyerToDelete.buyerID)
+        UserService.deleteUser(buyerToDelete.buyerID)
             .then(() => {
                 this.setState({
                     buyerIDToDelete: '',
@@ -125,7 +125,7 @@ class Buyers extends Component {
                 toastr.success('Successfully deleted a buyer');
                 $('#buyerDeleteConfModal').modal('hide');
                 $('.modal-backdrop').remove();
-                this.getBuyers();
+                this.getUsers();
             })
             .catch(() => {
                 toastr.error('There was an error in deleting a buyer');
@@ -144,11 +144,11 @@ class Buyers extends Component {
     }
 
     handleBuyerCreated = () => {
-        this.getBuyers();
+        this.getUsers();
     }
 
     handleBuyerUpdated = () => {
-        this.getBuyers();
+        this.getUsers();
     }
 
     render() {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import BuyersService from '../../services/buyersService';
+import UserService from '../../services/userService';
 import toastr from 'toastr';
 import { connect } from 'react-redux';
 
@@ -31,7 +31,7 @@ class BuyerDetail extends Component {
     componentDidMount() {
         const { buyerID } = this.state;
         this.props.showLoading({ reset: true, count: 1 });
-        BuyersService.getBuyer(buyerID)
+        UserService.getUser(buyerID)
             .then(res => {
                 this.setState({ buyerDetail: res.data });
             })
@@ -48,7 +48,7 @@ class BuyerDetail extends Component {
         if (loadBuyer === true) {
             this.setState({ loadBuyer: false });
             this.props.showLoading({ reset: true, count: 1 });
-            BuyersService.getBuyer(buyerID)
+            UserService.getUser(buyerID)
                 .then(res => {
                     this.setState({ buyerDetail: res.data });
                 })

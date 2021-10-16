@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import BuyersService from '../../services/buyersService';
+import UserService from '../../services/userService';
 import toastr from 'toastr';
 import { connect } from 'react-redux';
 import $ from 'jquery';
@@ -41,7 +41,7 @@ class BuyerLookupModal extends Component {
         keywordToSend = keywordToSend.replace(' ', '+');
         if (keywordToSend.length > 0) {
             this.props.showLoading({ reset: true, count: 1 });
-            BuyersService.searchForBuyers(keywordToSend)
+            UserService.searchForBuyers(keywordToSend)
                 .then(res => {
                     this.setState({ buyers: res.data });
                 })

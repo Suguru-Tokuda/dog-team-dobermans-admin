@@ -6,23 +6,35 @@ import UtilService from './utilService';
 
 export default class AboutUsService {
     static getServiceBase() {
-        return `${SessionInfoService.getBaseUrlForAPI()}aboutUs/`;
+        return `${SessionInfoService.getBaseUrlForAPI()}api/aboutUs/`;
     }
 
     static getAboutUs() {
-        return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}`);
+        return axios.get(`${this.getServiceBase()}`);
+    }
+
+    static getAboutDobermans() {
+        return axios.get(`${this.getServiceBase()}aboutDobermans`);
+    }
+
+    static updateAboutDobermans(aboutDobermans) {
+        const data = {
+            aboutDobermans: aboutDobermans
+        };
+
+        return axios.put(`${this.getServiceBase()}aboutDobermans`, data);
     }
 
     static updateAboutUs(aboutUsID, data) {
-        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}&aboutUsID=${aboutUsID}`, data);
+        return axios.put(`${this.getServiceBase()}?aboutUsID=${aboutUsID}`, data);
     }
 
     static updateIntroductions(data) {
-        return axios.put(`${this.getServiceBase()}missionStatements?key=${api.API_KEY}`, data);
+        return axios.put(`${this.getServiceBase()}missionStatements`, data);
     }
 
     static updateOurTeam(data) {
-        return axios.put(`${this.getServiceBase()}ourTeam?key=${api.API_KEY}`, data);
+        return axios.put(`${this.getServiceBase()}ourTeam`, data);
     }
 
     static uploadPicture(imageFile, directory) {

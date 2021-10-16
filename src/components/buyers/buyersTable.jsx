@@ -160,8 +160,8 @@ class BuyersTable extends Component {
         if (displayedData && displayedData.length > 0) {
             const rows = displayedData.map(buyer => {
                 return (
-                    <tr key={`buyer-${buyer.buyerID}`}>
-                        <td>{buyer.buyerID}</td>
+                    <tr key={`buyer-${buyer.userID}`}>
+                        <td>{buyer.userID}</td>
                         <td>{buyer.firstName}</td>
                         <td>{buyer.lastName}</td>
                         <td>{buyer.email}</td>

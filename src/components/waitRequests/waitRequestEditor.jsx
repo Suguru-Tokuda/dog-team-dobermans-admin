@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import toastr from 'toastr';
-import WaitListService from '../../services/waitListService';
+import WaitlistService from '../../services/waitlistService';
 import ValidationService from '../../services/validationService';
 import ConstantsService from '../../services/constantsService';
 import DatePicker from 'react-datepicker';
@@ -43,7 +43,7 @@ class WaitRequestEditor extends Component {
         const { waitRequestID } = this.state;
         if (waitRequestID !== '') {
             this.props.showLoading({ reset: true, count: 1 });
-            WaitListService.getWaitRequest(waitRequestID)
+            WaitlistService.getWaitRequest(waitRequestID)
                 .then(res => {
                     const { selections } = this.state;
                     const { firstName, lastName, email, phone, city, state, message, note, color, expectedPurchaseDate } = res.data;
@@ -245,7 +245,7 @@ class WaitRequestEditor extends Component {
                     notified: null
                 };
                 this.props.showLoading({ reset: true, count: 1 });
-                WaitListService.createWaitRequest(createData)
+                WaitlistService.createWaitRequest(createData)
                     .then(() => {
                         toastr.success('New wait request created.');
                         this.props.history.push('/wait-list');
@@ -270,7 +270,7 @@ class WaitRequestEditor extends Component {
                 updateData.message = message.trim();
                 updateData.note = note.trim();
                 this.props.showLoading({ reset: true, count: 1 });
-                WaitListService.updateWaitRequest(waitRequestID, updateData)
+                WaitlistService.updateWaitRequest(waitRequestID, updateData)
                     .then(() => {
                         toastr.success('Updated a wait request');
                         this.props.history.push('/wait-list');

@@ -1,18 +1,18 @@
 import SessionInfoService from './sessionInfoService';
-import * as api from '../api.json';
 import axios from 'axios';
 
 export default class ContactService {
     static getServiceBase() {
-        return `${SessionInfoService.getBaseUrlForAPI()}contact/`;
+        return `${SessionInfoService.getBaseUrlForAPI()}api/contact`;
     }
 
-    static getContactusInfo() {
-        return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}`);
+    static getContact() {
+        return axios.get(`${this.getServiceBase()}`);
     }
 
-    static updateContactdInfo(firstName, lastName, street, city, state, email, phone, zip, contactID) {
+    static updateContact(firstName, lastName, street, city, state, email, phone, zip, contactID) {
         const data = {
+            contactID: contactID,
             firstName: firstName,
             lastName: lastName,
             street: street,
@@ -22,7 +22,7 @@ export default class ContactService {
             phone: phone,
             zip: zip
         };
-        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}&contactID=${contactID}`, data);
+        return axios.put(`${this.getServiceBase()}`, data);
     }
     
 }

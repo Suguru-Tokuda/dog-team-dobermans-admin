@@ -4,6 +4,7 @@ import AboutDobermansEditorModal from './aboutDobermansEditorModal';
 import AboutDobermanService from '../../services/aboutDobermanService';
 import toastr from 'toastr';
 import $ from 'jquery';
+import AboutUsService from '../../services/aboutUsService';
 
 class AboutDobermans extends Component {
     state = {
@@ -30,7 +31,7 @@ class AboutDobermans extends Component {
 
     handleUpdateData = () => {
         this.props.showLoading({ reset: true, count: 1 });
-        AboutDobermanService.getAboutDobermans()
+        AboutUsService.getAboutDobermans()
             .then(res => {
                 this.setState({ aboutDobermans: res.data })
             })

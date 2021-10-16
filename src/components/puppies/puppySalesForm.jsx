@@ -5,7 +5,7 @@ import PuppyDetail from './puppyDetail';
 import BuyerDetail from '../buyers/buyerDetail';
 import BuyerLookupModal from '../buyers/buerLookupModal';
 import BuyerRegistrationModal from '../buyers/buyerRegistrationModal';
-import PuppiesService from '../../services/puppiesService';
+import PuppyService from '../../services/puppyService';
 import toastr from 'toastr';
 
 class PuppySalesForm extends Component {
@@ -27,7 +27,7 @@ class PuppySalesForm extends Component {
     componentDidMount() {
         const { puppyID } = this.state;
         this.props.showLoading({ reset: true, count: 1 });
-        PuppiesService.getPuppy(puppyID)
+        PuppyService.getPuppy(puppyID)
             .then(res => {
                 this.setState({ puppyDetail: res.data });
                 if (res.data.buyerID !== null || res.data.buyerID !== '') {
@@ -78,7 +78,7 @@ class PuppySalesForm extends Component {
             puppyDetail.paidAmount = paymentAmount;
             puppyDetail.buyerID = buyerID;
             this.props.showLoading({ reset: true, count: 1 });
-            PuppiesService.processTransaction(puppyDetail.puppyID, buyerID, paymentAmount)
+            PuppyService.processTransaction(puppyDetail.puppyID, buyerID, paymentAmount)
                 .then(() => {
                     toastr.success('Successfully updated the puppy data');
                     this.props.history.push('/puppies');

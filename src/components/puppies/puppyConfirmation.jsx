@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PuppiesService from '../../services/puppiesService';
+import PuppyService from '../../services/puppyService';
 import toastr from 'toastr';
 
 class PuppyConfirmation extends Component {
@@ -149,13 +149,13 @@ class PuppyConfirmation extends Component {
         this.props.showLoading({ reset: true, count: 1 });
         if (pictures.length > 0) {
             for (let i = 0, max = pictures.length; i < max; i++) {
-                const url = await PuppiesService.uploadPicture(pictures[i]);
+                const url = await PuppyService.uploadPicture(pictures[i]);
                 pictureLinks.push(url);
             }
         }
         data.pictures = pictureLinks;
         data.name = data.name.trim();
-        PuppiesService.createPuppy(data)
+        PuppyService.createPuppy(data)
             .then(() => {
                 toastr.success('New puppy created');
             })

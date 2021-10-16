@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import WaitListTable from './waitListTable';
-import WaitListService from '../../services/waitListService';
+import WaitlistService from '../../services/waitlistService';
 import toastr from 'toastr';
 import imageCompression from 'browser-image-compression';
 import $ from 'jquery';
@@ -9,6 +9,7 @@ import $ from 'jquery';
 class WaitList extends Component {
     state = {
         waitRequests: [],
+        totalItems: 0,
         loaded: false,
         emailHasSent: false
     };
@@ -23,44 +24,43 @@ class WaitList extends Component {
 
     componentDidMount() {
         if (this.props.authenticated === true) {
-            this.props.showLoading({ reset: true, count: 1 });
+            this.updateWaitRequests(0, 25, 'created', true, '');
+        }
+    }
 
-            WaitListService.getWaitList()
+    updateWaitRequests(startIndex, endIndex, sortField, sortDescending, searchText) {
+        if (this.props.authenticated) {
+            this.props.showLoading({reset: true, count: 1});
+
+            WaitlistService.getWaitlistByRange(startIndex, endIndex, sortField, sortDescending, searchText)
                 .then(res => {
-                    let waitRequests = [];
-                    res.data.map(request => {
-                        if (request.statusID === 1 || request.statusID === undefined) {
-                            waitRequests.push(request);
-                        }
+                    const { data } = res;
+                    this.setState({
+                        waitRequests: data.waitRequests,
+                        totalItems: data.totalItems
                     });
-
-                    waitRequests = waitRequests.sort((a, b) => {
-                        return a.created > b.created ? -1 : a.created < b.created ? 1 : 0;
-                    });
-
-                    this.setState({ waitRequests });
                 })
                 .catch((err) => {
                     console.log(err);
-                    toastr.error('There was an error in loading wait list data');
                 })
                 .finally(() => {
-                    this.props.doneLoading({ reset: true });
-                    this.setState({ loaded: true });
-                });
+                    this.props.doneLoading({reset: true});
+                    this.setState({loaded: true});
+                })
         }
     }
 
     getTable() {
-        const { waitRequests, loaded } = this.state;
+        const { waitRequests, loaded, totalItems } = this.state;
         if (loaded === true) {
             if (waitRequests.length > 0) {
                 return (
                     <WaitListTable
-                    waitRequests={waitRequests}
-                    totalItems={waitRequests.length}
-                    onSendEmailBtnClicked={this.handleSendEmailBtnClicked.bind(this)}
-                    onDeleteBtnClicked={this.handleDeleteBtnClicked.bind(this)}
+                        waitRequests={waitRequests}
+                        totalItems={totalItems}
+                        onUpdateList={this.updateWaitRequests.bind(this)}
+                        onSendEmailBtnClicked={this.handleSendEmailBtnClicked.bind(this)}
+                        onDeleteBtnClicked={this.handleDeleteBtnClicked.bind(this)}
                     />
                 );
             } else if (waitRequests.length === 0) {
@@ -70,36 +70,25 @@ class WaitList extends Component {
         return null;
     }
 
-    handleDeleteBtnClicked = (waitRequestIDs) => {
+    handleDeleteBtnClicked = async (waitRequestIDs, startIndex, endIndex, sortField, sortDescending) => {
         if (waitRequestIDs.length > 0) { 
             this.props.showLoading({ reset: true, count: 1 });
 
-            WaitListService.deleteWaitRequests(waitRequestIDs)
-                .then(async () => {
-                    const successMessage = waitRequestIDs.length > 1 ? `Successfully deleted ${waitRequestIDs.length} requests` : 'Successfully deleted one request';
-                    toastr.success(successMessage);
-                    setTimeout(async () => {
-                        const res = await WaitListService.getWaitList();
-                        let waitRequests = [];
-                        res.data.map(request => {
-                            if (request.statusID === 1 || request.statusID === undefined) {
-                                waitRequests.push(request);
-                            }
-                        });
+            try {
+                await WaitlistService.deleteWaitRequests(waitRequestIDs);
+                const res = await WaitlistService.getWaitlistByRange(startIndex, endIndex, sortField, sortDescending);
 
-                        waitRequests = waitRequests.sort((a, b) => {
-                            return a.created > b.created ? -1 : a.created < b.created ? 1 : 0;
-                        });
+                toastr.success(`Deleted ${waitRequestIDs.length} request${waitRequestIDs.length > 1 ? 's' : ''}`);
 
-                        this.setState({ waitRequests });
-                    }, 100);
-                })
-                .catch(() => {
-                    toastr.error('There was an error ')
-                })
-                .finally(() => {
-                    this.props.doneLoading({ reset: true });
+                this.setState({
+                    waitRequests: res.data.waitRequests,
+                    totalItems: res.data.totalItems
                 });
+            } catch (err) {
+                toastr.error('There was an error in deleting wait requests.');
+            } finally {
+                this.props.doneLoading({ reset: true });
+            }
         }
     }
 
@@ -125,7 +114,7 @@ class WaitList extends Component {
                                         useWebWorker: true
                                     };
                                     const compressedFile = await imageCompression(newFile, options);
-                                    const image = await WaitListService.uploadPicture(compressedFile);
+                                    const image = await WaitlistService.uploadPicture(compressedFile);
                                     files.push(image);
                                 } catch (err) {
                                     toastr.error(err);
@@ -147,12 +136,12 @@ class WaitList extends Component {
             return imageTag;
         }));
 
-        WaitListService.notify(waitRequestIDs, subject, body)
+        WaitlistService.notify(waitRequestIDs, subject, body)
             .then(async () => {
                 toastr.success('Email sent');
                 $('#waitListEmailModal').modal('hide');
                 $('.modal-backdrop').remove();
-                const res = await WaitListService.getWaitList();
+                const res = await WaitlistService.getWaitList();
                 this.setState({ waitRequests: res.data });
             })
             .catch(() => {

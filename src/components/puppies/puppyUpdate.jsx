@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PuppyUpdateSelection from './puppyUpdateSelection';
 import PuppyCreateForm from './puppyInitialForm';
 import PuppyPictureUpdateForm from './puppyPictureUpdateForm';
-import ParentsService from '../../services/parentsService';
+import ParentService from '../../services/parentService';
 import toastr from 'toastr';
 
 class PuppyUpdate extends Component {
@@ -23,7 +23,7 @@ class PuppyUpdate extends Component {
 
     componentDidMount() {
         this.props.showLoading({ reset: true, count: 1 });
-        ParentsService.getAllParents()
+        ParentService.getAllParents()
             .then(res => {
                 if (res.data.length > 0) {
                     const dads = [];

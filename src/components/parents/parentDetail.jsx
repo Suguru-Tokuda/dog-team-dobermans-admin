@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import ParentsService from '../../services/parentsService';
+import ParentService from '../../services/parentService';
 import toastr from 'toastr';
 
 class ParentDetail extends Component {
@@ -33,7 +33,7 @@ class ParentDetail extends Component {
         const { parentID, loadDetail } = this.state;
         if (loadDetail === true) {
             this.props.showLoading({ reset: true, count: 1 });
-            ParentsService.getParent(parentID)
+            ParentService.getParent(parentID)
                 .then(res => {
                     this.setState({ parentDetail: res.data });
                 })

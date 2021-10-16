@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import ParentsService from '../../services/parentsService';
+import ParentService from '../../services/parentService';
 import toastr from 'toastr';
 
 class ParentConfirmation extends Component {
@@ -97,7 +97,7 @@ class ParentConfirmation extends Component {
         this.props.showLoading({ reset: true, count: 1 });
         if (pictures.length > 0) {
             for (let i = 0, max = pictures.length; i < max; i++) {
-                const url = await ParentsService.uploadPicture(pictures[i]);
+                const url = await ParentService.uploadPicture(pictures[i]);
                 pictureLinks.push(url);
             }
         }
@@ -108,7 +108,7 @@ class ParentConfirmation extends Component {
         const color = data.color;
         const weight = data.weight;
         const description = data.description;
-        ParentsService.createParent(name, dateOfBirth, type, gender, color, weight, description, pictureLinks)
+        ParentService.createParent(name, dateOfBirth, type, gender, color, weight, description, pictureLinks)
             .then(() => {
                 toastr.success('New parent create');
             })

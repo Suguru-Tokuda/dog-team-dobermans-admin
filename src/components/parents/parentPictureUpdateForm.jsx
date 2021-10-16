@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import ParentsService from '../../services/parentsService';
+import ParentService from '../../services/parentService';
 import SortablePictureList from '../miscellaneous/sortablePictureList';
 import toastr from 'toastr';
 import ImageCropModal from '../miscellaneous/imageCropModal';
@@ -26,7 +26,7 @@ class ParentPictureUpdateForm extends Component {
     componentDidMount() {
         const { parentID } = this.state;
         this.props.showLoading({ reset: true, count: 1 });
-        ParentsService.getParent(parentID)
+        ParentService.getParent(parentID)
             .then(res => {
                 this.setState({ parentDetail: res.data });
             })
@@ -76,7 +76,7 @@ class ParentPictureUpdateForm extends Component {
         const { parentID, parentDetail } = this.state;
         parentDetail.pictures = pictures;
         this.setState({ parentDetail });
-        ParentsService.updateParent(parentID, parentDetail);
+        ParentService.updateParent(parentID, parentDetail);
     }
 
     handleImageChange = async (event) => {
@@ -91,7 +91,7 @@ class ParentPictureUpdateForm extends Component {
         // upload a picture and get { reference, url }
         let newPicture;
         try {
-            newPicture = await ParentsService.uploadPicture(newFile);
+            newPicture = await ParentService.uploadPicture(newFile);
         } catch (err) {
             console.log(err);
             toastr.error('There was an error in uploading a file');
@@ -99,7 +99,7 @@ class ParentPictureUpdateForm extends Component {
         // push the new picture reference
         if (typeof newPicture !== 'undefined') {
             parentDetail.pictures.push(newPicture);
-            ParentsService.updateParent(parentID, parentDetail)
+            ParentService.updateParent(parentID, parentDetail)
                 .then(() => {
                     toastr.success('Upload success');
                 })
@@ -116,10 +116,10 @@ class ParentPictureUpdateForm extends Component {
         const { parentID, parentDetail } = this.state;
         const pictureToDelete = JSON.parse(JSON.stringify(parentDetail.pictures[index]));
         parentDetail.pictures.splice(index, 1);
-        ParentsService.deletePicture(pictureToDelete.reference)
+        ParentService.deletePicture(pictureToDelete.reference)
             .then(() => {
                 delete parentDetail.parentID;
-                ParentsService.updateParent(parentID, parentDetail)
+                ParentService.updateParent(parentID, parentDetail)
                     .then(() => {
                         toastr.success('Successfully deleted the picture');
                         $('#imageDeleteConfModal').modal('hide');

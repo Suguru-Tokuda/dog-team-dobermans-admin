@@ -5,7 +5,7 @@ import SortablePictureList from '../miscellaneous/sortablePictureList';
 import AboutUsService from '../../services/aboutUsService';
 import toastr from 'toastr';
 import ImageCropModal from '../miscellaneous/imageCropModal';
-import ParentsService from '../../services/parentsService';
+import ParentService from '../../services/parentService';
 import $ from 'jquery';
 
 class AboutUsPictureForm extends Component {
@@ -64,7 +64,7 @@ class AboutUsPictureForm extends Component {
     handleFinishImageCroppping = async (newFile) => {
         const { aboutUsID, aboutUsDetail } = this.state;
         this.props.showLoading({ reset: true, count: 1 });
-        const newPicture = await ParentsService.uploadPicture(newFile);
+        const newPicture = await ParentService.uploadPicture(newFile);
         aboutUsDetail.pictures.push(newPicture);
         AboutUsService.updateAboutUs(aboutUsID, aboutUsDetail)
             .then(() => {

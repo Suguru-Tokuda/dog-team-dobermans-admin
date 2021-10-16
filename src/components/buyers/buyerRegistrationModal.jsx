@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import toastr from 'toastr';
 import $ from 'jquery';
 import { connect } from 'react-redux';
-import BuyersService from '../../services/buyersService';
+import UserService from '../../services/userService';
 import ConstantsService from '../../services/constantsService';
 import ValidationService from '../../services/validationService';
 
@@ -225,7 +225,7 @@ class BuyerRegistrationModal extends Component {
             let emailAvailable = false;
             this.props.showLoading({ reset: true, count: 1 });
             try {
-                const res = await BuyersService.checkEmailAvailability(selections.email);
+                const res = await UserService.checkEmailAvailability(selections.email);
                 emailAvailable = res.data;
                 if (emailAvailable === false)
                     validations.email = 'Email taken already.';
@@ -235,7 +235,7 @@ class BuyerRegistrationModal extends Component {
             if (emailAvailable === true) {
                 this.props.showLoading({ reset: true, count: 1 });
                 setTimeout(() => {
-                    BuyersService.createBuyer(selections.firstName, selections.lastName, selections.email, selections.phone, selections.state, selections.city)
+                    UserService.createUser(selections.firstName, selections.lastName, selections.email, selections.phone, selections.state, selections.city)
                         .then(res => {
                             this.props.onBuyerSelected(res.data.buyerID);
                             this.setState({
@@ -298,7 +298,7 @@ class BuyerRegistrationModal extends Component {
             const { puppyIDs } = this.state.buyerToUpdate;
             let emailAvailable = true;
             try {
-                const res = await BuyersService.checkEmailAvailability(email, buyerID);
+                const res = await UserService.checkEmailAvailability(email, buyerID);
                 emailAvailable = res.data;
                 if (emailAvailable === false)
                     validations.email = 'Email taken already.';
@@ -312,7 +312,7 @@ class BuyerRegistrationModal extends Component {
             }
             if (emailAvailable === true) {
                 setTimeout(() => {
-                    BuyersService.updateBuyer(buyerID, firstName, lastName, email, phone, state, city, puppyIDs)
+                    UserService.updateUser(buyerID, firstName, lastName, email, phone, state, city, puppyIDs)
                         .then(() => {
                             this.props.onBuyerUpdated();
                             toastr.success('Successfully updated a buyer');

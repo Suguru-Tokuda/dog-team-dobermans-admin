@@ -1,55 +1,48 @@
 import SessionInfoService from './sessionInfoService';
-import UtilService from './utilService';
-import * as api from '../api.json';
 import axios from 'axios';
 import { storage } from './firebaseService';
+import UtilService from './utilService';
 
-export default class PuppiesService {
+export default class ParentService {
     static getServiceBase() {
-        return `${SessionInfoService.getBaseUrlForAPI()}`;
+        return `${SessionInfoService.getBaseUrlForAPI()}api/parents`;
     }
 
-    static getAllPuppies() {
-        return axios.get(`${this.getServiceBase()}puppies?key=${api.API_KEY}&includeBuyer=true`);
+    static getAllParents() {
+        return axios.get(`${this.getServiceBase()}`);
     }
 
-    static getPuppy(puppyID) {
-        return axios.get(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyID=${puppyID}`);
+    static getParent(parentID) {
+        return axios.get(`${this.getServiceBase()}/getByID?parentID=${parentID}`);
     }
 
-    static getPuppiesForBuyerID(buyerID) {
-        return axios.get(`${this.getServiceBase()}puppies/getByBuyerID?key=${api.API_KEY}&buyerID=${buyerID}`);
-    }
-
-    static createPuppy(data) {
-        return axios.post(`${this.getServiceBase()}puppy?key=${api.API_KEY}`, data);
-    }
-
-    static updatePuppy(puppyID, data) {
-        return axios.put(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyID=${puppyID}`, data);
-    }
-
-    static processTransaction(puppyID, buyerID, paidAmount) {
+    static createParent(name, dateOfBirth, type, gender, color, weight, description, pictures) {
         const data = {
-            puppyID: puppyID,
-            buyerID: buyerID,
-            paidAmount: paidAmount
+            name: name,
+            dateOfBirth: dateOfBirth,
+            type: type,
+            gender: gender,
+            color: color,
+            weight: weight,
+            description: description,
+            pictures: pictures,
+            live: false
         };
-        return axios.post(`${this.getServiceBase()}puppies/processTransaction?key=${api.API_KEY}`, data);
+        return axios.post(`${this.getServiceBase()}`, data);
     }
 
-    static cancelTransaction(puppyID) {
-        return axios.post(`${this.getServiceBase()}puppies/cancelTransaction?key=${api.API_KEY}&puppyID=${puppyID}`);
+    static updateParent(parentID, data) {
+        return axios.put(`${this.getServiceBase()}?parentID=${parentID}`, data);
     }
 
-    static deletePuppy(puppyID) {
-        return axios.delete(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyID=${puppyID}`);
+    static deleteParent(parentID) {
+        return axios.delete(`${this.getServiceBase()}?parentID=${parentID}`);
     }
 
     static uploadPicture(imageFile) {
         return new Promise(function (resolve) {
             const pictureID = UtilService.generateID(10);
-            const reference = `/puppies/${pictureID}`;
+            const reference = `/parents/${pictureID}`;
             const task = storage.ref(reference).put(imageFile);
             task.on('state_changed',
                 function (snapshot) {
@@ -83,7 +76,7 @@ export default class PuppiesService {
                 },
                 function () {
                     task.snapshot.ref.getDownloadURL()
-                        .then(function (downloadURL) { 
+                        .then(function (downloadURL) {
                             resolve({
                                 reference: reference,
                                 url: downloadURL
@@ -92,7 +85,7 @@ export default class PuppiesService {
                 });
         });
     }
-
+    
     static deletePicture(imageRef) {
         const desertRef = storage.ref(imageRef);
         return desertRef.delete();
