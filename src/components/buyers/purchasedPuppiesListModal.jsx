@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PuppiesService from '../../services/puppiesService';
+import PuppyService from '../../services/puppyService';
 import $ from 'jquery';
 import moment from 'moment';
 import toastr from 'toastr';
@@ -18,7 +18,7 @@ class PurchasedPuppiesModal extends Component {
         if (updateData === true && buyerID !== undefined) {
             this.setState({ updateData: false });
             this.props.showLoading({ reset: true, count: 1 });
-            PuppiesService.getPuppiesForBuyerID(buyerID)
+            PuppyService.getPuppiesForBuyerID(buyerID)
                 .then(res => {
                     this.setState({ puppies: res.data });
                 })

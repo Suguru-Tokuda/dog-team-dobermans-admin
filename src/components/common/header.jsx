@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { auth } from '../../services/firebaseService';
 import Messages from './messages';
-import waitListService from '../../services/waitListService';
+import waitlistService from '../../services/waitlistService';
 import toastr from 'toastr';
 import moment from 'moment';
 
@@ -32,7 +32,7 @@ class AdminHeader extends Component {
             }
 
             if (loadMessages) {
-                waitListService.getUnreadMessagesByUserID(undefined, 5)
+                waitlistService.getUnreadMessagesByUserID(undefined, 5)
                     .then(res => {
                         this.setState({ 
                             messages: res.data,

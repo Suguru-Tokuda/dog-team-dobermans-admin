@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import toastr from 'toastr';
-import WaitListService from '../../services/waitListService';
+import WaitlistService from '../../services/waitlistService';
 import ValidationService from '../../services/validationService';
 import ConstantsService from '../../services/constantsService';
 import DatePicker from 'react-datepicker';
@@ -20,7 +20,7 @@ class WaitRequestEditor extends Component {
             state: '',
             message: '',
             color: '',
-            expectedPurchaseDate: null
+            // expectedPurchaseDate: null
         },
         waitRequestData: {},
         validations: {},
@@ -41,9 +41,9 @@ class WaitRequestEditor extends Component {
 
     componentDidMount() {
         const { waitRequestID } = this.state;
-        if (waitRequestID !== '') {
+        if (waitRequestID) {
             this.props.showLoading({ reset: true, count: 1 });
-            WaitListService.getWaitRequest(waitRequestID)
+            WaitlistService.getWaitRequest(waitRequestID)
                 .then(res => {
                     const { selections } = this.state;
                     const { firstName, lastName, email, phone, city, state, message, note, color, expectedPurchaseDate } = res.data;
@@ -56,11 +56,10 @@ class WaitRequestEditor extends Component {
                     selections.message = message !== undefined ? message : '';
                     selections.note = note !== undefined ? note : '';
                     selections.color = color !== undefined ? color : '';
-                    selections.expectedPurchaseDate = expectedPurchaseDate !== undefined ? new Date(expectedPurchaseDate) : null;
+                    // selections.expectedPurchaseDate = expectedPurchaseDate !== undefined ? new Date(expectedPurchaseDate) : null;
                     this.setState({ waitRequestData: res.data, selections: selections });
                 })
                 .catch(err => {
-                    console.log(err);
                     toastr.error('There was an error in loading wait request data');
                 })
                 .finally(() => {
@@ -178,16 +177,16 @@ class WaitRequestEditor extends Component {
         this.setState({ selections, validations });
     }
 
-    handleSelectExpectedPurchaseDate = (expectedPurchaseDate) => {
-        const { selections, validations } = this.state;
-        selections.expectedPurchaseDate = expectedPurchaseDate;
-        if (expectedPurchaseDate !== null) {
-            validations.expectedPurchaseDate = '';
-        } else {
-            validations.expectedPurchaseDate = 'Enter expected purchase date';
-        }
-        this.setState({ selections, validations });
-    }
+    // handleSelectExpectedPurchaseDate = (expectedPurchaseDate) => {
+    //     const { selections, validations } = this.state;
+    //     selections.expectedPurchaseDate = expectedPurchaseDate;
+    //     if (expectedPurchaseDate !== null) {
+    //         validations.expectedPurchaseDate = '';
+    //     } else {
+    //         validations.expectedPurchaseDate = 'Enter expected purchase date';
+    //     }
+    //     this.setState({ selections, validations });
+    // }
 
     handleSetMessage = (event) => {
         const message = event.target.value;
@@ -227,7 +226,7 @@ class WaitRequestEditor extends Component {
                 delete validations[key];
             }
         });
-        const { firstName, lastName, email, phone, city, state, color, message, note, expectedPurchaseDate } = selections;
+        const { firstName, lastName, email, phone, city, state, color, message, note } = selections;
         if (isValid === true) {
             if (waitRequestID === '') {
                 const createData = {
@@ -238,21 +237,21 @@ class WaitRequestEditor extends Component {
                     city: `${selections.city.trim().substring(0, 1).toUpperCase()}${selections.city.trim().substring(1)}`,
                     state: state,
                     color: color.trim(),
-                    expectedPurchaseDate: expectedPurchaseDate,
+                    // expectedPurchaseDate: expectedPurchaseDate,
                     message: message.trim(),
                     note: note.trim(),
                     created: new Date(),
                     notified: null
                 };
                 this.props.showLoading({ reset: true, count: 1 });
-                WaitListService.createWaitRequest(createData)
+                WaitlistService.createWaitRequestByEmail(createData)
                     .then(() => {
                         toastr.success('New wait request created.');
                         this.props.history.push('/wait-list');
                     })
                     .catch(err => {
                         console.log(err);
-                        toastr.error('There was an erorr in creating a wait request');
+                        toastr.error('There was an error in creating a wait request');
                     })
                     .finally(() => {
                         this.props.doneLoading({ reset: true });
@@ -266,11 +265,11 @@ class WaitRequestEditor extends Component {
                 updateData.city = city.trim();
                 updateData.state = state;
                 updateData.color = color;
-                updateData.expectedPurchaseDate = expectedPurchaseDate;
+                // updateData.expectedPurchaseDate = expectedPurchaseDate;
                 updateData.message = message.trim();
                 updateData.note = note.trim();
                 this.props.showLoading({ reset: true, count: 1 });
-                WaitListService.updateWaitRequest(waitRequestID, updateData)
+                WaitlistService.updateWaitRequest(waitRequestID, updateData)
                     .then(() => {
                         toastr.success('Updated a wait request');
                         this.props.history.push('/wait-list');
@@ -383,11 +382,11 @@ class WaitRequestEditor extends Component {
                                     {this.getColorOptions()}
                                 </select>
                             </div>
-                            <div className="col-sm-6">
+                            {/* <div className="col-sm-6">
                                 <label className="form-label">Expected Purchase Date *</label><br/>
                                 <DatePicker className={`form-control ${this.getFormClass('expectedPurchaseDate')}`} selected={expectedPurchaseDate} onChange={this.handleSelectExpectedPurchaseDate} />
                                 <br />{formSubmitted === true && validations.expectedPurchaseDate && (<small className="text-danger">{validations.expectedPurchaseDate}</small>)}
-                            </div>
+                            </div> */}
                         </div>
                         <div className="row">
                             <div className="col-12">

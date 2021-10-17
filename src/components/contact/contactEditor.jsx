@@ -33,7 +33,7 @@ class ContactUsEditor extends Component {
 
     componentDidMount() {
         this.props.showLoading({ reset: true, count: 1 });
-        ContactService.getContactusInfo()
+        ContactService.getContact()
             .then(res => {
                 const selections = {
                     firstName: res.data.firstName,
@@ -202,7 +202,7 @@ class ContactUsEditor extends Component {
             this.props.showLoading({ reset: true, count: 1 });
             const { firstName, lastName, street, city, state, email, phone, zip } = selections;
             const { contactID } = contactInfo;
-            ContactService.updateContactdInfo(firstName, lastName, street, city, state, email, phone, zip, contactID)
+            ContactService.updateContact(firstName, lastName, street, city, state, email, phone, zip, contactID)
                 .then(() => {
                     if (Object.keys(contactInfo).length > 0) {
                         toastr.success('Successfully updated contact info');

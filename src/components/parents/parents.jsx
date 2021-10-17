@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import ParentsTable from './parentsTable';
-import ParentsService from '../../services/parentsService';
+import ParentService from '../../services/parentService';
 import toastr from 'toastr';
 import ParentDeleteConfModal from './parentDeleteConfModal';
 
@@ -31,7 +31,7 @@ class Parents extends Component {
 
     loadParents() {
         this.props.showLoading({ reset: true, count: 1 });
-        ParentsService.getAllParents()
+        ParentService.getAllParents()
             .then(res => {
                 res.data.sort((a, b) => { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
                 this.setState({ parents: res.data });
@@ -94,9 +94,8 @@ class Parents extends Component {
             }
         });
         parentToUpdate.live = !parentToUpdate.live;
-        delete parentToUpdate.parentID;
         this.props.showLoading({ reset: true, count: 1 });
-        ParentsService.updateParent(parentID, parentToUpdate)
+        ParentService.updateParent(parentToUpdate)
             .then(() => {
                 parentToUpdate.parentID = parentID;
                 parents[index] = parentToUpdate;
@@ -139,13 +138,13 @@ class Parents extends Component {
         if (pictures.length > 0) {
             pictures.forEach(async picture => {
                 try { 
-                    await ParentsService.deletePicture(picture.reference);
+                    await ParentService.deletePicture(picture.reference);
                 } catch (err) {
                     console.log(err);
                 }
             });
         }
-        ParentsService.deleteParent(parentToDelete.parentID)
+        ParentService.deleteParent(parentToDelete.parentID)
             .then(res => {
                 toastr.success('Successfully deleted a parent');
                 this.setState({

@@ -6,7 +6,7 @@ import { storage } from './firebaseService';
 
 export default class BlogService {
     static getServiceBase() {
-        return `${SessionInfoService.getBaseUrlForAPI()}blogs?key=${api.API_KEY}`;
+        return `${SessionInfoService.getBaseUrlForAPI()}api/blogs`;
     }
 
     static getAllBlogs() {
@@ -14,7 +14,7 @@ export default class BlogService {
     }
 
     static getBlog(blogID) {
-        return axios.get(`${this.getServiceBase()}&blogID=${blogID}`);
+        return axios.get(`${this.getServiceBase()}?blogID=${blogID}`);
     }
 
     static createBlog(author, title, message, thumbnail) {
@@ -34,11 +34,11 @@ export default class BlogService {
             message: message,
             thumbnail: thumbnail
         };
-        return axios.put(`${this.getServiceBase()}&blogID=${blogID}`, data);
+        return axios.put(`${this.getServiceBase()}?blogID=${blogID}`, data);
     }
 
     static deleteBlog(blogID) {
-        return axios.delete(`${this.getServiceBase()}&blogID=${blogID}`);
+        return axios.delete(`${this.getServiceBase()}?blogID=${blogID}`);
     }
 
     static uploadPicture(imageFile) {

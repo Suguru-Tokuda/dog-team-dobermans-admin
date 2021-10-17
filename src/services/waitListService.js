@@ -1,50 +1,76 @@
 import SessionInfoService from './sessionInfoService';
 import ConstantsService from './constantsService';
 import UtilService from './utilService';
-import * as api from '../api.json';
 import axios from 'axios';
 import { storage } from './firebaseService';
 
-export default class WaitListService {
+export default class WaitlistService {
     static getServiceBase() {
-        return `${SessionInfoService.getBaseUrlForAPI()}waitList`;
+        return `${SessionInfoService.getBaseUrlForAPI()}api/waitlist`;
     }
 
     static getWaitRequest(waitRequestID) {
-        return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}&waitRequestID=${waitRequestID}`);
+        return axios.get(`${this.getServiceBase()}/getByID?&waitRequestID=${waitRequestID}`);
+    }
+
+    static getWaitRequestsByIDs(waitRequestIDs) {
+        const data = {
+            waitRequestIDs: waitRequestIDs
+        };
+
+        return axios.post(`${this.getServiceBase()}/getByIDs`, data);
     }
 
     static getWaitList() {
         const recipientID = ConstantsService.getBreederID();
-        return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}&recipientID=${recipientID}`);
+        return axios.get(`${this.getServiceBase()}?&recipientID=${recipientID}`);
+    }
+
+    static getWaitlistByRange(startIndex, endIndex, sortField, sortDescending, searchText) {
+        const recipientID = ConstantsService.getBreederID();
+        const data = {
+            recipientID: recipientID,
+            startIndex: startIndex,
+            endIndex: endIndex,
+            sortField: sortField,
+            searchText: searchText,
+            activeOnly: true,
+            sortDescending: sortDescending
+        };
+
+        return axios.post(`${this.getServiceBase()}/getByRange`, data);
     }
 
     static waitRequest(data) {
-        return axios.post(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
+        return axios.post(`${this.getServiceBase()}`, data);
     }
 
     static createWaitRequest(data) {
-        return axios.post(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
+        return axios.post(`${this.getServiceBase()}`, data);
+    }
+
+    static createWaitRequestByEmail(data) {
+        return axios.post(`${this.getServiceBase()}/createByEmail`, data);
     }
 
     static updateWaitRequest(waitRequestID, data) {
-        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}&waitRequestID=${waitRequestID}`, data);
+        return axios.put(`${this.getServiceBase()}?&waitRequestID=${waitRequestID}`, data);
     }
 
     static updateWaitRequests(waitRequests) {
-        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}`, waitRequests);
+        return axios.put(`${this.getServiceBase()}?`, waitRequests);
     }
 
     static getMessagesByUserID(userID = ConstantsService.getBreederID(), limit) {
-        return axios.get(`${this.getServiceBase()}/messages/getByUserID?key=${api.API_KEY}&userID=${userID}&limit=${limit}`)
+        return axios.get(`${this.getServiceBase()}/messages/byUserID?&userID=${userID}&limit=${limit}`)
     }
 
     static getUnreadMessagesByUserID(userID = ConstantsService.getBreederID(), limit) {
-        return axios.get(`${this.getServiceBase()}/messages/getUnreadMessagesByUserID?key=${api.API_KEY}&userID=${userID}&limit=${limit}`)
+        return axios.get(`${this.getServiceBase()}/messages/unreadByUseID?&userID=${userID}&limit=${limit}`)
     }
 
     static getMessagesGroupedByWaitRequest() {
-        return axios.get(`${this.getServiceBase()}/messages/byWaitRequest?key=${api.API_KEY}`);
+        return axios.get(`${this.getServiceBase()}/messages/byWaitRequest`);
     }
 
     static sendWaitRequestMessage(senderID = ConstantsService.getBreederID(), recipientID, waitRequestID, messageBody) {
@@ -57,15 +83,28 @@ export default class WaitListService {
             read: false
         };
 
-        return axios.post(`${this.getServiceBase()}/messages?key=${api.API_KEY}`, data);
+        return axios.post(`${this.getServiceBase()}/messages`, data);
+    }
+
+    static updateWaitRequestMessage(senderID = ConstantsService.getBreederID(), recipientID, waitRequestID, messageBody) {
+        const data = {
+            waitRequestID: waitRequestID,
+            senderID: senderID,
+            recipientID: recipientID,
+            messageBody: messageBody,
+            isBreeder: true,
+            read: false
+        };
+
+        return axios.put(`${this.getServiceBase()}/messages`, data);
     }
 
     static getWaitRequestMessages(waitRequestID) {
-        return axios.get(`${this.getServiceBase()}/messages?key=${api.API_KEY}&waitRequestID=${waitRequestID}`);
+        return axios.get(`${this.getServiceBase()}/messages?&waitRequestID=${waitRequestID}`);
     }
 
     static getNewMessages(waitRequestID, recipientID = 'sSJ0mWxDjtaTuFsolvKskzDY4GI3') {
-        return axios.get(`${this.getServiceBase()}/messages?key=${api.API_KEY}&waitRequestID=${waitRequestID}&recipientID=${recipientID}&onlyUnread=true`);
+        return axios.get(`${this.getServiceBase()}/messages?&waitRequestID=${waitRequestID}&recipientID=${recipientID}&onlyUnread=true`);
     }
 
     static deleteWaitRequests(waitRequestIDs) {
@@ -74,7 +113,7 @@ export default class WaitListService {
             data: {
                 waitRequestIDs: waitRequestIDs
             },
-            url: `${this.getServiceBase()}?key=${api.API_KEY}`
+            url: `${this.getServiceBase()}?`
         });
     }
 
@@ -84,7 +123,7 @@ export default class WaitListService {
             subject: subject,
             body: body
         };
-        return axios.post(`${this.getServiceBase()}/notify?key=${api.API_KEY}`, data);
+        return axios.post(`${this.getServiceBase()}/notify`, data);
     }
 
     static markMessageAsRead(messageIDs) {
@@ -92,7 +131,7 @@ export default class WaitListService {
             messageIDs: messageIDs
         };
 
-        return axios.post(`${this.getServiceBase()}/messages/markAsRead?key=${api.API_KEY}`, data);
+        return axios.post(`${this.getServiceBase()}/messages/markAsRead`, data);
     }
 
     static uploadPicture(imageFile) {

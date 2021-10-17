@@ -4,7 +4,7 @@ import { Link, Redirect } from 'react-router-dom';
 import PuppiesTable from './puppiesTable';
 import PuppyDeleteConfModal from './puppyDeleteConfModal';
 import PuppyTransactionCancelationModal from './puppyTransactionCancelationModal';
-import PuppiesService from '../../services/puppiesService';
+import PuppyService from '../../services/puppyService';
 import toastr from 'toastr';
 import $ from 'jquery';
 
@@ -34,7 +34,7 @@ class Puppies extends Component {
 
     getPuppies = () => {
         this.props.showLoading({ reset: true, count: 1 });
-        PuppiesService.getAllPuppies()
+        PuppyService.getAllPuppies()
             .then(res => {
                 this.setState({ puppies: res.data });
             })
@@ -112,7 +112,7 @@ class Puppies extends Component {
     handleDoCancelTransactionBtnClicked = () => {
         const { puppyIDToCancelTransaction } = this.state;
         this.props.showLoading({ reset: true, count: 1 });
-        PuppiesService.cancelTransaction(puppyIDToCancelTransaction)
+        PuppyService.cancelTransaction(puppyIDToCancelTransaction)
             .then(() => {
                 toastr.success('Successfully cancelled the transaction');
                 $('#puppyTransactionCancelationModal').modal('hide');
@@ -147,7 +147,7 @@ class Puppies extends Component {
         });
         puppyToUpdate.live = !puppyToUpdate.live;
         this.props.showLoading({ reset: true, count: 1 });
-        PuppiesService.updatePuppy(puppyID, puppyToUpdate)
+        PuppyService.updatePuppy(puppyID, puppyToUpdate)
             .then(() => {
                 puppies[index] = puppyToUpdate;
                 this.setState({ puppies });
@@ -192,13 +192,13 @@ class Puppies extends Component {
         if (pictures.length > 0) {
             pictures.forEach(async picture => {
                 try {
-                    await PuppiesService.deletePicture(picture.reference);
+                    await PuppyService.deletePicture(picture.reference);
                 } catch (err) {
                     console.log(err);
                 }
             });
         }
-        PuppiesService.deletePuppy(puppyToDelete.puppyID)
+        PuppyService.deletePuppy(puppyToDelete.puppyID)
             .then(() => {
                 toastr.success('Successfully deleted a puppy');
                 $('#puppyDeleteConfModal').modal('hide');

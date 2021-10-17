@@ -1,32 +1,31 @@
 import SessionInfoService from './sessionInfoService';
 import UtilService from './utilService';
-import * as api from '../api.json';
 import axios from 'axios';
 import { storage } from './firebaseService';
 
-export default class PuppiesService {
+export default class PuppyService {
     static getServiceBase() {
-        return `${SessionInfoService.getBaseUrlForAPI()}`;
+        return `${SessionInfoService.getBaseUrlForAPI()}api/puppies`;
     }
 
     static getAllPuppies() {
-        return axios.get(`${this.getServiceBase()}puppies?key=${api.API_KEY}&includeBuyer=true`);
+        return axios.get(`${this.getServiceBase()}?includeBuyer=true`);
     }
 
     static getPuppy(puppyID) {
-        return axios.get(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyID=${puppyID}`);
+        return axios.get(`${this.getServiceBase()}/getByID?puppyID=${puppyID}`);
     }
 
     static getPuppiesForBuyerID(buyerID) {
-        return axios.get(`${this.getServiceBase()}puppies/getByBuyerID?key=${api.API_KEY}&buyerID=${buyerID}`);
+        return axios.get(`${this.getServiceBase()}/getByBuyerID?&buyerID=${buyerID}`);
     }
 
     static createPuppy(data) {
-        return axios.post(`${this.getServiceBase()}puppy?key=${api.API_KEY}`, data);
+        return axios.post(`${this.getServiceBase()}`, data);
     }
 
     static updatePuppy(puppyID, data) {
-        return axios.put(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyID=${puppyID}`, data);
+        return axios.put(`${this.getServiceBase()}?puppyID=${puppyID}`, data);
     }
 
     static processTransaction(puppyID, buyerID, paidAmount) {
@@ -35,19 +34,19 @@ export default class PuppiesService {
             buyerID: buyerID,
             paidAmount: paidAmount
         };
-        return axios.post(`${this.getServiceBase()}puppies/processTransaction?key=${api.API_KEY}`, data);
+        return axios.post(`${this.getServiceBase()}/processTransaction`, data);
     }
 
     static cancelTransaction(puppyID) {
-        return axios.post(`${this.getServiceBase()}puppies/cancelTransaction?key=${api.API_KEY}&puppyID=${puppyID}`);
+        return axios.post(`${this.getServiceBase()}/cancelTransaction?&puppyID=${puppyID}`);
     }
 
     static deletePuppy(puppyID) {
-        return axios.delete(`${this.getServiceBase()}puppy?key=${api.API_KEY}&puppyID=${puppyID}`);
+        return axios.delete(`${this.getServiceBase()}?&puppyID=${puppyID}`);
     }
 
     static uploadPicture(imageFile) {
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             const pictureID = UtilService.generateID(10);
             const reference = `/puppies/${pictureID}`;
             const task = storage.ref(reference).put(imageFile);
@@ -69,12 +68,15 @@ export default class PuppiesService {
                 function (err) {
                     switch (err.code) {
                         case 'storage/unauthorized':
+                            reject('Storage unauthorized.');
                             // console.log('unauthorized');
                             break;
                         case 'storage/canceled':
+                            reject('Image uploading cancelled.');
                             // console.log('canceled');
                             break;
                         case 'storage/unknown':
+                            reject('Image uploading stopped for unknown error.');
                             // console.log('unknown error');
                             break;
                         default:
@@ -88,6 +90,9 @@ export default class PuppiesService {
                                 reference: reference,
                                 url: downloadURL
                             });
+                        })
+                        .catch((err) => {
+                            reject(err);
                         });
                 });
         });

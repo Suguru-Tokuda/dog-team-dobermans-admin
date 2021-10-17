@@ -12,7 +12,7 @@ class ContactUsDetail extends Component {
 
     componentDidMount() {
         this.props.showLoading({ reset: true, count: 1 });
-        ContactService.getContactusInfo()
+        ContactService.getContact()
             .then(res => {
                 this.setState({ contactInfo: res.data });
             })

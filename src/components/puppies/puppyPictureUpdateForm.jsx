@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import PuppiesService from '../../services/puppiesService';
+import PuppyService from '../../services/puppyService';
 import SortablePictureLlist from '../miscellaneous/sortablePictureList';
 import toastr from 'toastr';
 import ImageCropModal from '../miscellaneous/imageCropModal';
@@ -25,7 +25,7 @@ class PuppyPictureUpdateForm extends Component {
     componentDidMount() {
         const { puppyID } = this.state;
         this.props.showLoading({ reset: true, count: 1 });
-        PuppiesService.getPuppy(puppyID)
+        PuppyService.getPuppy(puppyID)
             .then(res => {
                 this.setState({
                     puppyData: res.data
@@ -76,7 +76,7 @@ class PuppyPictureUpdateForm extends Component {
         const puppyData = this.state.puppyData;
         puppyData.pictures = pictures;
         this.setState({ puppyData });
-        PuppiesService.updatePuppy(this.state.puppyID, puppyData);
+        PuppyService.updatePuppy(this.state.puppyID, puppyData);
     }
 
     handleImageChange = async (event) => {
@@ -90,15 +90,18 @@ class PuppyPictureUpdateForm extends Component {
         // upload a picture and get { reference, url }
         const puppyData = this.state.puppyData;
         let newPicture;
+
         try {
-            newPicture = await PuppiesService.uploadPicture(newFile);
+            newPicture = await PuppyService.uploadPicture(newFile);
         } catch (err) {
             toastr.error('There was an error in uploading a file');
+            this.props.doneLoading({reset: true});
+            return;
         }
         if (typeof newPicture !== 'undefined') {
             // push the new picture reference
             puppyData.pictures.push(newPicture);
-            PuppiesService.updatePuppy(this.state.puppyID, puppyData)
+            PuppyService.updatePuppy(this.state.puppyID, puppyData)
                 .then(res => {
                     toastr.success('Upload success');
                     this.setState({ tempPictureFile: null })
@@ -118,10 +121,10 @@ class PuppyPictureUpdateForm extends Component {
         const pictureToDelete = pictures[index];
         pictures.splice(index, 1);
         puppyData.pictures = pictures;
-        PuppiesService.deletePicture(pictureToDelete.reference)
+        PuppyService.deletePicture(pictureToDelete.reference)
             .then(res => {
                 delete puppyData.puppyID;
-                PuppiesService.updatePuppy(this.state.puppyID, puppyData)
+                PuppyService.updatePuppy(this.state.puppyID, puppyData)
                     .then(res => {
                         toastr.success('Successfully deleted the picture');
                         $('#imageDeleteConfModal').modal('hide');

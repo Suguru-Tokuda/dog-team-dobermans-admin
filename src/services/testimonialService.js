@@ -6,7 +6,7 @@ import { storage } from './firebaseService';
 
 export default class TestimonialService {
     static getServiceBase() {
-        return `${SessionInfoService.getBaseUrlForAPI()}testimonials`;
+        return `${SessionInfoService.getBaseUrlForAPI()}api/testimonials`;
     }
 
     static createTestimonial(firstName, lastName, dogName, email, message, picture, date) {
@@ -20,21 +20,21 @@ export default class TestimonialService {
             created: date,
             approved: false
         };
-        return axios.post(`${this.getServiceBase()}?key=${api.API_KEY}`, data);
+        return axios.post(`${this.getServiceBase()}`, data);
     }
     
     static getAllTestimonials() {
-        return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}`);
+        return axios.get(`${this.getServiceBase()}`);
     }
 
     static getTestimonial(testimonialID) {
-        return axios.get(`${this.getServiceBase()}?key=${api.API_KEY}&testimonialID=${testimonialID}`);
+        return axios.get(`${this.getServiceBase()}?&testimonialID=${testimonialID}`);
     }
 
     static updateTestimonial(testimonialID, testimonial) {
         const data = JSON.parse(JSON.stringify(testimonial));
         delete data.testimonialID;
-        return axios.put(`${this.getServiceBase()}?key=${api.API_KEY}&testimonialID=${testimonialID}`, data);
+        return axios.put(`${this.getServiceBase()}?&testimonialID=${testimonialID}`, data);
     }
 
     static deleteTestimonials(testimonialIDs) {
@@ -44,7 +44,7 @@ export default class TestimonialService {
         return axios({
             method: 'DELETE',
             data: data,
-            url: `${this.getServiceBase()}?key=${api.API_KEY}`
+            url: `${this.getServiceBase()}`
         });
     }
 

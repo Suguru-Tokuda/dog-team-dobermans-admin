@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ConstantsService from '../../services/constantsService';
 import DatePicker from 'react-datepicker';
-import ParentsService from '../../services/parentsService';
+import ParentService from '../../services/parentService';
 import toastr from 'toastr';
 
 class ParentInitialForm extends Component {
@@ -48,7 +48,7 @@ class ParentInitialForm extends Component {
         const { parentID, selections } = this.state;
         if (typeof this.props.initialParams === 'undefined') {
             this.props.showLoading({ reset: true, count: 1 });
-            ParentsService.getParent(parentID)
+            ParentService.getParent(parentID)
                 .then(res => {
                     const parentDetail = res.data;
                     selections.name = parentDetail.name;
@@ -238,7 +238,7 @@ class ParentInitialForm extends Component {
             parentToUpdate.description = parentToUpdate.description.trim();
             parentToUpdate.weight = parseFloat(parentToUpdate.weight);
             this.props.showLoading({ reset: true, count: 1 });
-            ParentsService.updateParent(parentID, parentToUpdate)
+            ParentService.updateParent(parentID, parentToUpdate)
                 .then(() => {
                     toastr.success('Profile updated');
                     this.props.history.push(`/parent/update/${parentID}`);

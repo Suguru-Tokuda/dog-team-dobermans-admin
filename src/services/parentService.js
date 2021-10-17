@@ -1,20 +1,19 @@
 import SessionInfoService from './sessionInfoService';
 import axios from 'axios';
-import * as api from '../api.json';
 import { storage } from './firebaseService';
 import UtilService from './utilService';
 
-export default class ParentsService {
+export default class ParentService {
     static getServiceBase() {
-        return `${SessionInfoService.getBaseUrlForAPI()}`;
+        return `${SessionInfoService.getBaseUrlForAPI()}api/parents`;
     }
 
     static getAllParents() {
-        return axios.get(`${this.getServiceBase()}parents?key=${api.API_KEY}`);
+        return axios.get(`${this.getServiceBase()}`);
     }
 
     static getParent(parentID) {
-        return axios.get(`${this.getServiceBase()}parent?parentID=${parentID}&key=${api.API_KEY}`);
+        return axios.get(`${this.getServiceBase()}/getByID?parentID=${parentID}`);
     }
 
     static createParent(name, dateOfBirth, type, gender, color, weight, description, pictures) {
@@ -29,19 +28,19 @@ export default class ParentsService {
             pictures: pictures,
             live: false
         };
-        return axios.post(`${this.getServiceBase()}parent?&key=${api.API_KEY}`, data);
+        return axios.post(`${this.getServiceBase()}`, data);
     }
 
-    static updateParent(parentID, data) {
-        return axios.put(`${this.getServiceBase()}parent?parentID=${parentID}&key=${api.API_KEY}`, data);
+    static updateParent(data) {
+        return axios.put(`${this.getServiceBase()}`, data);
     }
 
     static deleteParent(parentID) {
-        return axios.delete(`${this.getServiceBase()}parent?parentID=${parentID}&key=${api.API_KEY}`);
+        return axios.delete(`${this.getServiceBase()}?parentID=${parentID}`);
     }
 
     static uploadPicture(imageFile) {
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             const pictureID = UtilService.generateID(10);
             const reference = `/parents/${pictureID}`;
             const task = storage.ref(reference).put(imageFile);
@@ -63,13 +62,13 @@ export default class ParentsService {
                 function (err) {
                     switch (err.code) {
                         case 'storage/unauthorized':
-                            // console.log('unauthorized');
+                            reject('unauthorized');
                             break;
                         case 'storage/canceled':
-                            // console.log('canceled');
+                            reject('canceled');
                             break;
                         case 'storage/unknown':
-                            // console.log('unknown error');
+                            reject('unknown error');
                             break;
                         default:
                             break;

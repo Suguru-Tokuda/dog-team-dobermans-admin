@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import toastr from 'toastr';
-import waitListService from '../../services/waitListService';
+import waitlistService from '../../services/waitlistService';
 import MessageTable from './messageTable';
 
 class MessageList extends Component {
@@ -17,7 +17,7 @@ class MessageList extends Component {
     componentDidMount() {
         this.props.showLoading({ reset: true, count: 1 });
 
-        waitListService.getMessagesGroupedByWaitRequest()
+        waitlistService.getMessagesGroupedByWaitRequest()
             .then(res => {
                 this.setState({
                     messages: res.data

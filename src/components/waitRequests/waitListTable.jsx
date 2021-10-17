@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Checkbox } from 'react-ui-icheck';
-import SortService from '../../services/sortService';
 import UtilService from '../../services/utilService';
+import SearchService from '../../services/searchService';
+import WaitlistService from '../../services/waitlistService';
 import Pagination from '../miscellaneous/pagination';
 import moment from 'moment';
 import $ from 'jquery';
 import WaitListEmailModal from './waitListEmailModal';
+import { connect } from 'react-redux';
+import toastr from 'toastr';
 
 class WaitListTable extends Component {
     state = {
@@ -14,6 +17,7 @@ class WaitListTable extends Component {
         filteredData: [],
         displayedData: [],
         waitRequestsToNotify: [],
+        selectedWaitRequestIDs: [],
         paginationInfo: {
             currentPage: 1,
             startIndex: 0,
@@ -24,7 +28,7 @@ class WaitListTable extends Component {
         },
         sortData: {
             key: 'created',
-            orderAcs: false
+            orderAsc: false
         },
         checkAll: false,
         filterForExpectedPurchaseDate: false,
@@ -43,7 +47,11 @@ class WaitListTable extends Component {
         this.state.paginationInfo.totalItems = props.totalItems;
     }
 
-    componentDidMount() {
+    componentDidUpdate() {
+        this.enablePopover();
+    }
+
+    enablePopover() {
         $(document).ready(() => {
             $('[data-toggle="popover"]').popover({
                 placement: 'top',
@@ -52,68 +60,45 @@ class WaitListTable extends Component {
         });
     }
 
-    componentDidUpdate(props) {
-        const { tableData, paginationInfo, gridSearch, updateDisplayedData, updateFilteredData, doFilterForExpectedPurchaseDate, expectedPurchaseDateToSearch } = this.state;
-        if (updateFilteredData === true) {
-            let filteredData;
-            if (gridSearch !== '') {
-                const tableDataCopy = JSON.parse(JSON.stringify(tableData)).map(waitRequest => { waitRequest.selected = false; return waitRequest });
-                const searchKeywords = gridSearch.toLowerCase().trim().split(' ');
-                filteredData = this.filterForKeywords(tableDataCopy, searchKeywords);
-            } else {
-                filteredData = JSON.parse(JSON.stringify(tableData));
-            }
-            if (doFilterForExpectedPurchaseDate === true) {
-                filteredData = this.filterForExpectedPurchaseDate(filteredData, expectedPurchaseDateToSearch);
-            }
-            paginationInfo.totalItems = props.totalItems;
-            this.setState({
-                filteredData: filteredData,
-                paginationInfo: paginationInfo,
-                updateDisplayedData: true,
-                updateFilteredData: false
-            });
-        }
-        if (updateDisplayedData === true) {
-            this.setState({ updateDisplayedData: false });
-            this.updateDisplayedData(paginationInfo.currentPage, paginationInfo.startIndex, paginationInfo.endIndex);
-        }
-    }
-
     static getDerivedStateFromProps(nextProps, prevState) {
-        const newWaitRequests = JSON.parse(JSON.stringify(nextProps.waitRequests)).map(waitRequest => { waitRequest.selected = false; return waitRequest; });
-        const currentTableData = JSON.parse(JSON.stringify(prevState.tableData)).map(waitRequest => { waitRequest.selected = false; return waitRequest; });
+        const newWaitRequests = nextProps.waitRequests;
+        const currentTableData = prevState.tableData;
+
         if (JSON.stringify(newWaitRequests) !== JSON.stringify(currentTableData)) {
+            const selectedWaitRequestIDs = prevState.selectedWaitRequestIDs;
+            let selectCount = 0;
+            newWaitRequests.forEach(waitRequest => {
+                if (selectedWaitRequestIDs.indexOf(waitRequest.waitRequestID) !== -1) {
+                    waitRequest.selected = true;
+                    selectCount++;
+                } else {
+                    waitRequest.selected = false;
+                }
+            });
+
             return {
-                tableData: newWaitRequests,
-                updateFilteredData: true
+                checkAll: selectCount === newWaitRequests.length,
+                displayedData: newWaitRequests
             };
         }
         return null;
     }
 
     updateDisplayedData = (currentPage, startIndex, endIndex) => {
-        let displayedData;
-        const { filteredData, paginationInfo } = this.state;
-        if (startIndex !== endIndex) {
-            displayedData = filteredData.slice(startIndex, endIndex + 1);
-        } else {
-            displayedData = filteredData.slice(startIndex, startIndex + 1);
-        }
+        const { paginationInfo } = this.state;
         paginationInfo.currentPage = currentPage;
         paginationInfo.startIndex = startIndex;
         paginationInfo.endIndex = endIndex;
-        let counter = 0;
-        displayedData.forEach(waitRequest => {
-            if (waitRequest.selected === true)
-                counter++;
-        });
-        const checkAll = counter === displayedData.length;
+
         this.setState({
-            paginationInfo: paginationInfo,
-            displayedData: displayedData,
-            checkAll: checkAll
+            paginationInfo: paginationInfo
         });
+
+        /* Fetch data from the api */
+        const { sortData, gridSearch } = this.state;
+        const { key, orderAsc } = sortData;
+
+        this.props.onUpdateList(startIndex, endIndex, key, !orderAsc, gridSearch);
     }
 
     getPopoverContentForLastMessageFromUser = (waitRequest) => {
@@ -125,13 +110,17 @@ class WaitListTable extends Component {
     }
 
     sortTable = (accessor) => {
-        const { filteredData, sortData, paginationInfo } = this.state;
-        const tableData = SortService.sortDisplayedData(filteredData, accessor, sortData, paginationInfo.startIndex, paginationInfo.endIndex);
-        this.setState({
-            filteredData: tableData.filteredData,
-            displayedData: tableData.displayedData,
-            sortData: tableData.sortData
-        });
+        const { paginationInfo, sortData, gridSearch } = this.state;
+
+        if (sortData.key === accessor) {
+            sortData.orderAsc = !sortData.orderAsc;
+        } else {
+            sortData.key = accessor;
+            sortData.orderAsc = true;
+        }
+
+        this.setState({sortData});
+        this.props.onUpdateList(paginationInfo.startIndex, paginationInfo.endIndex, accessor, !sortData.orderAsc, gridSearch);
     }
 
     getPageSizeOptions() {
@@ -172,12 +161,18 @@ class WaitListTable extends Component {
 
     getTable() {
         const { displayedData, gridSearch, checkAll } = this.state;
+
         const thead = (
             <thead>
                 <tr>
                     <th className="text-center" data-toggle="tooltip" data-placement="top" title="Select/Unselect All">
                         {displayedData.length > 0 && (
-                            <Checkbox checkboxClass="icheckbox_square-blue" increaseArea="-100%" checked={checkAll} onChange={this.handleAllCheckChanged} label=" "/>
+                            <Checkbox checkboxClass="icheckbox_square-blue" 
+                                      increaseArea="-100%" 
+                                      checked={checkAll} 
+                                      onChange={this.handleAllCheckChanged} 
+                                      label=" "
+                            />
                         )}
                     </th>
                     <th>Wait Request ID</th>
@@ -200,7 +195,29 @@ class WaitListTable extends Component {
                 </tr>
                 <tr>
                     <th colSpan="100%">
-                        <input type="text" className="form-control" placeholder="Search for wait requests" defaultValue={gridSearch} onChange={this.handleGridSearch} />
+                        <div className="input-group">
+                            <input type="text" 
+                                   className="form-control" 
+                                   placeholder="Search for wait requests" 
+                                   defaultValue={gridSearch}
+                                   value={gridSearch}
+                                   onChange={this.handleGridSearch} 
+                            />
+                            <div className="input-group-append">
+                                <button className="btn btn-primary" 
+                                        type="button"
+                                        onClick={this.handleSearchBtnClicked}
+                                >
+                                    Search
+                                </button>
+                                <button className="btn btn-danger"
+                                        type="button"
+                                        onClick={this.handleClearSearchBtnClicked}
+                                >
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
                     </th>
                 </tr>
             </thead>
@@ -277,51 +294,75 @@ class WaitListTable extends Component {
     }
 
     handleCheckChanged = (index, e, checked) => {
-        const { displayedData, tableData, filteredData } = this.state;
+        const { displayedData, selectedWaitRequestIDs } = this.state;
+
         displayedData[index].selected = checked;
         const waitRequestID = displayedData[index].waitRequestID;
-        for (let i = 0, max = tableData.length; i < max; i++) {
-            if (tableData[i].waitRequestID === waitRequestID) {
-                tableData[i].selected = checked;
+        let selectCounter = 0;
+
+        if (checked) {
+            if (SearchService.getTargetIndex(selectedWaitRequestIDs, waitRequestID) === -1) {
+                const insertIndex = SearchService.getInsertIndex(selectedWaitRequestIDs, waitRequestID);
+                selectedWaitRequestIDs.splice(insertIndex, 0, waitRequestID);
             }
+        } else {
+            const removeIndex = SearchService.getTargetIndex(selectedWaitRequestIDs, waitRequestID);            
+            if (removeIndex !== -1)
+                selectedWaitRequestIDs.splice(removeIndex, 1);
         }
-        for (let i = 0, max = filteredData.length; i < max; i++) {
-            if (filteredData[i].waitRequestID === waitRequestID) {
-                filteredData[i].selected = checked;
-                break;
-            }
-        }
-        let counter = 0;
-        displayedData.forEach(waitRequest => {
-            if (waitRequest.selected === true)
-            counter++;
+
+        displayedData.forEach(request => {
+            if (request.selected)
+                selectCounter++;
         });
-        const checkAll = counter === displayedData.length;
-        this.setState({ displayedData, tableData, filteredData, checkAll });
+
+        const checkAll = selectCounter === displayedData.length;
+        this.setState({ displayedData, selectedWaitRequestIDs, checkAll });
     }
 
     handleAllCheckChanged = (e, checked) => {
-        const { tableData, filteredData, displayedData } = this.state;
+        const { displayedData, selectedWaitRequestIDs } = this.state;
+
         for (let i = 0, max = displayedData.length; i < max; i++) {
             displayedData[i].selected = checked;
-        }
-        const waitRequestIDs = displayedData.map(testimonial => testimonial.waitRequestID);
-        for (let i = 0, max = tableData.length; i < max; i++) {
-            if (waitRequestIDs.indexOf(tableData[i].waitRequestID) !== -1) {
-                tableData[i].selected = checked;
+            const waitRequestID = displayedData[i].waitRequestID;
+
+            if (checked) {
+                if (SearchService.getTargetIndex(selectedWaitRequestIDs, waitRequestID) === -1) {
+                    const insertIndex = SearchService.getInsertIndex(selectedWaitRequestIDs, waitRequestID);
+                    selectedWaitRequestIDs.splice(insertIndex, 0, waitRequestID);
+                }
+            } else {
+                const removeIndex = SearchService.getTargetIndex(selectedWaitRequestIDs, waitRequestID);            
+                if (removeIndex !== -1)
+                    selectedWaitRequestIDs.splice(removeIndex, 1);
             }
         }
-        for (let i = 0, max = filteredData.length; i < max; i++) {
-            if (waitRequestIDs.indexOf(filteredData[i].waitRequestID) !== -1) {
-                filteredData[i].selected = checked;
-            }
-        }
-        this.setState({ checkAll: checked, tableData: tableData, filteredData: filteredData, displayedData: displayedData });
+
+        this.setState({ checkAll: checked, displayedData: displayedData, selectedWaitRequestIDs: selectedWaitRequestIDs });
+    }
+
+    handleSearchBtnClicked = () => {
+        const { pageSize } = this.state.paginationInfo;
+        const { sortData, gridSearch } = this.state;
+        const { key, orderAsc } = sortData;
+        /* Refresh data and reset pagination. */
+        this.props.onUpdateList(0, pageSize, key, !orderAsc, gridSearch);
+    }
+
+    handleClearSearchBtnClicked = () => {
+        const gridSearch = '';
+        const { pageSize } = this.state.paginationInfo;
+        const { sortData } = this.state;
+        const { key, orderAsc } = sortData;
+
+        this.setState({gridSearch});
+        /* Refresh data and reset pagination. */
+        this.props.onUpdateList(0, pageSize, key, !orderAsc, gridSearch);
     }
 
     handleGridSearch = (input) => {
-        this.setState({ girdSearch: input.target.value });
-        this.processGridSearch(input.target.value);
+        this.setState({ gridSearch: input.target.value });
     }
 
     handlePageSizeChanged = (input) => {
@@ -331,19 +372,22 @@ class WaitListTable extends Component {
     }
 
     handleNotifyBtnClicked = () => {
-        const { tableData } = this.state;
-        const waitRequestsToNotify = [];
-        tableData.forEach(waitRequest => {
-            if (waitRequest.selected === true) {
-                const waitRequstToNotify = JSON.parse(JSON.stringify(waitRequest));
-                delete waitRequestsToNotify.selected;
-                waitRequestsToNotify.push(waitRequstToNotify);
-            }
-        });
-        this.setState({ waitRequestsToNotify });
-        if ($('#waitListEmailModal').is(':visible') === false) {
-            $('#waitListEmailModal').modal('show');
-        }
+        const { selectedWaitRequestIDs } = this.state;
+
+        this.props.showLoading({reset: true, count: 1});
+        WaitlistService.getWaitRequestsByIDs(selectedWaitRequestIDs)
+            .then(res => {
+                this.setState({ waitRequestsToNotify: res.data });
+                if ($('#waitListEmailModal').is(':visible') === false) {
+                    $('#waitListEmailModal').modal('show');
+                }       
+            })
+            .catch(err => {
+                toastr.error('There was an error in loading wait requests data.');
+            })
+            .finally(() => {
+                this.props.doneLoading({reset: true});
+            });
     }
 
     handleCancelEmailBtnClicked = () => {
@@ -414,16 +458,20 @@ class WaitListTable extends Component {
     }
 
     handleDeleteBtnClicked = () => {
-        const waitRequestIDs = [];
-        const { tableData } = this.state;
+        const { selectedWaitRequestIDs } = this.state;
 
-        tableData.forEach(waitRequest => {
-            if (waitRequest.selected === true)
-                waitRequestIDs.push(waitRequest.waitRequestID);
-        });
+        if (selectedWaitRequestIDs.length > 0) {
+            const { sortData } = this.state;
+            const { paginationInfo } = this.state;
 
-        if (waitRequestIDs.length > 0)
-            this.props.onDeleteBtnClicked(waitRequestIDs);
+            this.props.onDeleteBtnClicked(selectedWaitRequestIDs, 0, paginationInfo.pageSize, sortData.key, !sortData.orderAsc);
+            const gridSearch = '';
+            paginationInfo.currentPage = 1;
+            paginationInfo.startIndex = 0;
+            paginationInfo.endIndex = 0;
+
+            this.setState({paginationInfo, gridSearch});
+        }
     }
 
     handleFilterForExpectedPurchaseDateChanged = (e, checked) => {
@@ -445,8 +493,8 @@ class WaitListTable extends Component {
     }
 
     render() {
-        const buttonDisabled = this.getNumberOfSelectedWaitRequests() === 0;
-        const { waitRequestsToNotify, filterForExpectedPurchaseDate, expectedPurchaseDateToSearch } = this.state;
+        const buttonDisabled = this.state.selectedWaitRequestIDs.length === 0;
+        const { waitRequestsToNotify } = this.state;
         return (
             <React.Fragment>
                 <div className="animated fadeIn">
@@ -496,4 +544,17 @@ class WaitListTable extends Component {
 
 }
 
-export default WaitListTable;
+const mapStateToProps = state => ({
+    user: state.user,
+    authenticated: state.authenticated,
+    loadCount: state.loadCount
+});
+
+const mapDispatchToProps = dispatch => {
+    return {
+        showLoading: (params) => dispatch({ type: 'SHOW_LOADING', params: params }),
+        doneLoading: () => dispatch({ type: 'DONE_LOADING' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(WaitListTable);

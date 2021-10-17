@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ConstantsService from '../../services/constantsService';
 import DatePicker from 'react-datepicker';
-import PuppiesService from '../../services/puppiesService';
+import PuppyService from '../../services/puppyService';
 import UtilService from '../../services/utilService';
 import toastr from 'toastr';
 
@@ -72,7 +72,7 @@ class PuppyInitialForm extends Component {
         const { puppyID } = this.state;
         if (puppyID !== '') {
             this.props.showLoading({ reset: true, count: 1 });
-            PuppiesService.getPuppy(puppyID)
+            PuppyService.getPuppy(puppyID)
                 .then(res => {
                     const puppyDetail = res.data;
                     const { selections } = this.state;
@@ -367,7 +367,7 @@ class PuppyInitialForm extends Component {
               puppyDetail.description = selections.description;
               puppyDetail.dateOfBirth = selections.dateOfBirth;
               this.props.showLoading({ reset: true, count: 1 });
-              PuppiesService.updatePuppy(puppyID, puppyDetail)
+              PuppyService.updatePuppy(puppyID, puppyDetail)
                 .then(() => {
                     toastr.success('Profile updated');
                     this.props.onCancelBtnClicked();
