@@ -40,7 +40,7 @@ export default class ParentService {
     }
 
     static uploadPicture(imageFile) {
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             const pictureID = UtilService.generateID(10);
             const reference = `/parents/${pictureID}`;
             const task = storage.ref(reference).put(imageFile);
@@ -62,13 +62,13 @@ export default class ParentService {
                 function (err) {
                     switch (err.code) {
                         case 'storage/unauthorized':
-                            // console.log('unauthorized');
+                            reject('unauthorized');
                             break;
                         case 'storage/canceled':
-                            // console.log('canceled');
+                            reject('canceled');
                             break;
                         case 'storage/unknown':
-                            // console.log('unknown error');
+                            reject('unknown error');
                             break;
                         default:
                             break;

@@ -95,6 +95,8 @@ class ParentPictureUpdateForm extends Component {
         } catch (err) {
             console.log(err);
             toastr.error('There was an error in uploading a file');
+            this.props.doneLoading({reset: true});
+            return;
         }
         // push the new picture reference
         if (typeof newPicture !== 'undefined') {

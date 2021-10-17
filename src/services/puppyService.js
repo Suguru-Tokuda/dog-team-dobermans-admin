@@ -1,6 +1,5 @@
 import SessionInfoService from './sessionInfoService';
 import UtilService from './utilService';
-import * as api from '../api.json';
 import axios from 'axios';
 import { storage } from './firebaseService';
 
@@ -10,11 +9,11 @@ export default class PuppyService {
     }
 
     static getAllPuppies() {
-        return axios.get(`${this.getServiceBase()}?&includeBuyer=true`);
+        return axios.get(`${this.getServiceBase()}?includeBuyer=true`);
     }
 
     static getPuppy(puppyID) {
-        return axios.get(`${this.getServiceBase()}/getByBuyerID?&puppyID=${puppyID}`);
+        return axios.get(`${this.getServiceBase()}/getByID?puppyID=${puppyID}`);
     }
 
     static getPuppiesForBuyerID(buyerID) {
@@ -26,7 +25,7 @@ export default class PuppyService {
     }
 
     static updatePuppy(puppyID, data) {
-        return axios.put(`${this.getServiceBase()}?&puppyID=${puppyID}`, data);
+        return axios.put(`${this.getServiceBase()}?puppyID=${puppyID}`, data);
     }
 
     static processTransaction(puppyID, buyerID, paidAmount) {
@@ -47,7 +46,7 @@ export default class PuppyService {
     }
 
     static uploadPicture(imageFile) {
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             const pictureID = UtilService.generateID(10);
             const reference = `/puppies/${pictureID}`;
             const task = storage.ref(reference).put(imageFile);
@@ -69,12 +68,15 @@ export default class PuppyService {
                 function (err) {
                     switch (err.code) {
                         case 'storage/unauthorized':
+                            reject('Storage unauthorized.');
                             // console.log('unauthorized');
                             break;
                         case 'storage/canceled':
+                            reject('Image uploading cancelled.');
                             // console.log('canceled');
                             break;
                         case 'storage/unknown':
+                            reject('Image uploading stopped for unknown error.');
                             // console.log('unknown error');
                             break;
                         default:
@@ -88,6 +90,9 @@ export default class PuppyService {
                                 reference: reference,
                                 url: downloadURL
                             });
+                        })
+                        .catch((err) => {
+                            reject(err);
                         });
                 });
         });

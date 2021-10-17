@@ -18,46 +18,48 @@ class WaitRequestDetail extends Component {
         super(props);
 
         this.state.waitRequestID = props.match.params.waitRequestID;
-
-        this.props.showLoading({ reset: true, count: 1 });
         const { waitRequestID } = this.state;
 
-        Promise.all([
-            WaitlistService.getWaitRequest(waitRequestID),
-            WaitlistService.getWaitRequestMessages(waitRequestID)
-        ])
-        .then(async res => {
-
-            const waitRequest = res[0].data;
-            const messages = res[1].data;
-
-            this.state.waitRequest = waitRequest;
-            this.state.messages = messages;
-
-            if (messages.length > 0) {
-                const messageIDsMarkAsRead = [];
-
-                messages.forEach(message => {
-                    if (message.recipientID === ConstantsService.getBreederID() && !message.read)
-                        messageIDsMarkAsRead.push(message.messageID)
-                });
-                        
-                if (messageIDsMarkAsRead.length > 0) {
-                    try {
-                        await WaitlistService.markMessageAsRead(messageIDsMarkAsRead);
-                    } catch (err) {
-                        console.log(err);
+        if (waitRequestID && waitRequestID !== 'editor') {
+            this.props.showLoading({ reset: true, count: 1 });
+    
+            Promise.all([
+                WaitlistService.getWaitRequest(waitRequestID),
+                WaitlistService.getWaitRequestMessages(waitRequestID)
+            ])
+            .then(async res => {
+    
+                const waitRequest = res[0].data;
+                const messages = res[1].data;
+    
+                this.state.waitRequest = waitRequest;
+                this.state.messages = messages;
+    
+                if (messages.length > 0) {
+                    const messageIDsMarkAsRead = [];
+    
+                    messages.forEach(message => {
+                        if (message.recipientID === ConstantsService.getBreederID() && !message.read)
+                            messageIDsMarkAsRead.push(message.messageID)
+                    });
+                            
+                    if (messageIDsMarkAsRead.length > 0) {
+                        try {
+                            await WaitlistService.markMessageAsRead(messageIDsMarkAsRead);
+                        } catch (err) {
+                            console.log(err);
+                        }
                     }
                 }
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-            toastr.error('There was an error on loading wait request data')
-        })
-        .finally(() => {
-            this.props.doneLoading({ reset: false });
-        });
+            })
+            .catch((err) => {
+                console.log(err);
+                toastr.error('There was an error on loading wait request data')
+            })
+            .finally(() => {
+                this.props.doneLoading({ reset: false });
+            });
+        }
     }
 
     renderRequestDetail = () => {
@@ -168,22 +170,26 @@ class WaitRequestDetail extends Component {
             prevPathname = this.props.location.state;
         }
 
-        return (
-            <div className="container">
-                { this.renderRequestDetail() }
-                <div className="row">
-                    <div className="col-12">
-                        <Link className="btn btn-primary" to={prevPathname ? prevPathname : '/wait-list' }>Back</Link>
+        if (waitRequestID && waitRequestID !== 'editor') {
+            return (
+                <div className="container">
+                    { this.renderRequestDetail() }
+                    <div className="row">
+                        <div className="col-12">
+                            <Link className="btn btn-primary" to={prevPathname ? prevPathname : '/wait-list' }>Back</Link>
+                        </div>
                     </div>
+                    <WaitRequestMessenger {...this.props} 
+                                          waitRequestID={waitRequestID} 
+                                          userID={userID}
+                                          onMessageSent={this.onMessageSent.bind(this)}
+                    />
+                    { this.renderExistingMessages() }
                 </div>
-                <WaitRequestMessenger {...this.props} 
-                                      waitRequestID={waitRequestID} 
-                                      userID={userID}
-                                      onMessageSent={this.onMessageSent.bind(this)}
-                />
-                { this.renderExistingMessages() }
-            </div>
-        );
+            );
+        } else {
+            return null;
+        }
     }
 }
 

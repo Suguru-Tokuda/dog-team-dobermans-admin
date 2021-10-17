@@ -147,25 +147,26 @@ class PuppyConfirmation extends Component {
         const pictures = this.state.pictures;
         let pictureLinks = [];
         this.props.showLoading({ reset: true, count: 1 });
-        if (pictures.length > 0) {
-            for (let i = 0, max = pictures.length; i < max; i++) {
-                const url = await PuppyService.uploadPicture(pictures[i]);
-                pictureLinks.push(url);
+
+        try {
+            if (pictures.length > 0) {
+                for (let i = 0, max = pictures.length; i < max; i++) {
+                    const url = await PuppyService.uploadPicture(pictures[i]);
+                    pictureLinks.push(url);
+                }
             }
+
+            data.pictures = pictureLinks;
+            data.name = data.name.trim();
+            await PuppyService.createPuppy(data);
+            toastr.success('New puppy created');
+
+        } catch (err) {
+            toastr.error('There was an error in creating a puppy');
+        } finally {
+            this.props.doneLoading({ reset: true });
+            this.props.history.push('/puppies');
         }
-        data.pictures = pictureLinks;
-        data.name = data.name.trim();
-        PuppyService.createPuppy(data)
-            .then(() => {
-                toastr.success('New puppy created');
-            })
-            .catch(() => {
-                toastr.error('There was an error in creating a puppy');
-            })
-            .finally(() => {
-                this.props.doneLoading({ reset: true });
-                this.props.history.push('/puppies');
-            });
     }
 
     handleModifyBtnClicked = () => {

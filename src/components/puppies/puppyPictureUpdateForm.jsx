@@ -90,10 +90,13 @@ class PuppyPictureUpdateForm extends Component {
         // upload a picture and get { reference, url }
         const puppyData = this.state.puppyData;
         let newPicture;
+
         try {
             newPicture = await PuppyService.uploadPicture(newFile);
         } catch (err) {
             toastr.error('There was an error in uploading a file');
+            this.props.doneLoading({reset: true});
+            return;
         }
         if (typeof newPicture !== 'undefined') {
             // push the new picture reference
