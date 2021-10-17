@@ -31,8 +31,8 @@ export default class ParentService {
         return axios.post(`${this.getServiceBase()}`, data);
     }
 
-    static updateParent(parentID, data) {
-        return axios.put(`${this.getServiceBase()}?parentID=${parentID}`, data);
+    static updateParent(data) {
+        return axios.put(`${this.getServiceBase()}`, data);
     }
 
     static deleteParent(parentID) {

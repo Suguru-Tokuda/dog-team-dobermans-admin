@@ -94,9 +94,8 @@ class Parents extends Component {
             }
         });
         parentToUpdate.live = !parentToUpdate.live;
-        delete parentToUpdate.parentID;
         this.props.showLoading({ reset: true, count: 1 });
-        ParentService.updateParent(parentID, parentToUpdate)
+        ParentService.updateParent(parentToUpdate)
             .then(() => {
                 parentToUpdate.parentID = parentID;
                 parents[index] = parentToUpdate;
