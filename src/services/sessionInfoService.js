@@ -1,6 +1,10 @@
 export default class SessionInfoService {
     static getBaseUrlForAPI() {
-        const isProd = window.location.toString().indexOf('dogteamdobermans-admin.web.app') !== -1;
+        const prodOrigins = [
+            'dogteamdobermans-admin.web.app', 
+            'https://dogteamdobermans-admin.firebaseapp.com'
+        ];
+        const isProd = prodOrigins.indexOf(window.location.origin) !== -1;
         
         if (isProd)
             return "https://us-central1-dogteamdobermans.cloudfunctions.net/";
