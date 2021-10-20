@@ -85,6 +85,14 @@ class Pagination extends Component {
         };
     }
 
+    handlePaginationClicked() {
+        const wrapper = document.getElementsByClassName('c-body');
+
+        if (wrapper.length > 0) {
+            wrapper[0].scrollTop = 0;
+        }
+    }
+
     getPagination = () => {
         if (this.state.totalItems > 0) {
             const paginationItems = this.state.paginationInfo.pages.map(page => 
@@ -93,7 +101,7 @@ class Pagination extends Component {
                 </li>
             );
             return (
-                <nav aria-label="pagination">
+                <nav aria-label="pagination" onClick={this.handlePaginationClicked}>
                     <ul className="pagination pagination-sm justify-content-center">
                         <li className={"page-item" + this.getFirstBtnClass()} onClick={() => this.handlePageChange(1)}>
                             <button className="page-link" aria-label="First">First</button>
