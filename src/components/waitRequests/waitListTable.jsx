@@ -64,7 +64,7 @@ class WaitListTable extends Component {
         const newWaitRequests = nextProps.waitRequests;
         const currentTableData = prevState.tableData;
 
-        if (JSON.stringify(newWaitRequests) !== JSON.stringify(currentTableData)) {
+        if (JSON.stringify(newWaitRequests) !== JSON.stringify(currentTableData) || (nextProps.totalItems !== prevState.paginationInfo.totalItems)) {
             const selectedWaitRequestIDs = prevState.selectedWaitRequestIDs;
             let selectCount = 0;
             newWaitRequests.forEach(waitRequest => {
@@ -76,11 +76,16 @@ class WaitListTable extends Component {
                 }
             });
 
+            const { paginationInfo } = prevState;
+            paginationInfo.totalItems = nextProps.totalItems;
+
             return {
                 checkAll: selectCount === newWaitRequests.length,
-                displayedData: newWaitRequests
+                displayedData: newWaitRequests,
+                paginationInfo: paginationInfo
             };
         }
+
         return null;
     }
 
@@ -141,11 +146,11 @@ class WaitListTable extends Component {
         const { tableData, paginationInfo } = this.state;
         if (tableData.length > 0) {
             return <Pagination
-                    onPageChange={this.updateDisplayedData.bind(this)}
-                    currentPage={paginationInfo.currentPage}
-                    totalItems={paginationInfo.totalItems}
-                    maxPages={paginationInfo.maxPages}
-                    pageSize={paginationInfo.pageSize}
+                        onPageChange={this.updateDisplayedData.bind(this)}
+                        currentPage={paginationInfo.currentPage}
+                        totalItems={paginationInfo.totalItems}
+                        maxPages={paginationInfo.maxPages}
+                        pageSize={paginationInfo.pageSize}
                     />;
         }
     }
