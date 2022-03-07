@@ -21,7 +21,8 @@ class PuppyInitialForm extends Component {
             dadID: '',
             momID: '',
             description: '',
-            dateOfBirth: null
+            dateOfBirth: null,
+            showPrice: true
         },
         validations: {
             name: '',
@@ -65,6 +66,7 @@ class PuppyInitialForm extends Component {
             this.state.selections.momID = props.initialParams.momID;
             this.state.selections.description = props.initialParams.description;
             this.state.selections.dateOfBirth = props.initialParams.dateOfBirth;
+            this.state.selections.showPrice = props.initialParams.showPrice;
         }
     }
 
@@ -88,6 +90,7 @@ class PuppyInitialForm extends Component {
                     selections.momID = puppyDetail.momID;
                     selections.description = puppyDetail.description;
                     selections.dateOfBirth = new Date(puppyDetail.dateOfBirth);
+                    selections.showPrice = puppyDetail.showPrice;
                     this.setState({ selections: selections, puppyDetail: puppyDetail })
                 })
                 .catch(() => {
@@ -366,6 +369,7 @@ class PuppyInitialForm extends Component {
               puppyDetail.momID = selections.momID;
               puppyDetail.description = selections.description;
               puppyDetail.dateOfBirth = selections.dateOfBirth;
+              puppyDetail.showPrice = selections.showPrice;
               this.props.showLoading({ reset: true, count: 1 });
               PuppyService.updatePuppy(puppyID, puppyDetail)
                 .then(() => {

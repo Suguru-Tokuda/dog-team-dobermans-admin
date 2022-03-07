@@ -183,7 +183,13 @@ class PuppiesTable extends Component {
                             {puppy.paidAmount > 0 && (
                                 <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onCancelTransactionBtnClicked(puppy.puppyID)}><i className="fa fa-dollar"></i>Cancel Transaction</button>
                             )}
-                            <button type="button" className="btn btn-sm btn-info ml-1" onClick={() => this.props.onLiveBtnClicked(puppy.puppyID)}><i className={`${puppy.live === true ? 'fa fa-eye-slash' : 'fa fa-eye'}`}></i> {`${puppy.live === true ? 'Hide' : 'Go Live'}`}</button>
+                            <button type="button" className={`btn btn-sm ml-1 ${puppy.showPrice ? 'btn-primary' : 'btn-info'}`} onClick={() => this.props.onLiveBtnClicked(puppy.puppyID)}><i className={`${puppy.live === true ? 'fa fa-eye-slash' : 'fa fa-eye'}`}></i> {`${puppy.live === true ? 'Hide' : 'Go Live'}`}</button>
+                            <button type="button" 
+                                    className="btn btn-sm btn-info ml-1"
+                                    onClick={() => this.props.onShowPriceBtnClicked(puppy.puppyID)}
+                            >
+                                {puppy.showPrice ? 'Show' : 'Hide'} <i className="fa fa-dollar"></i>
+                            </button>
                             {puppy.paidAmount === 0 && (
                                 <button type="button" className="btn btn-sm btn-danger ml-1" onClick={() => this.props.onDeleteBtnClicked(puppy.puppyID)}><i className="fa fa-close"></i> Delete</button>
                             )}

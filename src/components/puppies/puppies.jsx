@@ -76,6 +76,7 @@ class Puppies extends Component {
                  onCancelTransactionBtnClicked={this.handleCancelTransactionBtnClicked.bind(this)}
                  onDeleteBtnClicked={this.handleDeleteBtnClicked.bind(this)}
                  onLiveBtnClicked={this.handleLiveBtnClicked.bind(this)}
+                 onShowPriceBtnClicked={this.handleShowPriceBtnClicked.bind(this)}
                  />
             );
         }
@@ -150,6 +151,34 @@ class Puppies extends Component {
         PuppyService.updatePuppy(puppyID, puppyToUpdate)
             .then(() => {
                 puppies[index] = puppyToUpdate;
+                this.setState({ puppies });
+            })
+            .catch(() => {
+                toastr.error('There was an error in updating a puppy');
+            })
+            .finally(() => {
+                this.props.doneLoading({ reset: true });
+            });
+    }
+
+    handleShowPriceBtnClicked = (puppyID) => {
+        const puppies = JSON.parse(JSON.stringify(this.state.puppies));
+        let puppyToUpdate, index;
+        this.state.puppies.forEach((puppy, i) => {
+            if (puppy.puppyID === puppyID) {
+                puppyToUpdate = Object.assign({}, puppy);
+                index = i;
+            }
+        });
+
+        puppyToUpdate.showPrice = puppyToUpdate.showPrice ? false : true;
+
+        this.props.showLoading({ reset: true, count: 1});
+
+        PuppyService.updatePuppy(puppyID, puppyToUpdate)
+            .then(() => {
+                puppies[index].showPrice = puppyToUpdate.showPrice;
+
                 this.setState({ puppies });
             })
             .catch(() => {
