@@ -26,7 +26,7 @@ class Pagination extends Component {
         this.state.totalItems = props.totalItems;
         const paginationInfo = PaginationService.getPaginationData(this.state.totalItems, props.currentPage, this.state.maxPages, this.state.pageSize);
         this.state.paginationInfo = paginationInfo;
-        props.onPageChange(this.state.currentPage, paginationInfo.startIndex, paginationInfo.endIndex);
+        props.onPageChange(this.state.currentPage, paginationInfo.startIndex, paginationInfo.endIndex, false);
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -40,7 +40,7 @@ class Pagination extends Component {
             if (nextProps.totalItems !== prevState.totalItems) {
                 state.totalItems = nextProps.totalItems;
             }
-            nextProps.onPageChange(1, paginationInfo.startIndex, paginationInfo.endIndex);
+            nextProps.onPageChange(1, paginationInfo.startIndex, paginationInfo.endIndex, false);
             return state;
         } else if (prevState.currentPage !== nextProps.currentPage) {
             const totalItems = prevState.paginationInfo.totalItems;
@@ -48,7 +48,7 @@ class Pagination extends Component {
             const state = prevState;
             state.currentPage = nextProps.currentPage;
             state.paginationInfo = paginationInfo;
-            nextProps.onPageChange(nextProps.currentPage, paginationInfo.startIndex, paginationInfo.endIndex);
+            nextProps.onPageChange(nextProps.currentPage, paginationInfo.startIndex, paginationInfo.endIndex, false);
         } else {
             return null;
         }
@@ -62,7 +62,7 @@ class Pagination extends Component {
                     currentPage: clickedPage,
                     paginationInfo: paginationInfo
                 });
-                this.props.onPageChange(clickedPage, paginationInfo.startIndex, paginationInfo.endIndex);
+                this.props.onPageChange(clickedPage, paginationInfo.startIndex, paginationInfo.endIndex, true);
             }
         }
     }

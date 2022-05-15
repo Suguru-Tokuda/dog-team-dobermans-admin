@@ -43,6 +43,7 @@ class WaitListTable extends Component {
     constructor(props) {
         super(props);
         this.state.tableData = props.waitRequests.map(waitRequest => { waitRequest.selected = false; return waitRequest; });
+        this.state.displayedData = JSON.parse(JSON.stringify(this.state.tableData)); 
         this.state.filteredData = JSON.parse(JSON.stringify(this.state.tableData));
         this.state.paginationInfo.totalItems = props.totalItems;
     }
@@ -89,7 +90,7 @@ class WaitListTable extends Component {
         return null;
     }
 
-    updateDisplayedData = (currentPage, startIndex, endIndex) => {
+    updateDisplayedData = (currentPage, startIndex, endIndex, updateList) => {
         const { paginationInfo } = this.state;
         paginationInfo.currentPage = currentPage;
         paginationInfo.startIndex = startIndex;
@@ -103,7 +104,8 @@ class WaitListTable extends Component {
         const { sortData, gridSearch } = this.state;
         const { key, orderAsc } = sortData;
 
-        this.props.onUpdateList(startIndex, endIndex, key, !orderAsc, gridSearch);
+        if (updateList)
+            this.props.onUpdateList(startIndex, endIndex, key, !orderAsc, gridSearch);
     }
 
     getPopoverContentForLastMessageFromUser = (waitRequest) => {
