@@ -3,6 +3,7 @@ import ConstantsService from './constantsService';
 import UtilService from './utilService';
 import axios from 'axios';
 import { storage } from './firebaseService';
+import moment from 'moment';
 
 export default class WaitlistService {
     static getServiceBase() {
@@ -26,7 +27,13 @@ export default class WaitlistService {
         return axios.get(`${this.getServiceBase()}?&recipientID=${recipientID}`);
     }
 
-    static getWaitlistByRange(startIndex, endIndex, sortField, sortDescending, searchText) {
+    static getWaitlistByRange(startDate, endDate, startIndex, endIndex, sortField, sortDescending, searchText) {
+        if (!startDate)
+            startDate = moment().subtract(30, 'days').toDate().toISOString();
+        
+        if (!endDate)
+            endDate = moment().toDate().toISOString();
+
         const recipientID = ConstantsService.getBreederID();
         const data = {
             recipientID: recipientID,
@@ -35,10 +42,12 @@ export default class WaitlistService {
             sortField: sortField,
             searchText: searchText,
             activeOnly: true,
+            startDate: startDate,
+            endDate: endDate,
             sortDescending: sortDescending
         };
 
-        return axios.post(`${this.getServiceBase()}/getByRange`, data);
+        return axios.post(`${this.getServiceBase()}/getByRangeTest`, data);
     }
 
     static waitRequest(data) {

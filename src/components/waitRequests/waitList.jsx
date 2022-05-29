@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import WaitListTable from './waitListTable';
 import WaitlistService from '../../services/waitlistService';
+import DateTimeService from '../../services/dateTimeService';
 import toastr from 'toastr';
 import imageCompression from 'browser-image-compression';
 import $ from 'jquery';
@@ -24,15 +25,16 @@ class WaitList extends Component {
 
     componentDidMount() {
         if (this.props.authenticated === true) {
-            this.updateWaitRequests(0, 25, 'created', true, '');
+            const { startDate, endDate } =  DateTimeService.getDateRangeByID(1);
+            this.updateWaitRequests(startDate, endDate, 0, 25, 'created', true, '');
         }
     }
 
-    updateWaitRequests(startIndex, endIndex, sortField, sortDescending, searchText) {
+    updateWaitRequests(startDate, endDate, startIndex, endIndex, sortField, sortDescending, searchText) {
         if (this.props.authenticated) {
             this.props.showLoading({reset: true, count: 1});
 
-            WaitlistService.getWaitlistByRange(startIndex, endIndex, sortField, sortDescending, searchText)
+            WaitlistService.getWaitlistByRange(startDate, endDate, startIndex, endIndex, sortField, sortDescending, searchText)
                 .then(res => {
                     const { data } = res;
                     this.setState({

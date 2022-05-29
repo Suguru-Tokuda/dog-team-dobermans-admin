@@ -4,12 +4,14 @@ import { Checkbox } from 'react-ui-icheck';
 import UtilService from '../../services/utilService';
 import SearchService from '../../services/searchService';
 import WaitlistService from '../../services/waitlistService';
+import DateTimeService from '../../services/dateTimeService';
 import Pagination from '../miscellaneous/pagination';
 import moment from 'moment';
 import $ from 'jquery';
 import WaitListEmailModal from './waitListEmailModal';
 import { connect } from 'react-redux';
 import toastr from 'toastr';
+import DateRangeModal from '../common/dateRangeModal';
 
 class WaitListTable extends Component {
     state = {
@@ -35,6 +37,15 @@ class WaitListTable extends Component {
         expectedPurchaseDateToSearch: null,
         gridSearch: '',
         pageSizes: [10, 25, 50],
+        dateRangeOptions: DateTimeService.getDateRangeOptions(),
+        dateRangeID: 1,
+        startDate: null,
+        endDate: null,
+        loadedDateRangeData: {
+            dateRangeID: null,
+            startDate: null,
+            endDate: null
+        },
         updateFilteredData: false,
         updateDisplayedData: false,
         doFilterForExpectedPurchaseDate: false
@@ -46,6 +57,8 @@ class WaitListTable extends Component {
         this.state.displayedData = JSON.parse(JSON.stringify(this.state.tableData)); 
         this.state.filteredData = JSON.parse(JSON.stringify(this.state.tableData));
         this.state.paginationInfo.totalItems = props.totalItems;
+
+        // access localStorage to get dateRangeID, startDate, endDate. If not found, use the default values
     }
 
     componentDidUpdate() {
@@ -83,7 +96,12 @@ class WaitListTable extends Component {
             return {
                 checkAll: selectCount === newWaitRequests.length,
                 displayedData: newWaitRequests,
-                paginationInfo: paginationInfo
+                paginationInfo: paginationInfo,
+                loadedDateRangeData: {
+                    dateRangeID: nextProps.dateRangeID,
+                    startDate: nextProps.startDate,
+                    endDate: nextProps.endDate
+                }
             };
         }
 
@@ -103,9 +121,12 @@ class WaitListTable extends Component {
         /* Fetch data from the api */
         const { sortData, gridSearch } = this.state;
         const { key, orderAsc } = sortData;
+        const dateRange = this.getSelectedGetRange();
+        const selectedStartDate = dateRange.startDate;
+        const selectedEndDate = dateRange.endDate;
 
         if (updateList)
-            this.props.onUpdateList(startIndex, endIndex, key, !orderAsc, gridSearch);
+            this.props.onUpdateList(selectedStartDate, selectedEndDate, startIndex, endIndex, key, !orderAsc, gridSearch);
     }
 
     getPopoverContentForLastMessageFromUser = (waitRequest) => {
@@ -117,7 +138,7 @@ class WaitListTable extends Component {
     }
 
     sortTable = (accessor) => {
-        const { paginationInfo, sortData, gridSearch } = this.state;
+        const { paginationInfo, sortData, gridSearch, startDate, endDate } = this.state;
 
         if (sortData.key === accessor) {
             sortData.orderAsc = !sortData.orderAsc;
@@ -127,7 +148,79 @@ class WaitListTable extends Component {
         }
 
         this.setState({sortData});
-        this.props.onUpdateList(paginationInfo.startIndex, paginationInfo.endIndex, accessor, !sortData.orderAsc, gridSearch);
+        this.props.onUpdateList(startDate, endDate, paginationInfo.startIndex, paginationInfo.endIndex, accessor, !sortData.orderAsc, gridSearch);
+    }
+
+    handleDateRangeSelected = (dateRange) => {
+        if (dateRange.startDate && dateRange.endDate) {
+            this.setState({
+                startDate: dateRange.startDate,
+                endDate: dateRange.endDate
+            });
+        }
+    }
+
+    handleDateRangeOptionSelected = (event) => {
+        const dateRangeID = parseInt(event.target.value)
+
+        this.setState({
+            dateRangeID: dateRangeID
+        });
+
+        if (dateRangeID === 6) {
+            // open modal to choose date range
+            if ($('#dateRangeModal').is(':visible') === false) {
+                $('#dateRangeModal').modal({backdrop: 'static', keyboard: false});
+                $('#dateRangeModal').modal('show');
+            }
+        } else {
+            const dateRange = DateTimeService.getDateRangeByID(dateRangeID);
+
+            this.setState({
+                startDate: dateRange.startDate,
+                endDate: dateRange.endDate
+            });
+        }
+    }
+
+    getDateRangeOptions = () => {
+        let selectedLabel = '';
+        const selectedDateRangeOption = this.state.dateRangeOptions.filter(option => option.id === this.state.dateRangeID)[0]; 
+
+        if (this.state.dateRangeID !== 6) {
+            selectedLabel = selectedDateRangeOption.label;
+        } else {
+            if (this.state.startDate && this.state.endDate) {
+                selectedLabel = `${moment(this.state.startDate).format('MM/DD/YYYY')}-${moment(this.state.endDate).format('MM/DD/YYYY')}`;
+            }
+        }
+
+        const dateRangeOptions = this.state.dateRangeOptions.map(option => {
+            let optionLabel = option.label;
+
+            if (option.id === 6 && this.state.dateRangeID === option.id) {
+                if (this.state.startDate && this.state.endDate) {
+                    optionLabel = `${option.label}: ${moment(this.state.startDate).format('MM/DD/YYYY')}-${moment(this.state.endDate).format('MM/DD/YYYY')}`;
+                }
+            }
+            return <option key={option.id}
+                           value={option.id}
+                   >
+                    {optionLabel}
+                   </option>
+        });
+
+        return (
+            <div className="input-group input-group-sm">
+                <select value={this.state.dateRangeID}
+                        className="form-control"
+                        onChange={this.handleDateRangeOptionSelected.bind(this)}
+                        style={{display: "inline-block"}}
+                >
+                    {dateRangeOptions}
+                </select>
+            </div>
+        );
     }
 
     getPageSizeOptions() {
@@ -135,11 +228,14 @@ class WaitListTable extends Component {
             <option key={pageSize}>{pageSize}</option>
         );
         return (
-                <div className="form-inline">
-                    Page size:
-                    <select value={this.state.paginationInfo.pageSize} className="form-control" onChange={this.handlePageSizeChanged}>
+                <div className="input-group input-group-sm">
+                    <select value={this.state.paginationInfo.pageSize} 
+                            className="form-control" 
+                            onChange={this.handlePageSizeChanged}
+                            style={{display: "inline-block"}}
+                    >
                         {pageSizeOptions}
-                    </select>
+                    </select>                    
                 </div>
         );
     }
@@ -221,7 +317,7 @@ class WaitListTable extends Component {
                                         type="button"
                                         onClick={this.handleClearSearchBtnClicked}
                                 >
-                                    Clear
+                                    <i className="fa fa-times"></i>
                                 </button>
                             </div>
                         </div>
@@ -351,21 +447,21 @@ class WaitListTable extends Component {
 
     handleSearchBtnClicked = () => {
         const { pageSize } = this.state.paginationInfo;
-        const { sortData, gridSearch } = this.state;
+        const { sortData, gridSearch, startDate, endDate } = this.state;
         const { key, orderAsc } = sortData;
         /* Refresh data and reset pagination. */
-        this.props.onUpdateList(0, pageSize, key, !orderAsc, gridSearch);
+        this.props.onUpdateList(startDate, endDate, 0, pageSize, key, !orderAsc, gridSearch);
     }
 
     handleClearSearchBtnClicked = () => {
         const gridSearch = '';
         const { pageSize } = this.state.paginationInfo;
-        const { sortData } = this.state;
+        const { sortData, startDate, endDate } = this.state;
         const { key, orderAsc } = sortData;
 
         this.setState({gridSearch});
         /* Refresh data and reset pagination. */
-        this.props.onUpdateList(0, pageSize, key, !orderAsc, gridSearch);
+        this.props.onUpdateList(startDate, endDate, 0, pageSize, key, !orderAsc, gridSearch);
     }
 
     handleGridSearch = (input) => {
@@ -499,6 +595,41 @@ class WaitListTable extends Component {
         this.setState({ expectedPurchaseDateToSearch, doFilterForExpectedPurchaseDate, updateFilteredData });
     }
 
+    handleLoadBtnClicked = () => {
+        // check if the date range has changed from the previous section.
+        // if changed, it needs to retrieve pagination information and set the start index to 0
+        
+        const { paginationInfo, sortData, gridSearch, dateRangeID, startDate, endDate, loadedDateRangeData } = this.state;
+        // const { startIndex, endIndex } = paginationInfo;
+        const startIndex = 0;
+        const endIndex = paginationInfo.pageSize - 1;
+        const { key, orderAsc } = sortData;
+
+        const dateRange = this.getSelectedGetRange();
+        const selectedStartDate = dateRange.startDate;
+        const selectedEndDate = dateRange.endDate;
+
+        if ((loadedDateRangeData.dateRangeID && loadedDateRangeData.startDate && loadedDateRangeData.endDate) && (dateRangeID !== loadedDateRangeData.dateRangeID || (dateRangeID === 6 && (startDate !== loadedDateRangeData.startDate || endDate !== loadedDateRangeData.endDate)))) {
+            toastr.error('Please elect date range to search for wait requests.');
+        } else {
+            // if not changed, use the existing information to load page data
+            this.props.onUpdateList(dateRange.startDate, dateRange.endDate, startIndex, endIndex, key, !orderAsc, gridSearch, selectedStartDate, selectedEndDate);
+        }
+    }
+
+    getSelectedGetRange = () => {
+        const { dateRangeID, startDate, endDate } = this.state;
+
+        if (dateRangeID !== 6) {
+            return DateTimeService.getDateRangeByID(dateRangeID);
+        } else {
+            return {
+                startDate: startDate,
+                endDate: endDate
+            };
+        }
+    }
+
     render() {
         const buttonDisabled = this.state.selectedWaitRequestIDs.length === 0;
         const { waitRequestsToNotify } = this.state;
@@ -508,10 +639,10 @@ class WaitListTable extends Component {
                     <div className="row">
                         <div className="col-12">
                             <div className="row">
-                                <div className="col-10">
-                                    <Link className="btn btn-success" to="/wait-list/editor">Create</Link>
-                                    <button className="btn btn-primary ml-2" disabled={buttonDisabled} onClick={this.handleNotifyBtnClicked}>Notify</button>
-                                    <button className="btn btn-danger ml-2" disabled={buttonDisabled} onClick={this.handleDeleteBtnClicked}>Delete</button>
+                                <div className="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xl-10">
+                                    <Link className="btn btn-success btn-sm" to="/wait-list/editor">Create</Link>
+                                    <button className="btn btn-primary btn-sm ml-2" disabled={buttonDisabled} onClick={this.handleNotifyBtnClicked}>Notify</button>
+                                    <button className="btn btn-danger btn-sm ml-2" disabled={buttonDisabled} onClick={this.handleDeleteBtnClicked}>Delete</button>
                                     {/* <span className="ml-2" data-toggle="tooltip" data-placement="top" title="Filter Wait List for 2 months before and after the selected date">
                                         <Checkbox checkboxClass="icheckbox_square-blue" increaseArea="-100%" checked={filterForExpectedPurchaseDate} onChange={this.handleFilterForExpectedPurchaseDateChanged} label=" Filter for Expected Purchase Date" />
                                     </span>
@@ -521,9 +652,28 @@ class WaitListTable extends Component {
                                         </span>
                                     )} */}
                                 </div>
-                                <div className="col-2">
+                                <div className="col-xs-2 col-sm-2 col-md-12 col-lg-12 col-xl-12">
                                     <div className="float-right">
-                                        {this.getPageSizeOptions()}
+                                        <div className="row">
+                                            <div className="col-12">
+                                                <div className="form-inline">
+                                                    <div className="form-group">
+                                                        {this.getDateRangeOptions()}
+                                                    </div>
+                                                    <div className="form-group ml-1">
+                                                        {this.getPageSizeOptions()}
+                                                    </div>
+                                                    <div className="form-group ml-1">
+                                                        <button type="button"
+                                                                class="btn btn-primary btn-sm"
+                                                                onClick={this.handleLoadBtnClicked}
+                                                        >
+                                                            Load
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -545,10 +695,15 @@ class WaitListTable extends Component {
                     onSendBtnClicked={this.props.onSendEmailBtnClicked.bind(this)}
                     onCancelBtnClicked={this.handleCancelEmailBtnClicked}
                 />
+                <DateRangeModal
+                    startDate={this.state.startDate}
+                    endDate={this.state.endDate}
+                    onDateRangeSelected={this.handleDateRangeSelected}
+                >
+                </DateRangeModal>
             </React.Fragment>
         );
     }
-
 }
 
 const mapStateToProps = state => ({
