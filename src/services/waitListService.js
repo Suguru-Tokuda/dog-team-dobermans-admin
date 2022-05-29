@@ -47,7 +47,7 @@ export default class WaitlistService {
             sortDescending: sortDescending
         };
 
-        return axios.post(`${this.getServiceBase()}/getByRangeTest`, data);
+        return axios.post(`${this.getServiceBase()}/getByRange`, data);
     }
 
     static waitRequest(data) {
