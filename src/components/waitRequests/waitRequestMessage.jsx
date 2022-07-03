@@ -39,13 +39,11 @@ class WaitRequestMessage extends Component {
                 </div>
                 <div className="row">
                     <div className="col-12">
-                        <textarea
-                            className="form-control"
-                            value={ message.messageBody }
-                            rows="7"
-                            style={{ resize: 'none' }}
-                            readOnly>
-                        </textarea>
+                        <div style={{ border: '0.5px solid black' }}>
+                            <div style={{ padding: '10px' }}>
+                                <div dangerouslySetInnerHTML={{ __html: message.messageBody }}></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
