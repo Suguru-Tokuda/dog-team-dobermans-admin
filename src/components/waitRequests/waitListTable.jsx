@@ -121,7 +121,7 @@ class WaitListTable extends Component {
         /* Fetch data from the api */
         const { sortData, gridSearch } = this.state;
         const { key, orderAsc } = sortData;
-        const dateRange = this.getSelectedGetRange();
+        const dateRange = this.getSelectedDateRange();
         const selectedStartDate = dateRange.startDate;
         const selectedEndDate = dateRange.endDate;
 
@@ -564,16 +564,8 @@ class WaitListTable extends Component {
         const { selectedWaitRequestIDs } = this.state;
 
         if (selectedWaitRequestIDs.length > 0) {
-            const { sortData } = this.state;
-            const { paginationInfo } = this.state;
-
-            this.props.onDeleteBtnClicked(selectedWaitRequestIDs, 0, paginationInfo.pageSize, sortData.key, !sortData.orderAsc);
-            const gridSearch = '';
-            paginationInfo.currentPage = 1;
-            paginationInfo.startIndex = 0;
-            paginationInfo.endIndex = 0;
-
-            this.setState({paginationInfo, gridSearch});
+            const listUpdateData = this.getListUpdateParams();
+            this.props.onDeleteBtnClicked(selectedWaitRequestIDs, listUpdateData);
         }
     }
 
@@ -605,7 +597,7 @@ class WaitListTable extends Component {
         const endIndex = paginationInfo.pageSize - 1;
         const { key, orderAsc } = sortData;
 
-        const dateRange = this.getSelectedGetRange();
+        const dateRange = this.getSelectedDateRange();
         const selectedStartDate = dateRange.startDate;
         const selectedEndDate = dateRange.endDate;
 
@@ -617,7 +609,7 @@ class WaitListTable extends Component {
         }
     }
 
-    getSelectedGetRange = () => {
+    getSelectedDateRange = () => {
         const { dateRangeID, startDate, endDate } = this.state;
 
         if (dateRangeID !== 6) {
@@ -628,6 +620,30 @@ class WaitListTable extends Component {
                 endDate: endDate
             };
         }
+    }
+
+    getListUpdateParams = () => {
+        const { paginationInfo, sortData, gridSearch } = this.state;
+        const { startIndex, endIndex } = paginationInfo;
+        const { key, orderAsc } = sortData;
+        const dateRange = this.getSelectedDateRange();
+        const { startDate, endDate } = dateRange;
+        const retVal = {
+            startDate: startDate,
+            endDate: endDate,
+            startIndex: startIndex,
+            endIndex: endIndex,
+            key: key,
+            orderDesc: !orderAsc,
+            gridSearch: gridSearch
+        };
+
+        return retVal;
+    }
+
+    handleSendEmail = (waitRequestIDs, subject, body) => {
+        const listUpdateData = this.getListUpdateParams();
+        this.props.onSendEmailBtnClicked(waitRequestIDs, subject, body, listUpdateData);
     }
 
     render() {
@@ -692,7 +708,7 @@ class WaitListTable extends Component {
                 </div>
                 <WaitListEmailModal 
                     waitRequests={waitRequestsToNotify} 
-                    onSendBtnClicked={this.props.onSendEmailBtnClicked.bind(this)}
+                    onSendBtnClicked={this.handleSendEmail.bind(this)}
                     onCancelBtnClicked={this.handleCancelEmailBtnClicked}
                 />
                 <DateRangeModal

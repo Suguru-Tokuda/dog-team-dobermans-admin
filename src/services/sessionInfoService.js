@@ -4,8 +4,7 @@ export default class SessionInfoService {
             'https://dogteamdobermans-admin.web.app', 
             'https://dogteamdobermans-admin.firebaseapp.com'
         ];
-        // const isProd = prodOrigins.indexOf(window.location.origin) !== -1;
-        const isProd = true;
+        const isProd = prodOrigins.indexOf(window.location.origin) !== -1;
         
         if (isProd)
             return "https://us-central1-dogteamdobermans.cloudfunctions.net/";

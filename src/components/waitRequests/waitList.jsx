@@ -72,21 +72,17 @@ class WaitList extends Component {
         return null;
     }
 
-    handleDeleteBtnClicked = async (waitRequestIDs, startIndex, endIndex, sortField, sortDescending) => {
+    handleDeleteBtnClicked = async (waitRequestIDs, listUpdateData) => {
         if (waitRequestIDs.length > 0) { 
             this.props.showLoading({ reset: true, count: 1 });
 
             try {
                 await WaitlistService.deleteWaitRequests(waitRequestIDs);
-                const res = await WaitlistService.getWaitlistByRange(startIndex, endIndex, sortField, sortDescending);
-
+                const { startDate, endDate, startIndex, endIndex, key, orderDesc, gridSearch } = listUpdateData;
+                this.updateWaitRequests(startDate, endDate, startIndex, endIndex, key, orderDesc, gridSearch);
                 toastr.success(`Deleted ${waitRequestIDs.length} request${waitRequestIDs.length > 1 ? 's' : ''}`);
-
-                this.setState({
-                    waitRequests: res.data.waitRequests,
-                    totalItems: res.data.totalItems
-                });
             } catch (err) {
+                console.log(err);
                 toastr.error('There was an error in deleting wait requests.');
             } finally {
                 this.props.doneLoading({ reset: true });
@@ -94,7 +90,7 @@ class WaitList extends Component {
         }
     }
 
-    handleSendEmailBtnClicked = async (waitRequestIDs, subject, body) => {
+    handleSendEmailBtnClicked = async (waitRequestIDs, subject, body, listUpdateData) => {
         this.props.showLoading({ reset: true, count: 1 });
         const regex = /\<img (.*?)>/g;
         let result;
@@ -143,8 +139,10 @@ class WaitList extends Component {
                 toastr.success('Email sent');
                 $('#waitListEmailModal').modal('hide');
                 $('.modal-backdrop').remove();
-                const res = await WaitlistService.getWaitList();
-                this.setState({ waitRequests: res.data });
+                if (listUpdateData) {
+                    const { startDate, endDate, startIndex, endIndex, key, orderDesc, gridSearch } = listUpdateData;
+                    this.updateWaitRequests(startDate, endDate, startIndex, endIndex, key, orderDesc, gridSearch);
+                }
             })
             .catch(() => {
                 toastr.error('There was an error in sending email');
