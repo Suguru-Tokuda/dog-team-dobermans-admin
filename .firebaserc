@@ -6,8 +6,11 @@
   "targets": {
     "dogteamdobermans": {
       "hosting": {
+        "admin-dashbaord": [
+          "admin-dashboard"
+        ],
         "admin": [
-          "dogteamdobermans-admin"
+          "dogteamdobermans-admin-dashboard"
         ]
       }
     },
@@ -18,5 +21,6 @@
         ]
       }
     }
-  }
+  },
+  "etags": {}
 }
