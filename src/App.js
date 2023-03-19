@@ -6,6 +6,7 @@ import Spinner from 'react-spinkit';
 import Header from './components/common/header';
 import Sidebar from './components/common/sidebar';
 import Login from './components/common/login';
+import PasswordForgot from './components/common/passwordForgot';
 import Main from './components/main/main';
 import BannerEditor from './components/main/bannerEditor';
 import Puppies from './components/puppies/puppies';
@@ -91,6 +92,7 @@ class App extends Component {
                     <Switch>
                         <Route path="/" exact render={(props) => <Main {...props} />} />
                         <Route path="/login" exact render={(props) => <Login {...props} />} />
+                        <Route path="/password-reset" exact render={(props) => <PasswordForgot {...props} />} />
                         <Route path="/banner" exact render={(props) => <BannerEditor {...props} />} />
                         <Route path="/background-vide-editor" exact render={(props) => <VideoBackgroundEditor {...props} />} />
                         <Route path="/gallery-image-editor" exact render={(props) => <GalleryImageEditor {...props} />} />

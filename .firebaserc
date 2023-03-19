@@ -18,6 +18,9 @@
       "hosting": {
         "admin-dev": [
           "dogteamdobermans-admin-dev"
+        ],
+        "admin": [
+          "dogteamdobermansdev-admin"
         ]
       }
     }

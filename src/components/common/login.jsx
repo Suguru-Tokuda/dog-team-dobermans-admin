@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 import * as siteLogo from '../../assets/img/site_logo.PNG';
 import CryptoJS from 'crypto-js';
 import * as key from '../../key.json';
+import { Link } from 'react-router-dom';
 
 class Login extends Component {
     state = {
@@ -106,7 +107,7 @@ class Login extends Component {
                                         <div className="input-group mb-3">
                                             <div className="input-group-prepend">
                                                 <span className="input-group-text">
-                                                    <i className="fa fa-user"></i>
+                                                    <i className="fa fa-envelope"></i>
                                                 </span>
                                             </div>
                                             <input className="form-control" type="text" placeholder="Email" value={email} onChange={this.handleSetEmail} onKeyUp={this.handleSubmitByEnter} />
@@ -131,14 +132,25 @@ class Login extends Component {
                                                 </React.Fragment>
                                             )}
                                         </div>
-                                        <div className="input-group mb-4">
-                                            <div className="input-group-prepend">
-                                                <Checkbox checkboxClass="icheckbox_square-blue" checked={rememberMe} onChange={() => this.setState({ rememberMe: !rememberMe})} label=" Remember Me" />
+                                        <div className="row">
+                                            <div className="col-6">
+                                                <div className="input-group mb-4">
+                                                    <div className="input-group-prepend">
+                                                        <Checkbox checkboxClass="icheckbox_square-blue" checked={rememberMe} onChange={() => this.setState({ rememberMe: !rememberMe})} label=" Remember Me" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="col-6">
+                                                <div className="float-right">
+                                                    <button className="btn btn-primary px-4" type="button" onClick={this.handleLoginBtnClicked}>Login</button>
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="row">
-                                            <div className="col-6">
-                                                <button className="btn btn-primary px-4" type="button" onClick={this.handleLoginBtnClicked}>Login</button>
+                                            <div className="col-12">
+                                                <div className="float-right">
+                                                    <Link to="/password-reset">Forgot password?</Link>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

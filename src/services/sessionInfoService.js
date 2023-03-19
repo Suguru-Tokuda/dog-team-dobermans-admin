@@ -1,7 +1,8 @@
+import * as api from '../api.json';
+
 export default class SessionInfoService {
     static getBaseUrlForAPI() {
-        const prodOriginIdentifier = 'https://dogteamdobermans';
-        let isProd = window.location.origin.toLowerCase().indexOf(prodOriginIdentifier) !== -1;
+        let isProd = window.location.toString().indexOf(api.identifiers.prod) !== -1;
         
         if (isProd)
             return "https://us-central1-dogteamdobermans.cloudfunctions.net/";
