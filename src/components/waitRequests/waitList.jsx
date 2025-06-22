@@ -53,7 +53,6 @@ class WaitList extends Component {
           searchText
         )
         .then((res) => {
-          console.log(res);
           const { data } = res;
           this.setState({
             waitRequests: data.waitRequests,
@@ -61,7 +60,9 @@ class WaitList extends Component {
           });
         })
         .catch((err) => {
-          console.log(err);
+          toastr.error("There was an error in loading wait list", null, {
+            newestOnTop: true,
+          });
         })
         .finally(() => {
           this.props.doneLoading({ reset: true });
@@ -73,19 +74,15 @@ class WaitList extends Component {
   getTable() {
     const { waitRequests, loaded, totalItems } = this.state;
     if (loaded === true) {
-      if (waitRequests.length > 0) {
-        return (
-          <WaitListTable
-            waitRequests={waitRequests}
-            totalItems={totalItems}
-            onUpdateList={this.updateWaitRequests.bind(this)}
-            onSendEmailBtnClicked={this.handleSendEmailBtnClicked.bind(this)}
-            onDeleteBtnClicked={this.handleDeleteBtnClicked.bind(this)}
-          />
-        );
-      } else if (waitRequests.length === 0) {
-        return <h4>No requests</h4>;
-      }
+      return (
+        <WaitListTable
+          waitRequests={waitRequests}
+          totalItems={totalItems}
+          onUpdateList={this.updateWaitRequests.bind(this)}
+          onSendEmailBtnClicked={this.handleSendEmailBtnClicked.bind(this)}
+          onDeleteBtnClicked={this.handleDeleteBtnClicked.bind(this)}
+        />
+      );
     }
     return null;
   }
@@ -120,7 +117,6 @@ class WaitList extends Component {
           }`
         );
       } catch (err) {
-        console.log(err);
         toastr.error("There was an error in deleting wait requests.");
       } finally {
         this.props.doneLoading({ reset: true });

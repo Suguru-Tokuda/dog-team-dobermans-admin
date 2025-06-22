@@ -1,185 +1,222 @@
-import SessionInfoService from './sessionInfoService';
-import ConstantsService from './constantsService';
-import UtilService from './utilService';
-import axios from 'axios';
-import { storage } from './firebaseService';
-import moment from 'moment';
+import SessionInfoService from "./sessionInfoService";
+import ConstantsService from "./constantsService";
+import UtilService from "./utilService";
+import axios from "axios";
+import { storage } from "./firebaseService";
+import moment from "moment";
 
 export default class WaitlistService {
-    static getServiceBase() {
-        return `${SessionInfoService.getBaseUrlForAPI()}api/waitlist`;
-    }
+  static getServiceBase() {
+    return `${SessionInfoService.getBaseUrlForAPI()}api/waitlist`;
+  }
 
-    static getWaitRequest(waitRequestID) {
-        return axios.get(`${this.getServiceBase()}/getByID?&waitRequestID=${waitRequestID}`);
-    }
+  static getWaitRequest(waitRequestID) {
+    return axios.get(
+      `${this.getServiceBase()}/getByID?&waitRequestID=${waitRequestID}`
+    );
+  }
 
-    static getWaitRequestsByIDs(waitRequestIDs) {
-        const data = {
-            waitRequestIDs: waitRequestIDs
-        };
+  static getWaitRequestsByIDs(waitRequestIDs) {
+    const data = {
+      waitRequestIDs: waitRequestIDs,
+    };
 
-        return axios.post(`${this.getServiceBase()}/getByIDs`, data);
-    }
+    return axios.post(`${this.getServiceBase()}/getByIDs`, data);
+  }
 
-    static getWaitList() {
-        const recipientID = ConstantsService.getBreederID();
-        return axios.get(`${this.getServiceBase()}?&recipientID=${recipientID}`);
-    }
+  static getWaitList() {
+    const recipientID = ConstantsService.getBreederID();
+    return axios.get(`${this.getServiceBase()}?&recipientID=${recipientID}`);
+  }
 
-    static getWaitlistByRange(startDate, endDate, startIndex, endIndex, sortField, sortDescending, searchText) {
-        if (!startDate)
-            startDate = moment().subtract(30, 'days').toDate().toISOString();
-        
-        if (!endDate)
-            endDate = moment().toDate().toISOString();
+  static getWaitlistByRange(
+    startDate,
+    endDate,
+    startIndex,
+    endIndex,
+    sortField,
+    sortDescending,
+    searchText
+  ) {
+    if (!startDate)
+      startDate = moment().subtract(30, "days").toDate().toISOString();
 
-        const recipientID = ConstantsService.getBreederID();
-        const data = {
-            recipientID: recipientID,
-            startIndex: startIndex,
-            endIndex: endIndex,
-            sortField: sortField,
-            searchText: searchText,
-            activeOnly: true,
-            startDate: startDate,
-            endDate: endDate,
-            sortDescending: sortDescending
-        };
+    if (!endDate) endDate = moment().toDate().toISOString();
 
-        return axios.post(`${this.getServiceBase()}/getByRange`, data);
-    }
+    const recipientID = ConstantsService.getBreederID();
+    const data = {
+      recipientID: recipientID,
+      startIndex: startIndex,
+      endIndex: endIndex,
+      sortField: sortField,
+      searchText: searchText,
+      activeOnly: true,
+      startDate: startDate,
+      endDate: endDate,
+      sortDescending: sortDescending,
+    };
 
-    static waitRequest(data) {
-        return axios.post(`${this.getServiceBase()}`, data);
-    }
+    return axios.post(`${this.getServiceBase()}/getByRange`, data);
+  }
 
-    static createWaitRequest(data) {
-        return axios.post(`${this.getServiceBase()}`, data);
-    }
+  static waitRequest(data) {
+    return axios.post(`${this.getServiceBase()}`, data);
+  }
 
-    static createWaitRequestByEmail(data) {
-        return axios.post(`${this.getServiceBase()}/createByEmail`, data);
-    }
+  static createWaitRequest(data) {
+    return axios.post(`${this.getServiceBase()}`, data);
+  }
 
-    static updateWaitRequest(waitRequestID, data) {
-        return axios.put(`${this.getServiceBase()}?&waitRequestID=${waitRequestID}`, data);
-    }
+  static createWaitRequestByEmail(data) {
+    return axios.post(`${this.getServiceBase()}/createByEmail`, data);
+  }
 
-    static updateWaitRequests(waitRequests) {
-        return axios.put(`${this.getServiceBase()}?`, waitRequests);
-    }
+  static updateWaitRequest(waitRequestID, data) {
+    return axios.put(
+      `${this.getServiceBase()}?&waitRequestID=${waitRequestID}`,
+      data
+    );
+  }
 
-    static getMessagesByUserID(userID = ConstantsService.getBreederID(), limit) {
-        return axios.get(`${this.getServiceBase()}/messages/byUserID?&userID=${userID}&limit=${limit}`)
-    }
+  static updateWaitRequests(waitRequests) {
+    return axios.put(`${this.getServiceBase()}?`, waitRequests);
+  }
 
-    static getUnreadMessagesByUserID(userID = ConstantsService.getBreederID(), limit) {
-        return axios.get(`${this.getServiceBase()}/messages/unreadByUseID?&userID=${userID}&limit=${limit}`)
-    }
+  static getMessagesByUserID(userID = ConstantsService.getBreederID(), limit) {
+    return axios.get(
+      `${this.getServiceBase()}/messages/byUserID?&userID=${userID}&limit=${limit}`
+    );
+  }
 
-    static getMessagesGroupedByWaitRequest() {
-        return axios.get(`${this.getServiceBase()}/messages/byWaitRequest`);
-    }
+  static getUnreadMessagesByUserID(
+    userID = ConstantsService.getBreederID(),
+    limit
+  ) {
+    return axios.get(
+      `${this.getServiceBase()}/messages/unreadByUseID?&userID=${userID}&limit=${limit}`
+    );
+  }
 
-    static sendWaitRequestMessage(senderID = ConstantsService.getBreederID(), recipientID, waitRequestID, messageBody) {
-        const data = {
-            waitRequestID: waitRequestID,
-            senderID: senderID,
-            recipientID: recipientID,
-            messageBody: messageBody,
-            isBreeder: true,
-            read: false
-        };
+  static getMessagesGroupedByWaitRequest() {
+    return axios.get(`${this.getServiceBase()}/messages/byWaitRequest`);
+  }
 
-        return axios.post(`${this.getServiceBase()}/messages`, data);
-    }
+  static sendWaitRequestMessage(
+    senderID = ConstantsService.getBreederID(),
+    recipientID,
+    waitRequestID,
+    messageBody
+  ) {
+    const data = {
+      waitRequestID: waitRequestID,
+      senderID: senderID,
+      recipientID: recipientID,
+      messageBody: messageBody,
+      isBreeder: true,
+      read: false,
+    };
 
-    static updateWaitRequestMessage(senderID = ConstantsService.getBreederID(), recipientID, waitRequestID, messageBody) {
-        const data = {
-            waitRequestID: waitRequestID,
-            senderID: senderID,
-            recipientID: recipientID,
-            messageBody: messageBody,
-            isBreeder: true,
-            read: false
-        };
+    return axios.post(`${this.getServiceBase()}/messages`, data);
+  }
 
-        return axios.put(`${this.getServiceBase()}/messages`, data);
-    }
+  static updateWaitRequestMessage(
+    senderID = ConstantsService.getBreederID(),
+    recipientID,
+    waitRequestID,
+    messageBody
+  ) {
+    const data = {
+      waitRequestID: waitRequestID,
+      senderID: senderID,
+      recipientID: recipientID,
+      messageBody: messageBody,
+      isBreeder: true,
+      read: false,
+    };
 
-    static getWaitRequestMessages(waitRequestID) {
-        return axios.get(`${this.getServiceBase()}/messages?&waitRequestID=${waitRequestID}`);
-    }
+    return axios.put(`${this.getServiceBase()}/messages`, data);
+  }
 
-    static getNewMessages(waitRequestID, recipientID = 'sSJ0mWxDjtaTuFsolvKskzDY4GI3') {
-        return axios.get(`${this.getServiceBase()}/messages?&waitRequestID=${waitRequestID}&recipientID=${recipientID}&onlyUnread=true`);
-    }
+  static getWaitRequestMessages(waitRequestID) {
+    return axios.get(
+      `${this.getServiceBase()}/messages?&waitRequestID=${waitRequestID}`
+    );
+  }
 
-    static deleteWaitRequests(waitRequestIDs) {
-        return axios({
-            method: 'DELETE',
-            data: {
-                waitRequestIDs: waitRequestIDs
-            },
-            url: `${this.getServiceBase()}?`
-        });
-    }
+  static getNewMessages(
+    waitRequestID,
+    recipientID = "sSJ0mWxDjtaTuFsolvKskzDY4GI3"
+  ) {
+    return axios.get(
+      `${this.getServiceBase()}/messages?&waitRequestID=${waitRequestID}&recipientID=${recipientID}&onlyUnread=true`
+    );
+  }
 
-    static notify(waitRequestIDs, subject, body) {
-        const data = {
-            waitRequestIDs: waitRequestIDs,
-            subject: subject,
-            body: body
-        };
-        return axios.post(`${this.getServiceBase()}/notify`, data);
-    }
+  static deleteWaitRequests(waitRequestIDs) {
+    return axios({
+      method: "DELETE",
+      data: {
+        waitRequestIDs: waitRequestIDs,
+      },
+      url: `${this.getServiceBase()}?`,
+    });
+  }
 
-    static markMessageAsRead(messageIDs) {
-        const data = {
-            messageIDs: messageIDs
-        };
+  static notify(waitRequestIDs, subject, body) {
+    const data = {
+      waitRequestIDs: waitRequestIDs,
+      subject: subject,
+      body: body,
+    };
+    return axios.post(`${this.getServiceBase()}/notify`, data);
+  }
 
-        return axios.post(`${this.getServiceBase()}/messages/markAsRead`, data);
-    }
+  static markMessageAsRead(messageIDs) {
+    const data = {
+      messageIDs: messageIDs,
+    };
 
-    static uploadPicture(imageFile) {
-        return new Promise((resolve) => {
-            const pictureID = UtilService.generateID(10);
-            const reference = `waitList/${pictureID}`;
-            const task = storage.ref(reference).put(imageFile);
-            task.on('state_changed', 
-            (snapshot) => {
-                switch (snapshot.state) {
-                    case 'paused':
-                        break;
-                    case 'running':
-                        break;
-                    default:
-                        break;
-                }
-            }
-            ,(err) => {
-                switch (err.code) {
-                    case 'storage/unauthorized':
-                        break;
-                    case 'storage/canceled':
-                        break;
-                    case 'storage/unknown':
-                        break;
-                    default:
-                        break;
-                }
-            },
-            () => {
-                task.snapshot.ref.getDownloadURL()
-                .then(function (downloadURL) { 
-                    resolve({
-                        reference: reference,
-                        url: downloadURL
-                    });
-                });
+    return axios.post(`${this.getServiceBase()}/messages/markAsRead`, data);
+  }
+
+  static uploadPicture(imageFile) {
+    return new Promise((resolve) => {
+      const pictureID = UtilService.generateID(10);
+      const reference = `waitList/${pictureID}`;
+      const task = storage.ref(reference).put(imageFile);
+      task.on(
+        "state_changed",
+        (snapshot) => {
+          switch (snapshot.state) {
+            case "paused":
+              break;
+            case "running":
+              break;
+            default:
+              break;
+          }
+        },
+        (err) => {
+          switch (err.code) {
+            case "storage/unauthorized":
+              break;
+            case "storage/canceled":
+              break;
+            case "storage/unknown":
+              break;
+            default:
+              break;
+          }
+        },
+        () => {
+          task.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+            resolve({
+              reference: reference,
+              url: downloadURL,
             });
-        });
-    }
+          });
+        }
+      );
+    });
+  }
 }

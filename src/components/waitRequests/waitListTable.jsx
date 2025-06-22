@@ -355,7 +355,6 @@ class WaitListTable extends Component {
           <th className="pointer" onClick={() => this.sortTable("created")}>
             Created {this.getSortIcon("created")}
           </th>
-          {/* <th className="pointer" onClick={() => this.sortTable('expectedPurchaseDate')}>Expected Purchase {this.getSortIcon('expectedPurchaseDate')}</th> */}
           <th className="pointer" onClick={() => this.sortTable("notified")}>
             Last Notified {this.getSortIcon("notified")}
           </th>
@@ -452,7 +451,6 @@ class WaitListTable extends Component {
               ? ""
               : moment(waitRequest.created).format("MM/DD/YYYY hh:mm:ss")}
           </td>
-          {/* <td>{waitRequest.expectedPurchaseDate === undefined || waitRequest.expectedPurchaseDate === null ? '' : moment(waitRequest.expectedPurchaseDate).format('MM/DD/YYYY')}</td> */}
           <td>
             {waitRequest.notified === undefined || waitRequest.notified === null
               ? "N/A"
@@ -499,6 +497,19 @@ class WaitListTable extends Component {
         </tr>
       ));
       tbody = <tbody>{rows}</tbody>;
+    } else {
+      tbody = (
+        <tbody>
+          <tr>
+            <th colSpan="100%" className="text-center">
+              <h2>
+                No requests for the selected search criteria. Adjust date range
+                to see more requests.
+              </h2>
+            </th>
+          </tr>
+        </tbody>
+      );
     }
     return (
       <div className="table-responsive">
@@ -909,14 +920,6 @@ class WaitListTable extends Component {
                   >
                     Delete
                   </button>
-                  {/* <span className="ml-2" data-toggle="tooltip" data-placement="top" title="Filter Wait List for 2 months before and after the selected date">
-                                        <Checkbox checkboxClass="icheckbox_square-blue" increaseArea="-100%" checked={filterForExpectedPurchaseDate} onChange={this.handleFilterForExpectedPurchaseDateChanged} label=" Filter for Expected Purchase Date" />
-                                    </span>
-                                    {filterForExpectedPurchaseDate === true && (
-                                        <span className="ml-2">
-                                            <DatePicker className="form-control" selected={expectedPurchaseDateToSearch} onChange={this.handleSetExpectedPurchaseDate} />
-                                        </span>
-                                    )} */}
                 </div>
                 <div className="col-xs-2 col-sm-2 col-md-12 col-lg-12 col-xl-12">
                   <div className="float-right">
